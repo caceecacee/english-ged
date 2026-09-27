@@ -1,0 +1,1153 @@
+/* English Path — UI และการเชื่อมข้อมูลกับตรรกะเกม
+   ไฟล์นี้ไม่มีเนื้อหาบทเรียน ข้อมูลทั้งหมดอยู่ใน src/data/ */
+(function () {
+  'use strict';
+  var EP = window.EP;
+  var L = EP.logic;
+  var LEVELS = ['A1', 'A2', 'B1', 'B2'];
+  var KEYS = ['A', 'B', 'C', 'D'];
+  var THAI_MARK = ['ก', 'ข', 'ค', 'ง', 'จ'];
+
+  /* ---------- เครื่องมือเล็ก ๆ ---------- */
+  function $(sel, root) { return (root || document).querySelector(sel); }
+  function $all(sel, root) { return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  function stripTags(s) { return String(s).replace(/<[^>]*>/g, ''); }
+
+  var ICON = {
+    play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 9v6h4l5 4V5L8 9H4zm12.5 3a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>',
+    back: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M15.4 6.4 14 5l-7 7 7 7 1.4-1.4L9.8 12z"/></svg>',
+    book: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a1.5 1.5 0 0 0 0 3H20v1H6.5A2.5 2.5 0 0 1 4 19.5v-15zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg>',
+    cards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 7.5 12.2 3l5 10.3-9.2 4.5L3 7.5zm15.4 5.3L14.6 5H19a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8.5l7.9-8.2z"/></svg>',
+    read: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 6.5C10.2 5 7.7 4 5 4c-1 0-2 .1-3 .4v14c1-.3 2-.4 3-.4 2.7 0 5.2 1 7 2.5 1.8-1.5 4.3-2.5 7-2.5 1 0 2 .1 3 .4v-14C21 4.1 20 4 19 4c-2.7 0-5.2 1-7 2.5zm-1 11.2A11.8 11.8 0 0 0 5 16c-.3 0-.7 0-1 .1V6.1L5 6c2.2 0 4.3.8 6 2.1v9.6z"/></svg>'
+  };
+  function sayBtn(text, small) {
+    return '<button type="button" class="say' + (small ? ' sm' : '') + '" data-say="' + esc(text) + '" aria-label="ฟังเสียงภาษาอังกฤษ: ' + esc(text) + '">' + ICON.play + '</button>';
+  }
+  function lvBadge(lv) { return '<span class="lv" data-lv="' + lv + '">' + lv + '</span>'; }
+
+  /* ---------- แจ้งเตือน ---------- */
+  var toastTimer;
+  function toast(msg) {
+    var t = $('#toast');
+    t.textContent = msg;
+    t.hidden = false;
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { t.hidden = true; }, 5200);
+  }
+
+  /* ---------- บันทึกความคืบหน้าในเครื่อง แยกตามชื่อเล่น ----------
+     root = { v:2, current:<key>, profiles:{ <key>: {nick, updated, grammar, gpost, vocab, reading} } }
+     key '__guest' = ยังไม่ใส่ชื่อเล่น (ไม่ขึ้นตารางอันดับ) */
+  var GUEST = '__guest';
+  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {} }; }
+  function nickKey(nick) { return 'n:' + nick.trim().toLowerCase(); }
+  var Store = {
+    key: 'english-path:v2',
+    root: { v: 2, current: GUEST, profiles: {} },
+    data: null,
+    load: function () {
+      this.root.profiles[GUEST] = emptyProfile('');
+      try {
+        var s = window.localStorage.getItem(this.key);
+        if (s) {
+          var r = JSON.parse(s);
+          if (r && r.profiles) this.root = r;
+        } else {
+          var old = window.localStorage.getItem('english-path:v1'); // ย้ายข้อมูลจากเวอร์ชันแรก
+          if (old) {
+            var d = JSON.parse(old);
+            ['grammar', 'gpost', 'vocab', 'reading'].forEach(function (k) { if (d[k]) Store.root.profiles[GUEST][k] = d[k]; });
+          }
+        }
+      } catch (e) { /* ไม่มีที่เก็บ ใช้ต่อได้โดยไม่บันทึก */ }
+      if (!this.root.profiles[GUEST]) this.root.profiles[GUEST] = emptyProfile('');
+      if (!this.root.profiles[this.root.current]) this.root.current = GUEST;
+      this.data = this.root.profiles[this.root.current];
+    },
+    save: function () {
+      if (this.data) this.data.updated = Date.now();
+      this.saveLocal();
+      if (typeof Remote !== 'undefined') Remote.queue();
+    },
+    saveLocal: function () {
+      try { window.localStorage.setItem(this.key, JSON.stringify(this.root)); } catch (e) { }
+    },
+    named: function () {
+      var ps = this.root.profiles;
+      return Object.keys(ps).filter(function (k) { return k !== GUEST; }).map(function (k) { return { key: k, p: ps[k] }; });
+    },
+    /* ตั้ง/สลับชื่อเล่น: ชื่อที่มีอยู่แล้วจะสลับไปใช้, ชื่อแรกของเครื่องจะรับความคืบหน้าที่ทำไว้ก่อนใส่ชื่อ */
+    use: function (nick) {
+      var key = nickKey(nick);
+      var existed = !!this.root.profiles[key];
+      var moved = false;
+      if (!existed) {
+        var prof = emptyProfile(nick.trim());
+        var g = this.root.profiles[GUEST];
+        if (this.named().length === 0 && hasProgress(g)) {
+          ['grammar', 'gpost', 'vocab', 'reading'].forEach(function (k) { prof[k] = g[k]; });
+          this.root.profiles[GUEST] = emptyProfile('');
+          moved = true;
+        }
+        this.root.profiles[key] = prof;
+      }
+      this.root.current = key;
+      this.data = this.root.profiles[key];
+      this.save();
+      return { existed: existed, moved: moved };
+    },
+    guest: function () { this.root.current = GUEST; this.data = this.root.profiles[GUEST]; this.save(); },
+    remove: function (key) {
+      if (key === GUEST) return;
+      delete this.root.profiles[key];
+      if (this.root.current === key) { this.root.current = GUEST; this.data = this.root.profiles[GUEST]; }
+      this.save();
+    }
+  };
+  function hasProgress(p) {
+    return ['grammar', 'gpost', 'vocab', 'reading'].some(function (k) { return p[k] && Object.keys(p[k]).length > 0; });
+  }
+
+  /* ---------- คะแนนรวมของแต่ละ Part (ใช้จัดอันดับ) ---------- */
+  var PARTS = {
+    grammar: { label: 'Grammar', unit: 'คะแนนรวมสูงสุดจาก mini-test และ Post-test' },
+    vocab: { label: 'คำศัพท์', unit: 'คะแนนรวมสูงสุดจากการ์ดและ Post-test ทุกชุด' },
+    reading: { label: 'ฝึกอ่าน', unit: 'คะแนนรวมสูงสุดจากทุกบทอ่าน' }
+  };
+  function partMax(part) {
+    if (part === 'grammar') return EP.grammar.reduce(function (s, c) { return s + c.lessons.length * 5 + c.post.length; }, 0);
+    if (part === 'vocab') return 16 * 40;
+    return EP.reading.reduce(function (s, p) { return s + p.q.length; }, 0);
+  }
+  function partScore(p, part) {
+    var sum = 0;
+    if (part === 'grammar') {
+      Object.keys(p.grammar || {}).forEach(function (k) { sum += p.grammar[k].best || 0; });
+      Object.keys(p.gpost || {}).forEach(function (k) { sum += p.gpost[k] || 0; });
+      return sum;
+    }
+    if (part === 'vocab') {
+      var best = {};
+      Object.keys(p.vocab || {}).forEach(function (k) {
+        var set = k.split('-').slice(0, 2).join('-');
+        var r = p.vocab[k];
+        var b = best[set] || { card: 0, post: 0 };
+        b.card = Math.max(b.card, r.card > 0 ? r.card : 0);
+        b.post = Math.max(b.post, r.post > 0 ? r.post : 0);
+        best[set] = b;
+      });
+      Object.keys(best).forEach(function (k) { sum += best[k].card + best[k].post; });
+      return sum;
+    }
+    Object.keys(p.reading || {}).forEach(function (k) { sum += p.reading[k].best || 0; });
+    return sum;
+  }
+
+  /* ---------- ตารางคะแนนรวมผ่าน Google Sheet (ใช้เมื่อ config.js ระบุ scoreEndpoint) ----------
+     ส่ง: POST {action:'submit', nick, grammar, vocab, reading} แบบ text/plain (ไม่ต้องขอ CORS preflight)
+     ดึง: GET ?action=top → {ok:true, rows:[{nick, grammar, vocab, reading, updated}]}
+     ถ้าเชื่อมไม่ได้ เว็บใช้งานต่อได้ และตารางจะแสดงข้อมูลในเครื่องแทน */
+  var CFG = window.EP_CONFIG || {};
+  var Remote = {
+    url: String(CFG.scoreEndpoint || '').trim(),
+    rows: null,
+    status: 'idle',
+    fetchedAt: 0,
+    timer: null,
+    enabled: function () { return /^https:\/\//.test(this.url) || /^http:\/\/(localhost|127\.0\.0\.1)(:|\/)/.test(this.url); },
+    load: function (force) {
+      if (!this.enabled() || this.status === 'loading') return;
+      if (!force && this.fetchedAt && Date.now() - this.fetchedAt < 30000) return;
+      var self = this;
+      this.status = 'loading';
+      fetch(this.url + (this.url.indexOf('?') < 0 ? '?' : '&') + 'action=top&t=' + Date.now())
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.ok || !Array.isArray(d.rows)) throw new Error('bad');
+          self.rows = d.rows; self.status = 'ok'; self.fetchedAt = Date.now(); refreshBoards();
+        })
+        .catch(function () { self.status = 'error'; self.fetchedAt = Date.now(); refreshBoards(); });
+    },
+    queue: function () {
+      if (!this.enabled() || Store.root.current === GUEST) return;
+      var self = this;
+      clearTimeout(this.timer);
+      this.timer = setTimeout(function () { self.send(); }, 1200);
+    },
+    send: function () {
+      var p = Store.data;
+      if (!p || !p.nick || Store.root.current === GUEST) return;
+      var body = { action: 'submit', nick: p.nick, grammar: partScore(p, 'grammar'), vocab: partScore(p, 'vocab'), reading: partScore(p, 'reading') };
+      var sig = p.nick + '|' + body.grammar + '/' + body.vocab + '/' + body.reading;
+      if (p.sent === sig) return;
+      if (!body.grammar && !body.vocab && !body.reading) return; // ยังไม่มีคะแนน ไม่ต้องสร้างแถว
+      var self = this;
+      fetch(this.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          if (!d || !d.ok) throw new Error('bad');
+          p.sent = sig; Store.saveLocal(); self.load(true);
+        })
+        .catch(function () { /* ส่งไม่สำเร็จ จะลองใหม่เมื่อมีการบันทึกครั้งถัดไปหรือเปิดหน้าใหม่ */ });
+    }
+  };
+  function refreshBoards() {
+    ['grammar', 'vocab', 'reading'].forEach(function (part) {
+      var el = document.getElementById('lbw-' + part);
+      if (el) el.innerHTML = leaderboardInner(part);
+    });
+  }
+  function cleanNick(n) { return String(n || '').replace(/\s+/g, ' ').trim().replace(/^[=+\-@\s]+/, '').slice(0, 20); }
+
+  /* ---------- เสียง: อ่านเฉพาะภาษาอังกฤษ และเฉพาะเมื่อผู้ใช้กด ---------- */
+  var Speech = {
+    supported: typeof window.speechSynthesis !== 'undefined' && typeof window.SpeechSynthesisUtterance !== 'undefined',
+    voice: null,
+    warned: false,
+    pick: function () {
+      var vs = [];
+      try { vs = window.speechSynthesis.getVoices() || []; } catch (e) { }
+      var en = vs.filter(function (v) { return /^en([-_]|$)/i.test(v.lang); });
+      var us = en.filter(function (v) { return /en[-_]US/i.test(v.lang); });
+      this.voice = us.filter(function (v) { return v.localService; })[0] || us[0] || en[0] || null;
+      return { total: vs.length, english: en.length };
+    },
+    speak: function (text, btn) {
+      if (!text || L.hasThai(text)) return; // กันไม่ให้อ่านภาษาไทยเด็ดขาด
+      if (!this.supported) {
+        toast('เบราว์เซอร์นี้ไม่มีระบบเสียงอ่าน ลองเปิดหน้านี้ด้วย Chrome, Safari หรือ Edge รุ่นใหม่');
+        return;
+      }
+      var info = this.pick();
+      if (info.total > 0 && info.english === 0 && !this.warned) {
+        this.warned = true;
+        toast('ไม่พบเสียงภาษาอังกฤษในอุปกรณ์นี้ ระบบจะลองใช้เสียงเริ่มต้น หากไม่ได้ยิน ให้เพิ่มเสียงภาษาอังกฤษในการตั้งค่าอุปกรณ์');
+      }
+      var synth = window.speechSynthesis;
+      try { synth.cancel(); } catch (e) { }
+      var u = new window.SpeechSynthesisUtterance(text);
+      u.lang = this.voice ? this.voice.lang : 'en-US';
+      if (this.voice) u.voice = this.voice;
+      u.rate = 0.9;
+      var started = false;
+      $all('.say.playing').forEach(function (b) { b.classList.remove('playing'); });
+      if (btn) btn.classList.add('playing');
+      u.onstart = function () { started = true; };
+      u.onend = function () { if (btn) btn.classList.remove('playing'); };
+      u.onerror = function (e) {
+        if (btn) btn.classList.remove('playing');
+        if (e && (e.error === 'interrupted' || e.error === 'canceled')) return;
+        toast('เล่นเสียงไม่สำเร็จ ตรวจว่าเปิดเสียงเครื่องแล้ว หรือกดฟังอีกครั้ง');
+      };
+      synth.speak(u);
+      setTimeout(function () {
+        if (!started && btn && btn.classList.contains('playing')) {
+          btn.classList.remove('playing');
+          if (!synth.speaking) toast('ยังไม่มีเสียง ตรวจว่าเครื่องไม่ได้ปิดเสียงหรืออยู่ในโหมดเงียบ แล้วลองกดใหม่');
+        }
+      }, 2500);
+    }
+  };
+  if (Speech.supported) {
+    try { window.speechSynthesis.onvoiceschanged = function () { Speech.pick(); }; } catch (e) { }
+  }
+
+  /* ---------- สถานะหน้า ---------- */
+  var S = {
+    tab: 'grammar',
+    g: { cat: 0, view: 'list', lesson: 0 },
+    v: { lv: 'A1', set: 0, dir: 'en-th', choices: 4, phase: 'setup' },
+    r: { filter: 'all', view: 'list', id: null, showTh: false },
+    p: { editing: false, del: null }
+  };
+
+  /* ---------- แท็บหลัก ---------- */
+  var TABS = [
+    { id: 'grammar', label: 'เรียน Grammar', icon: ICON.book },
+    { id: 'vocab', label: 'เกมคำศัพท์', icon: ICON.cards },
+    { id: 'reading', label: 'ฝึกอ่าน GED', icon: ICON.read }
+  ];
+  function renderNav() {
+    var nav = $('#nav');
+    nav.innerHTML = TABS.map(function (t) {
+      var sel = S.tab === t.id;
+      return '<button type="button" role="tab" id="tab-' + t.id + '" aria-controls="view" aria-selected="' + sel + '" tabindex="' + (sel ? 0 : -1) + '" data-tab="' + t.id + '">' + t.icon + '<span>' + t.label + '</span></button>';
+    }).join('');
+  }
+  function setTab(id, focusView) {
+    S.tab = id;
+    renderNav();
+    render();
+    try { history.replaceState(null, '', '#' + id); } catch (e) { }
+    if (focusView) { var h = $('#view h2'); if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); } }
+    window.scrollTo(0, 0);
+  }
+
+  /* ปุ่มกลุ่มแบบแท็บ: เลื่อนด้วยลูกศรซ้าย/ขวา/Home/End */
+  function tabKeys(e, selector) {
+    var keys = ['ArrowLeft', 'ArrowRight', 'Home', 'End'];
+    if (keys.indexOf(e.key) < 0) return false;
+    var items = $all(selector, e.currentTarget);
+    var i = items.indexOf(document.activeElement);
+    if (i < 0) return false;
+    e.preventDefault();
+    var n = e.key === 'Home' ? 0 : e.key === 'End' ? items.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + items.length) % items.length;
+    items[n].focus();
+    items[n].click();
+    return true;
+  }
+
+  /* ---------- เส้นทางแนะนำ ---------- */
+  function renderRoute() {
+    var stops = [['A1', '--a1'], ['A2', '--a2'], ['B1', '--b1'], ['B2', '--b2'], ['GED', '--ged']];
+    var html = '';
+    stops.forEach(function (s, i) {
+      if (i) html += '<span class="seg" style="--c1:var(' + stops[i - 1][1] + ');--c2:var(' + s[1] + ')" aria-hidden="true"></span>';
+      html += '<span class="stop' + (s[0] === 'GED' ? ' ged' : '') + '" style="--c:var(' + s[1] + ')"><span class="stop-dot" aria-hidden="true"></span><span class="stop-name">' + s[0] + '</span></span>';
+    });
+    $('#route').innerHTML = html;
+  }
+
+  /* ===================================================================
+     ตัวสร้างแบบทดสอบ (ใช้ร่วมกัน Grammar และ Reading)
+     =================================================================== */
+  function prepQuestion(q, escapeText) {
+    var items = q.o.map(function (text, i) { return { text: escapeText ? esc(text) : text, note: q.n ? q.n[i] : '', correct: i === q.a }; });
+    return { src: q, items: L.shuffle(items) };
+  }
+
+  function optionsHTML(pq, qi, chosen, en) {
+    var answered = chosen != null;
+    return '<div class="opts' + (pq.items.every(function (it) { return stripTags(it.text).length < 26; }) ? ' two' : '') + '" role="group" aria-label="ตัวเลือกข้อ ' + (qi + 1) + '">' +
+      pq.items.map(function (it, i) {
+        var cls = 'opt';
+        var mark = '';
+        if (answered) {
+          if (it.correct) { cls += ' correct'; mark = '✓ ถูก'; }
+          else if (i === chosen) { cls += ' wrong'; mark = '✗ ที่เลือก'; }
+          else cls += ' dim';
+        }
+        return '<button type="button" class="' + cls + '" data-q="' + qi + '" data-o="' + i + '"' + (answered ? ' disabled aria-disabled="true"' : '') + '>' +
+          '<span class="key" aria-hidden="true">' + KEYS[i] + '</span><span class="' + (en ? 'en' : '') + '">' + it.text + '</span>' +
+          (mark ? '<span class="mark">' + mark + '</span>' : '') + '</button>';
+      }).join('') + '</div>';
+  }
+
+  /* เฉลย Grammar: คำตอบที่ถูก → ดูจากคำใด → ใช้กฎใด → ทำไม/ทำไมข้อที่เลือกผิด → ตัวอย่างเพิ่ม */
+  function grammarFeedback(pq, chosen) {
+    var q = pq.src;
+    var right = pq.items[chosen].correct;
+    var correctItem = pq.items.filter(function (it) { return it.correct; })[0];
+    var steps = [
+      ['คำตอบที่ถูก', '<b class="en">' + correctItem.text + '</b>'],
+      ['ดูจากคำ', q.clue],
+      ['กฎที่ใช้', q.rule],
+      ['ทำไมจึงเลือก', q.why]
+    ];
+    if (!right) steps.push(['ข้อที่เลือกผิดเพราะ', '<span class="en">' + pq.items[chosen].text + '</span> — ' + pq.items[chosen].note]);
+    steps.push(['ตัวอย่าง/ภาพจำ', '<span class="en">' + q.ex + '</span>']);
+    return '<div class="fb ' + (right ? 'good' : 'bad') + '" role="status">' +
+      '<p class="fb-verdict">' + (right ? '✓ ถูกต้อง' : '✗ ยังไม่ถูก') + '</p>' +
+      '<ul class="fb-steps">' + steps.map(function (s) { return '<li><b>' + s[0] + '</b><span>' + s[1] + '</span></li>'; }).join('') + '</ul></div>';
+  }
+
+  /* เฉลย Reading: คำตอบ → หลักฐานจากบทอ่าน → เหตุผล → ทำไมข้อที่เลือกผิด */
+  function readingFeedback(pq, chosen, passage) {
+    var q = pq.src;
+    var right = pq.items[chosen].correct;
+    var correctItem = pq.items.filter(function (it) { return it.correct; })[0];
+    var ev = q.ev.map(function (e) {
+      if (e === 'visual') return '<div class="quote">' + (passage.visual.kind === 'table' ? 'ดูจากตาราง' : 'ดูจากแผนภูมิ') + ': ' + esc(passage.visual.title) + '</div>';
+      return '<div class="quote">ประโยคที่ ' + (e + 1) + ': ' + esc(passage.s[e]) + '</div>';
+    }).join('');
+    var steps = [
+      ['คำตอบที่ถูก', '<b class="en">' + correctItem.text + '</b>'],
+      ['หลักฐาน', ev + '<button type="button" class="link-btn" data-show-ev="' + esc(q.ev.join(',')) + '">ดูในบทอ่าน</button>'],
+      ['เหตุผล', esc(q.why)]
+    ];
+    if (!right) steps.push(['ข้อที่เลือกผิดเพราะ', esc(pq.items[chosen].note)]);
+    return '<div class="fb ' + (right ? 'good' : 'bad') + '" role="status">' +
+      '<p class="fb-verdict">' + (right ? '✓ ถูกต้อง' : '✗ ยังไม่ถูก') + '</p>' +
+      '<ul class="fb-steps">' + steps.map(function (s) { return '<li><b>' + s[0] + '</b><span>' + s[1] + '</span></li>'; }).join('') + '</ul></div>';
+  }
+
+  /* ===================================================================
+     GRAMMAR
+     =================================================================== */
+  var TAGS = {
+    n: ['Noun', '--c-n'], pro: ['Pronoun', '--c-pro'], v: ['Verb', '--c-v'], adj: ['Adjective', '--c-adj'], adv: ['Adverb', '--c-adv'],
+    prep: ['Preposition', '--c-prep'], conj: ['Conjunction', '--c-conj'], int: ['Interjection', '--c-int'], det: ['Determiner', '--c-det'],
+    S: ['ประธาน · ใคร', '--c-n'], V: ['กริยา · ทำอะไร', '--c-v'], O: ['กรรม · กับอะไร', '--c-adj'], C: ['ส่วนเติมเต็ม', '--c-adv'],
+    T: ['เวลา · เมื่อไร', '--c-prep'], Pl: ['สถานที่ · ที่ไหน', '--c-pro'], R: ['เหตุผล · เพราะอะไร', '--c-conj'], M: ['ส่วนขยาย', '--c-det'],
+    aux: ['กริยาช่วย', '--c-int'], neg: ['ปฏิเสธ', '--c-int'], q: ['ตัวถาม', '--c-int'], x: ['', '']
+  };
+  function diagram(en) {
+    return '<div class="diagram">' + en.split('|').map(function (tok) {
+      var k = tok.slice(0, tok.indexOf(':'));
+      var w = tok.slice(tok.indexOf(':') + 1);
+      var t = TAGS[k] || TAGS.x;
+      return '<span class="tok' + (k === 'x' ? ' x' : '') + '"' + (t[1] ? ' style="--c:var(' + t[1] + ')"' : '') + '><span class="w">' + esc(w) + '</span><span class="l">' + esc(t[0]) + '</span></span>';
+    }).join('<span aria-hidden="true" class="muted" style="align-self:center;padding-bottom:18px">→</span>') + '</div>';
+  }
+  function exampleText(en) { return en.split('|').map(function (t) { return t.slice(t.indexOf(':') + 1); }).join(' ').replace(/\s+([.,?!])/g, '$1') + (/[.?!]$/.test(en) ? '' : '.'); }
+
+  function lessonDone(id) { var r = Store.data.grammar[id]; return r && r.answered >= 5; }
+  function catProgress(cat) { return cat.lessons.filter(function (l) { return lessonDone(l.id); }).length; }
+
+  function renderGrammar(view) {
+    var cat = EP.grammar[S.g.cat];
+    if (S.g.view === 'lesson') return renderLesson(view, cat, S.g.lesson);
+    if (S.g.view === 'post') return renderGPost(view, cat);
+    var done = catProgress(cat);
+    var postBest = Store.data.gpost[cat.id];
+    var unlocked = done === cat.lessons.length;
+    view.innerHTML =
+      '<div class="stack">' +
+      '<div class="row" style="justify-content:space-between"><h2>เรียน Grammar</h2><span class="small muted">5 หมวด · mini-test บทละ 5 ข้อ · Post-test หมวดละ 10 ข้อ</span></div>' +
+      playerBar('grammar') +
+      '<div class="chips" role="tablist" aria-label="หมวด Grammar" id="gcats">' +
+      EP.grammar.map(function (c, i) {
+        var sel = i === S.g.cat;
+        return '<button type="button" class="chip" role="tab" aria-selected="' + sel + '" tabindex="' + (sel ? 0 : -1) + '" data-gcat="' + i + '"><span class="en">' + c.name + '</span><small>' + c.th + ' · ' + catProgress(c) + '/' + c.lessons.length + '</small></button>';
+      }).join('') + '</div>' +
+      '<section class="panel stack" aria-labelledby="cat-h">' +
+      '<div><p class="eyebrow">หมวด ' + (S.g.cat + 1) + ' จาก 5</p><h3 id="cat-h"><span class="en">' + cat.name + '</span> · ' + cat.th + '</h3><p class="muted small">' + cat.blurb + '</p></div>' +
+      '<div class="row small muted"><span>เรียนแล้ว ' + done + '/' + cat.lessons.length + ' บท</span></div>' +
+      '<div class="progress" aria-hidden="true"><span style="width:' + Math.round(done / cat.lessons.length * 100) + '%"></span></div>' +
+      '<div class="lesson-list">' +
+      cat.lessons.map(function (l, i) {
+        var r = Store.data.grammar[l.id];
+        var d = lessonDone(l.id);
+        return '<button type="button" class="lesson-item' + (d ? ' done' : '') + '" data-lesson="' + i + '">' +
+          '<span class="num" aria-hidden="true">' + (d ? '✓' : i + 1) + '</span>' +
+          '<span class="t"><span class="en">' + l.title + '</span><small>' + l.th + '</small></span>' +
+          '<span class="st">' + lvBadge(l.level) + (r && r.best != null ? '<span>mini-test ' + r.best + '/5</span>' : '<span>ยังไม่เรียน</span>') + '</span></button>';
+      }).join('') +
+      '<button type="button" class="lesson-item post" data-gpost="1"' + (unlocked ? '' : ' aria-disabled="true"') + '>' +
+      '<span class="num" aria-hidden="true">★</span><span class="t">Post-test หมวดนี้<small>' + (unlocked ? '10 ข้อ ไล่จากง่ายไปยาก' : 'ทำ mini-test ให้ครบทุกบทก่อน (' + done + '/' + cat.lessons.length + ')') + '</small></span>' +
+      '<span class="st">' + (postBest != null ? '<span>ดีที่สุด ' + postBest + '/10</span>' : '<span>' + (unlocked ? 'พร้อมทำ' : 'ล็อก') + '</span>') + '</span></button>' +
+      '</div>' +
+      resetBlock('grammar', 'ล้างความคืบหน้า Grammar ของผู้เล่นนี้') +
+      '</section>' + leaderboard('grammar') + '</div>';
+  }
+
+  var gQuiz = null; // สถานะ mini-test ของบทที่เปิดอยู่
+  function renderLesson(view, cat, idx) {
+    var l = cat.lessons[idx];
+    if (!gQuiz || gQuiz.id !== l.id) gQuiz = { id: l.id, qs: l.quiz.map(prepQuestion), ans: [null, null, null, null, null] };
+    var answered = gQuiz.ans.filter(function (a) { return a != null; }).length;
+    var score = gQuiz.ans.reduce(function (s, a, i) { return s + (a != null && gQuiz.qs[i].items[a].correct ? 1 : 0); }, 0);
+    var isLast = idx === cat.lessons.length - 1;
+    var usesPOS = /^pos-/.test(l.id);
+    var legendKeys = usesPOS ? ['n', 'pro', 'v', 'adj', 'adv', 'prep', 'conj', 'int', 'det'] : ['S', 'V', 'O', 'C', 'T', 'Pl', 'R', 'M'];
+    view.innerHTML =
+      '<div class="stack lesson">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหมวด ' + cat.name + '</button>' +
+      '<header class="stack" style="gap:6px"><div class="row">' + lvBadge(l.level) + '<span class="eyebrow">' + cat.name + ' · บทที่ ' + (idx + 1) + '/' + cat.lessons.length + '</span></div>' +
+      '<h2><span class="en">' + l.title + '</span> ' + l.th + '</h2></header>' +
+      '<section class="panel stack">' +
+      part(0, 'อธิบายสั้น ๆ', '<div class="explain">' + l.explain + '</div>') +
+      part(1, 'สูตร / ภาพจำ', '<div class="formula">' + l.formula + '</div>') +
+      part(2, 'ตัวอย่าง + แผนภาพหน้าที่คำ',
+        '<div class="legend" aria-label="คำอธิบายสี">' + legendKeys.map(function (k) { return '<span style="--c:var(' + TAGS[k][1] + ')">' + TAGS[k][0] + '</span>'; }).join('') + '</div>' +
+        l.examples.map(function (e) {
+          var text = exampleText(e.en);
+          return '<div class="example"><div class="row" style="align-items:flex-start;flex-wrap:nowrap">' + diagram(e.en) + '<span style="margin-left:auto">' + sayBtn(text, true) + '</span></div><p class="th">' + e.th + '</p></div>';
+        }).join('') +
+        '<p class="small muted">ป้ายใต้แต่ละคำบอกหน้าที่ของคำนั้น สีเป็นตัวช่วยเสริม</p>') +
+      part(3, 'จุดที่มักสับสน', '<ul class="confuse">' + l.confuse.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ul>') +
+      '</section>' +
+      '<section class="panel stack" aria-labelledby="mt-h"><div class="part-head"><span class="part-mark">' + THAI_MARK[4] + '</span><h3 id="mt-h">Mini-test 5 ข้อ</h3></div>' +
+      '<p class="small muted">ถามเฉพาะเรื่องในบทนี้ ตอบครบ 5 ข้อเพื่อไปบทถัดไป</p>' +
+      '<div id="mt">' + gQuiz.qs.map(function (pq, i) { return gQuestionHTML(pq, i, gQuiz.ans[i]); }).join('') + '</div>' +
+      '<div class="stack" id="mt-foot">' + lessonFoot(answered, score, idx, isLast, cat) + '</div>' +
+      '</section></div>';
+  }
+  function part(i, title, body) {
+    return '<div class="part"><div class="part-head"><span class="part-mark">' + THAI_MARK[i] + '</span><h3>' + title + '</h3></div>' + body + '</div>';
+  }
+  function gQuestionHTML(pq, i, chosen) {
+    return '<div class="q" id="gq-' + i + '"><p class="q-num">ข้อ ' + (i + 1) + '</p><p class="q-stem">' + pq.src.q.replace(/___/g, '<span class="blank en">?</span>') + '</p>' +
+      optionsHTML(pq, i, chosen, true) + (chosen != null ? grammarFeedback(pq, chosen) : '') + '</div>';
+  }
+  function lessonFoot(answered, score, idx, isLast, cat) {
+    var all = answered === 5;
+    var buttons = [];
+    var notes = [];
+    if (all) buttons.push('<button type="button" class="btn" data-gretry="1">ทำ mini-test ใหม่</button>');
+    if (isLast) {
+      var remaining = cat.lessons.filter(function (l, i) { return i !== idx && !lessonDone(l.id); }).length;
+      buttons.push('<button type="button" class="btn primary" data-gpost="1"' + (all && remaining === 0 ? '' : ' disabled') + '>ไป Post-test หมวดนี้</button>');
+      if (all && remaining > 0) notes.push('ยังมีอีก ' + remaining + ' บทในหมวดนี้ที่ยังไม่ได้ทำ mini-test กลับไปทำให้ครบเพื่อเปิด Post-test');
+    } else {
+      buttons.push('<button type="button" class="btn primary" data-gnext="1"' + (all ? '' : ' disabled') + '>บทถัดไป →</button>');
+    }
+    if (!all) notes.push('ตอบให้ครบ 5 ข้อก่อน ปุ่ม' + (isLast ? ' Post-test' : 'บทถัดไป') + 'จึงจะใช้ได้');
+    return '<div class="progress" aria-hidden="true"><span style="width:' + answered * 20 + '%"></span></div>' +
+      '<p class="gate" aria-live="polite">' + (all ? 'คะแนน mini-test: <b>' + score + '/5</b>' : 'ตอบแล้ว ' + answered + '/5 ข้อ') + '</p>' +
+      '<div class="row" style="justify-content:center">' + buttons.join('') + '</div>' +
+      notes.map(function (n) { return '<p class="gate">' + n + '</p>'; }).join('');
+  }
+  function answerLesson(qi, oi) {
+    if (!gQuiz || gQuiz.ans[qi] != null) return;
+    gQuiz.ans[qi] = oi;
+    var box = $('#gq-' + qi);
+    box.outerHTML = gQuestionHTML(gQuiz.qs[qi], qi, oi);
+    var cat = EP.grammar[S.g.cat];
+    var idx = S.g.lesson;
+    var answered = gQuiz.ans.filter(function (a) { return a != null; }).length;
+    var score = gQuiz.ans.reduce(function (s, a, i) { return s + (a != null && gQuiz.qs[i].items[a].correct ? 1 : 0); }, 0);
+    if (answered === 5) {
+      var rec = Store.data.grammar[gQuiz.id] || {};
+      rec.answered = 5;
+      rec.last = score;
+      rec.best = Math.max(rec.best || 0, score);
+      Store.data.grammar[gQuiz.id] = rec;
+      Store.save();
+    }
+    $('#mt-foot').innerHTML = lessonFoot(answered, score, idx, idx === cat.lessons.length - 1, cat);
+    var fb = $('#gq-' + qi + ' .fb');
+    if (fb) { fb.setAttribute('tabindex', '-1'); fb.focus({ preventScroll: true }); fb.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); }
+  }
+
+  var gPost = null;
+  function renderGPost(view, cat) {
+    if (!gPost || gPost.cat !== cat.id) gPost = { cat: cat.id, qs: cat.post.map(prepQuestion), ans: [], i: 0 };
+    var total = gPost.qs.length;
+    if (gPost.i >= total) {
+      var score = gPost.ans.reduce(function (s, a, i) { return s + (gPost.qs[i].items[a].correct ? 1 : 0); }, 0);
+      var wrong = gPost.qs.map(function (pq, i) { return { pq: pq, i: i, a: gPost.ans[i] }; }).filter(function (x) { return !x.pq.items[x.a].correct; });
+      view.innerHTML = '<div class="stack">' +
+        '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหมวด ' + cat.name + '</button>' +
+        '<h2>Post-test: <span class="en">' + cat.name + '</span></h2>' +
+        '<section class="panel score-card"><p class="eyebrow">คะแนน Post-test</p><p class="score-big">' + score + '<small>/10</small></p>' +
+        '<p class="muted">' + (score >= 8 ? 'เยี่ยม พร้อมไปหมวดถัดไป' : score >= 5 ? 'ดีแล้ว ทบทวนข้อที่ผิดด้านล่าง แล้วลองใหม่' : 'กลับไปทบทวนบทเรียนในหมวดนี้ก่อน แล้วลองใหม่') + '</p>' +
+        savedNote() + '<div class="row" style="justify-content:center"><button type="button" class="btn" data-gpostretry="1">ทำใหม่</button><button type="button" class="btn primary" data-gback="1">กลับไปทบทวนบทเรียน</button></div></section>' +
+        (wrong.length ? '<section class="panel stack"><h3>ข้อที่ยังไม่ถูก</h3>' + wrong.map(function (x) {
+          return '<div class="q"><p class="q-num">ข้อ ' + (x.i + 1) + '</p><p class="q-stem">' + x.pq.src.q.replace(/___/g, '<span class="blank en">?</span>') + '</p>' + grammarFeedback(x.pq, x.a) + '</div>';
+        }).join('') + '</section>' : '') + '</div>';
+      return;
+    }
+    var i = gPost.i;
+    var pq = gPost.qs[i];
+    var chosen = gPost.ans[i];
+    var answered = chosen != null;
+    var score2 = gPost.ans.reduce(function (s, a, k) { return s + (gPost.qs[k].items[a].correct ? 1 : 0); }, 0);
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'ออกจาก Post-test</button>' +
+      '<h2>Post-test: <span class="en">' + cat.name + '</span></h2>' +
+      '<section class="panel stack">' +
+      '<div class="stat-row"><span>ข้อ <b>' + (i + 1) + '</b>/' + total + '</span><span>คะแนน <b>' + score2 + '</b></span></div>' +
+      '<div class="progress" aria-hidden="true"><span style="width:' + ((i + (answered ? 1 : 0)) / total * 100) + '%"></span></div>' +
+      '<div class="q" id="gp"><p class="q-stem">' + pq.src.q.replace(/___/g, '<span class="blank en">?</span>') + '</p>' + optionsHTML(pq, i, chosen, true) +
+      (answered ? grammarFeedback(pq, chosen) : '') + '</div>' +
+      (answered ? '<button type="button" class="btn primary block" data-gpostnext="1">' + (i === total - 1 ? 'ดูคะแนน' : 'ข้อถัดไป →') + '</button>' : '<p class="gate">เลือกคำตอบเพื่อดูเฉลย</p>') +
+      '</section></div>';
+  }
+  function answerGPost(oi) {
+    if (gPost.ans[gPost.i] != null) return;
+    gPost.ans[gPost.i] = oi;
+    render();
+    var b = $('[data-gpostnext]');
+    if (b) b.focus({ preventScroll: true });
+    var fb = $('#gp .fb'); if (fb) fb.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' });
+  }
+  function finishGPost() {
+    gPost.i++;
+    if (gPost.i >= gPost.qs.length) {
+      var score = gPost.ans.reduce(function (s, a, i) { return s + (gPost.qs[i].items[a].correct ? 1 : 0); }, 0);
+      Store.data.gpost[gPost.cat] = Math.max(Store.data.gpost[gPost.cat] || 0, score);
+      Store.save();
+    }
+    render();
+    focusHeading();
+  }
+
+  /* ===================================================================
+     VOCAB
+     =================================================================== */
+  var game = null;
+  function vKey(lv, set, dir, choices) { return lv + '-' + (set + 1) + '-' + dir + '-' + choices; }
+  function vRec(lv, set) {
+    var r = Store.data.vocab[vKey(lv, set, S.v.dir, S.v.choices)];
+    return r || null;
+  }
+  function renderVocab(view) {
+    if (game && S.v.phase !== 'setup') return renderGame(view);
+    var level = EP.vocab[S.v.lv];
+    var set = level.sets[S.v.set];
+    var lvColor = { A1: '--a1', A2: '--a2', B1: '--b1', B2: '--b2' };
+    view.innerHTML = '<div class="stack">' +
+      '<div class="row" style="justify-content:space-between"><h2>เกมการ์ดคำศัพท์</h2><span class="small muted">4 ระดับ × 4 ชุด × 25 คำ = 400 คำ</span></div>' +
+      playerBar('vocab') +
+      '<section class="panel stack">' +
+      '<div class="field"><span class="label" id="lv-l">ระดับ</span><div class="seg-ctl" role="group" aria-labelledby="lv-l">' +
+      LEVELS.map(function (lv) { return '<button type="button" aria-pressed="' + (lv === S.v.lv) + '" data-vlv="' + lv + '" style="' + (lv === S.v.lv ? 'background:var(' + lvColor[lv] + ');color:var(--surface)' : 'color:var(' + lvColor[lv] + ')') + '">' + lv + '</button>'; }).join('') + '</div></div>' +
+      '<div class="field"><span class="label" id="set-l">ชุดคำศัพท์</span><div class="set-grid" role="group" aria-labelledby="set-l">' +
+      level.sets.map(function (st, i) {
+        var r = vRec(S.v.lv, i);
+        return '<button type="button" class="set-card" aria-pressed="' + (i === S.v.set) + '" data-vset="' + i + '" style="--c:var(' + lvColor[S.v.lv] + ')">' +
+          '<span class="n">ชุด ' + (i + 1) + ' · คำที่ ' + (i * 25 + 1) + '–' + (i * 25 + 25) + '</span><span class="t">' + st.name + '</span>' +
+          '<span class="best">' + (r ? 'การ์ด ' + (r.card != null ? r.card : '–') + '/25 · Post ' + (r.post != null ? r.post : '–') + '/15' : 'ยังไม่เล่นในโหมดนี้') + '</span></button>';
+      }).join('') + '</div></div>' +
+      '<div class="row" style="gap:18px;align-items:flex-start">' +
+      '<div class="field"><span class="label" id="dir-l">ทิศทาง</span><div class="seg-ctl" role="group" aria-labelledby="dir-l">' +
+      [['en-th', 'อังกฤษ → ไทย'], ['th-en', 'ไทย → อังกฤษ']].map(function (d) { return '<button type="button" aria-pressed="' + (S.v.dir === d[0]) + '" data-vdir="' + d[0] + '">' + d[1] + '</button>'; }).join('') + '</div></div>' +
+      '<div class="field"><span class="label" id="ch-l">จำนวนตัวเลือกในการ์ด</span><div class="seg-ctl" role="group" aria-labelledby="ch-l">' +
+      [2, 3, 4].map(function (n) { return '<button type="button" aria-pressed="' + (S.v.choices === n) + '" data-vch="' + n + '">' + n + '</button>'; }).join('') + '</div></div></div>' +
+      '<button type="button" class="btn primary block" data-vstart="1">เริ่มชุด ' + (S.v.set + 1) + ' ระดับ ' + S.v.lv + ' (25 การ์ด + Post-test 15 ข้อ)</button>' +
+      '<p class="small muted"><b>วิธีเล่น:</b> ทำการ์ด 25 คำให้ครบ (สุ่มลำดับใหม่ทุกครั้ง) แล้วทำ Post-test เติมคำ 15 ข้อที่สุ่มจากคลัง 25 ประโยคของชุดนี้ กดปุ่ม ' + ICON.play.replace('<svg', '<svg width="14" height="14" style="vertical-align:-2px"') + ' เพื่อฟังเสียงภาษาอังกฤษ เสียงจะไม่เล่นเอง</p>' +
+      '</section>' +
+      '<section class="panel stack"><details class="words"><summary>ดูคำศัพท์ทั้ง 25 คำในชุดนี้</summary><ul class="word-list" style="padding:0;margin:8px 0 0">' +
+      set.words.map(function (w) { return '<li>' + sayBtn(w.w, true) + '<span><span class="en">' + esc(w.w) + '</span> <span class="small muted">' + w.p + '</span><br><span class="th">' + esc(w.th) + '</span></span></li>'; }).join('') +
+      '</ul></details>' + resetBlock('vocab', 'ล้างคะแนนคำศัพท์ของผู้เล่นนี้') + '</section>' + leaderboard('vocab') +
+      '<p class="small muted">รายการคำศัพท์นี้คัดและจัดระดับเพื่อการฝึกเรียน ไม่ใช่บัญชีคำศัพท์ทางการของ GED หรือการรับรองระดับ CEFR</p>' +
+      '</div>';
+  }
+
+  function startGame(review) {
+    var set = EP.vocab[S.v.lv].sets[S.v.set];
+    var targets = review ? game.missed.slice() : null;
+    game = {
+      lv: S.v.lv, set: S.v.set, dir: S.v.dir, choices: S.v.choices, words: set.words,
+      review: !!review,
+      cards: L.buildCardRound(set.words, S.v.choices, S.v.dir, Math.random, targets),
+      ci: 0, cAns: [], post: null, pi: 0, pAns: [], hint: false,
+      missed: []
+    };
+    S.v.phase = 'cards';
+    render();
+    focusHeading();
+  }
+  function cardScore() { return game.cAns.reduce(function (s, a, i) { return s + (a === game.cards[i].answer ? 1 : 0); }, 0); }
+  function postScore() { return game.pAns.reduce(function (s, a, i) { return s + (a === game.post[i].answer ? 1 : 0); }, 0); }
+
+  function renderGame(view) {
+    var total = game.cards.length;
+    var head = '<button type="button" class="back" data-vquit="1">' + ICON.back + 'ออกจากเกม</button>' +
+      '<div class="row">' + lvBadge(game.lv) + '<span class="eyebrow">ชุด ' + (game.set + 1) + ' · ' + (game.dir === 'en-th' ? 'อังกฤษ → ไทย' : 'ไทย → อังกฤษ') + ' · ' + game.choices + ' ตัวเลือก' + (game.review ? ' · ทบทวนคำที่ผิด' : '') + (Store.root.current !== GUEST ? ' · ' + esc(Store.data.nick) : '') + '</span></div>';
+    var lvc = { A1: '--a1', A2: '--a2', B1: '--b1', B2: '--b2' }[game.lv];
+
+    if (S.v.phase === 'cards') {
+      var c = game.cards[game.ci];
+      var chosen = game.cAns[game.ci];
+      var answered = chosen != null;
+      var enPrompt = game.dir === 'en-th';
+      var prompt = enPrompt
+        ? '<p class="prompt" lang="en">' + esc(c.word.w) + '</p><p class="pos">' + c.word.p + '</p>' + sayBtn(c.word.w)
+        : '<p class="prompt thai">' + esc(c.word.th) + '</p><p class="pos">เลือกคำภาษาอังกฤษ · ' + c.word.p + '</p>';
+      var opts = '<div class="opts" role="group" aria-label="ตัวเลือก">' + c.options.map(function (o, i) {
+        var cls = 'opt';
+        var mark = '';
+        if (answered) {
+          if (i === c.answer) { cls += ' correct'; mark = '✓ ถูก'; }
+          else if (i === chosen) { cls += ' wrong'; mark = '✗ ที่เลือก'; }
+          else cls += ' dim';
+        }
+        var label = enPrompt ? esc(o.th) : '<span class="en">' + esc(o.w) + '</span>';
+        var btn = '<button type="button" class="' + cls + '" data-vcard="' + i + '"' + (answered ? ' disabled' : '') + '><span class="key" aria-hidden="true">' + KEYS[i] + '</span><span>' + label + '</span>' + (mark ? '<span class="mark">' + mark + '</span>' : '') + '</button>';
+        return enPrompt ? btn : '<div class="opt-row">' + btn + sayBtn(o.w) + '</div>';
+      }).join('') + '</div>';
+      var fb = '';
+      if (answered) {
+        var right = chosen === c.answer;
+        fb = '<div class="fb ' + (right ? 'good' : 'bad') + '" role="status"><p class="fb-verdict">' + (right ? '✓ ถูกต้อง' : '✗ ยังไม่ถูก') + '</p>' +
+          '<div class="row" style="flex-wrap:nowrap">' + sayBtn(c.word.w, true) + '<p><b class="en">' + esc(c.word.w) + '</b> <span class="small muted">(' + c.word.p + ')</span> = ' + esc(c.word.th) + '</p></div>' +
+          (!right ? '<p class="small">คุณเลือก: ' + (enPrompt ? esc(c.options[chosen].th) + ' ซึ่งหมายถึง <span class="en">' + esc(c.options[chosen].w) + '</span>' : '<span class="en">' + esc(c.options[chosen].w) + '</span> = ' + esc(c.options[chosen].th)) + '</p>' : '') +
+          '</div>';
+      }
+      var last = game.ci === total - 1;
+      view.innerHTML = '<div class="stack">' + head +
+        '<h2 class="sr">การ์ดคำศัพท์</h2>' +
+        '<section class="card-stage">' +
+        '<div class="stat-row"><span>การ์ด <b>' + (game.ci + 1) + '</b>/' + total + '</span><span>คะแนน <b>' + cardScore() + '</b>/' + total + '</span></div>' +
+        '<div class="progress" role="progressbar" aria-label="ความคืบหน้าการ์ด" aria-valuemin="0" aria-valuemax="' + total + '" aria-valuenow="' + (game.ci + (answered ? 1 : 0)) + '"><span style="width:' + ((game.ci + (answered ? 1 : 0)) / total * 100) + '%"></span></div>' +
+        '<div class="flash" style="--c:var(' + lvc + ')">' + prompt + '</div>' + opts + fb +
+        (answered ? '<button type="button" class="btn primary block" data-vnext="1">' + (last ? (game.review ? 'ดูผลการทบทวน' : 'ไปทำ Post-test →') : 'คำถัดไป →') + '</button>' : '<p class="gate">เลือกคำตอบเพื่อดูเฉลย แล้วค่อยไปคำถัดไป</p>') +
+        '</section></div>';
+      return;
+    }
+
+    if (S.v.phase === 'bridge') {
+      var cs = cardScore();
+      view.innerHTML = '<div class="stack">' + head + '<h2>การ์ดครบ 25 คำแล้ว</h2>' +
+        '<section class="panel score-card"><p class="eyebrow">คะแนนการ์ด</p><p class="score-big">' + cs + '<small>/25</small></p>' +
+        '<p class="muted" style="max-width:48ch">ต่อไปคือ Post-test 15 ข้อ เติมคำในประโยคสั้น ๆ แต่ละข้อมี 4 ตัวเลือกจากชุดเดียวกัน สุ่มจากคลัง 25 ประโยค ไม่ซ้ำกันในรอบนี้</p>' +
+        '<button type="button" class="btn primary" data-vpost="1">เริ่ม Post-test 15 ข้อ</button></section></div>';
+      return;
+    }
+
+    if (S.v.phase === 'post') {
+      var p = game.post[game.pi];
+      var ch = game.pAns[game.pi];
+      var done = ch != null;
+      var parts = p.item.s.split('___');
+      var sentence = done
+        ? esc(parts[0]) + '<span class="filled">' + esc(p.word.w) + '</span>' + esc(parts[1])
+        : esc(parts[0]) + '<span class="blank" aria-label="ช่องว่าง">?</span>' + esc(parts[1]);
+      var popts = '<div class="opts two" role="group" aria-label="ตัวเลือก">' + p.options.map(function (o, i) {
+        var cls = 'opt';
+        var mark = '';
+        if (done) {
+          if (i === p.answer) { cls += ' correct'; mark = '✓'; }
+          else if (i === ch) { cls += ' wrong'; mark = '✗'; }
+          else cls += ' dim';
+        }
+        return '<div class="opt-row"><button type="button" class="' + cls + '" data-vpostans="' + i + '"' + (done ? ' disabled' : '') + '><span class="key" aria-hidden="true">' + KEYS[i] + '</span><span class="en">' + esc(o.w) + '</span>' + (mark ? '<span class="mark">' + mark + '</span>' : '') + '</button>' + sayBtn(o.w) + '</div>';
+      }).join('') + '</div>';
+      var pfb = '';
+      if (done) {
+        var ok = ch === p.answer;
+        var full = L.fillBlank(p.item.s, p.word.w);
+        pfb = '<div class="fb ' + (ok ? 'good' : 'bad') + '" role="status"><p class="fb-verdict">' + (ok ? '✓ ถูกต้อง' : '✗ ยังไม่ถูก') + '</p>' +
+          '<ul class="fb-steps"><li><b>คำที่ถูก</b><span><b class="en">' + esc(p.word.w) + '</b> (' + p.word.p + ') = ' + esc(p.word.th) + '</span></li>' +
+          '<li><b>ประโยคเต็ม</b><span class="row" style="flex-wrap:nowrap;align-items:flex-start"><span class="en">' + esc(full) + '</span>' + sayBtn(full, true) + '</span></li>' +
+          '<li><b>คำแปล</b><span>' + esc(p.item.st) + '</span></li>' +
+          (!ok ? '<li><b>ที่เลือก</b><span><span class="en">' + esc(p.options[ch].w) + '</span> = ' + esc(p.options[ch].th) + ' ใช้ในประโยคนี้ไม่ได้</span></li>' : '') +
+          '</ul></div>';
+      }
+      view.innerHTML = '<div class="stack">' + head + '<h2 class="sr">Post-test คำศัพท์</h2>' +
+        '<section class="panel stack">' +
+        '<div class="stat-row"><span>Post-test ข้อ <b>' + (game.pi + 1) + '</b>/15</span><span>คะแนน <b>' + postScore() + '</b>/15</span></div>' +
+        '<div class="progress" aria-hidden="true"><span style="width:' + ((game.pi + (done ? 1 : 0)) / 15 * 100) + '%"></span></div>' +
+        '<p class="small muted">เลือกคำที่เติมในช่องว่างแล้วได้ความหมายถูกต้อง</p>' +
+        '<p class="sentence">' + sentence + '</p>' +
+        (!done ? (game.hint ? '<p class="small"><span class="tag">คำใบ้</span> ' + esc(p.item.st.replace(p.word.th.split(',')[0].trim(), '___')) + '</p>' : '<button type="button" class="link-btn" data-vhint="1">ดูคำใบ้ภาษาไทย</button>') : '') +
+        popts + pfb +
+        (done ? '<button type="button" class="btn primary block" data-vpostnext="1">' + (game.pi === 14 ? 'ดูผลรวม' : 'ข้อถัดไป →') + '</button>' : '') +
+        '</section></div>';
+      return;
+    }
+
+    if (S.v.phase === 'result') {
+      var cs2 = cardScore();
+      var missed = game.missed;
+      var nextSet = game.set < 3 ? { lv: game.lv, set: game.set + 1 } : (LEVELS.indexOf(game.lv) < 3 ? { lv: LEVELS[LEVELS.indexOf(game.lv) + 1], set: 0 } : null);
+      view.innerHTML = '<div class="stack">' + head + '<h2>' + (game.review ? 'ผลการทบทวน' : 'สรุปผลชุดนี้') + '</h2>' +
+        '<section class="panel score-card">' +
+        (game.review
+          ? '<p class="eyebrow">ทบทวนคำที่ผิด</p><p class="score-big">' + cs2 + '<small>/' + game.cards.length + '</small></p>'
+          : '<div class="score-pair"><div><p class="eyebrow">การ์ด</p><p class="score-big">' + cs2 + '<small>/25</small></p></div><div><p class="eyebrow">Post-test</p><p class="score-big">' + postScore() + '<small>/15</small></p></div></div>') +
+        (game.review ? '' : savedNote()) + '<div class="row" style="justify-content:center">' +
+        (missed.length ? '<button type="button" class="btn" data-vreview="1">ฝึกคำที่ผิดอีกครั้ง (' + missed.length + ')</button>' : '') +
+        '<button type="button" class="btn" data-vreplay="1">เล่นชุดเดิมใหม่</button>' +
+        (nextSet ? '<button type="button" class="btn primary" data-vnextset="' + nextSet.lv + '-' + nextSet.set + '">ไปชุดถัดไป (' + nextSet.lv + ' ชุด ' + (nextSet.set + 1) + ')</button>' : '') +
+        '</div></section>' +
+        (missed.length ? '<section class="panel stack"><h3>คำที่ควรทบทวน</h3><ul class="missed" style="padding:0;margin:0">' + missed.map(function (w) {
+          return '<li>' + sayBtn(w.w, true) + '<span><b class="en">' + esc(w.w) + '</b> <span class="small muted">' + w.p + '</span> = ' + esc(w.th) + '<br><span class="small muted en">' + esc(L.fillBlank(w.s, w.w)) + '</span></span></li>';
+        }).join('') + '</ul></section>' : '<p class="muted" style="text-align:center">ไม่มีคำที่ตอบผิดในรอบนี้</p>') +
+        '</div>';
+    }
+  }
+  function addMissed(word) { if (game.missed.indexOf(word) < 0) game.missed.push(word); }
+  function answerCard(i) {
+    if (game.cAns[game.ci] != null) return;
+    game.cAns[game.ci] = i;
+    if (i !== game.cards[game.ci].answer) addMissed(game.cards[game.ci].word);
+    render();
+    var b = $('[data-vnext]'); if (b) b.focus({ preventScroll: true });
+  }
+  function nextCard() {
+    if (game.ci < game.cards.length - 1) { game.ci++; render(); var o = $('[data-vcard]'); if (o) o.focus({ preventScroll: true }); return; }
+    if (game.review) { S.v.phase = 'result'; game.missed = game.cards.filter(function (c, k) { return game.cAns[k] !== c.answer; }).map(function (c) { return c.word; }); render(); focusHeading(); return; }
+    saveVocab('card', cardScore());
+    S.v.phase = 'bridge';
+    render();
+    focusHeading();
+  }
+  function startPost() {
+    game.post = L.buildPostTest(game.words, game.words, 15, Math.random);
+    game.pi = 0; game.pAns = []; game.hint = false;
+    S.v.phase = 'post';
+    render();
+    focusHeading();
+  }
+  function answerPost(i) {
+    if (game.pAns[game.pi] != null) return;
+    game.pAns[game.pi] = i;
+    if (i !== game.post[game.pi].answer) addMissed(game.post[game.pi].word);
+    render();
+    var b = $('[data-vpostnext]'); if (b) b.focus({ preventScroll: true });
+  }
+  function nextPost() {
+    if (game.pi < 14) { game.pi++; game.hint = false; render(); var o = $('[data-vpostans]'); if (o) o.focus({ preventScroll: true }); return; }
+    saveVocab('post', postScore());
+    S.v.phase = 'result';
+    render();
+    focusHeading();
+  }
+  function saveVocab(kind, score) {
+    var k = vKey(game.lv, game.set, game.dir, game.choices);
+    var r = Store.data.vocab[k] || {};
+    r[kind] = Math.max(r[kind] == null ? -1 : r[kind], score);
+    if (kind === 'post') r.plays = (r.plays || 0) + 1;
+    Store.data.vocab[k] = r;
+    Store.save();
+  }
+
+  /* ===================================================================
+     READING
+     =================================================================== */
+  var OFFICIAL = [
+    { href: 'https://www.ged.com/en/test-previews.html', t: 'GED Test Previews', d: 'ตัวอย่างข้อสอบจากเว็บไซต์ GED ทางการ ใช้ดูรูปแบบข้อสอบจริง' },
+    { href: 'https://www.ged.com/educators-admins/teaching/classroom-materials/study-guides.html', t: 'GED Study Guides', d: 'คู่มือหัวข้อที่ต้องเตรียมในแต่ละวิชา จาก GED ทางการ' }
+  ];
+  var rQuiz = null;
+  function renderReading(view) {
+    if (S.r.view === 'passage') return renderPassage(view);
+    var filters = [['all', 'ทั้งหมด'], ['RLA', 'RLA'], ['Science', 'Science'], ['Social Studies', 'Social Studies']];
+    var list = EP.reading.filter(function (p) { return S.r.filter === 'all' || p.subject === S.r.filter; });
+    view.innerHTML = '<div class="stack">' +
+      '<div class="row" style="justify-content:space-between"><h2>ฝึกอ่านแนว GED</h2><span class="small muted">12 บท · เรียงจากง่ายไปยาก</span></div>' +
+      playerBar('reading') +
+      '<section class="panel stack"><div class="row"><span class="tag official">ของทางการ</span><span class="small muted">ใช้ดูรูปแบบข้อสอบจริง เปิดในแท็บใหม่</span></div><div class="official">' +
+      OFFICIAL.map(function (o) { return '<a href="' + o.href + '" target="_blank" rel="noopener"><span><b class="en">' + o.t + '</b><small>' + o.d + '</small></span><span aria-hidden="true" style="margin-left:auto">↗</span></a>'; }).join('') +
+      '</div></section>' +
+      '<section class="panel stack">' +
+      '<div class="row"><span class="tag practice">แบบฝึกแต่งขึ้น</span><span class="small muted">บทอ่านและคำถามด้านล่างเขียนขึ้นเพื่อฝึก ไม่ใช่ข้อสอบ GED จริง</span></div>' +
+      '<div class="chips" role="tablist" aria-label="กรองตามวิชา" id="rfil">' +
+      filters.map(function (f) { var sel = S.r.filter === f[0]; return '<button type="button" class="chip" role="tab" aria-selected="' + sel + '" tabindex="' + (sel ? 0 : -1) + '" data-rfil="' + f[0] + '">' + f[1] + '</button>'; }).join('') + '</div>' +
+      '<div class="pass-list">' + list.map(function (p) {
+        var r = Store.data.reading[p.id];
+        var n = EP.reading.indexOf(p) + 1;
+        return '<button type="button" class="pass-item" data-rid="' + p.id + '"><span><span class="subj" data-s="' + p.subject + '">' + n + ' · ' + p.subject + '</span><br><span class="t">' + esc(p.title) + '</span></span>' +
+          '<span style="display:grid;justify-items:end;gap:4px">' + lvBadge(p.level) + (r ? '<span class="small muted">ดีที่สุด ' + r.best + '/' + p.q.length + '</span>' : '') + '</span>' +
+          '<span class="sk">' + p.skill + ' · ' + p.q.length + ' คำถาม' + (p.visual ? ' · มี' + (p.visual.kind === 'table' ? 'ตาราง' : 'แผนภูมิ') : '') + '</span></button>';
+      }).join('') + '</div>' + resetBlock('reading', 'ล้างคะแนนการอ่านของผู้เล่นนี้') + '</section>' + leaderboard('reading') + '</div>';
+  }
+
+  function barChart(v) {
+    var W = 560, H = 270, padL = 44, padR = 12, padT = 18, padB = 56;
+    var max = Math.max.apply(null, v.values.concat(v.line ? [v.line.value] : []));
+    var nice = Math.ceil(max / 5) * 5;
+    var ph = H - padT - padB, pw = W - padL - padR;
+    var bw = pw / v.values.length;
+    var y = function (val) { return padT + ph - val / nice * ph; };
+    var ticks = [];
+    for (var t = 0; t <= nice; t += nice / 5) ticks.push(t);
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="' + esc(v.title + ': ' + v.labels.map(function (l, i) { return l + ' ' + v.values[i] + ' ' + v.unit; }).join(', ')) + '">';
+    ticks.forEach(function (t) {
+      svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(t) + '" y2="' + y(t) + '" style="stroke:var(--line)" stroke-width="1"/>' +
+        '<text x="' + (padL - 8) + '" y="' + (y(t) + 4) + '" text-anchor="end" style="fill:var(--muted);font:12px var(--f-en)">' + (Math.round(t * 10) / 10) + '</text>';
+    });
+    v.values.forEach(function (val, i) {
+      var x = padL + i * bw + bw * 0.18;
+      var w = bw * 0.64;
+      svg += '<rect x="' + x + '" y="' + y(val) + '" width="' + w + '" height="' + (y(0) - y(val)) + '" rx="5" style="fill:var(--a2)"/>' +
+        '<text x="' + (x + w / 2) + '" y="' + (y(val) - 6) + '" text-anchor="middle" style="fill:var(--ink);font:600 13px var(--f-en)">' + val + '</text>' +
+        '<text x="' + (x + w / 2) + '" y="' + (H - padB + 18) + '" text-anchor="middle" style="fill:var(--ink-2);font:12px var(--f-en)">' + esc(v.labels[i]) + '</text>';
+    });
+    if (v.line) {
+      svg += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + y(v.line.value) + '" y2="' + y(v.line.value) + '" style="stroke:var(--bad)" stroke-width="2" stroke-dasharray="6 4"/>' +
+        '<text x="' + (W - padR) + '" y="' + (y(v.line.value) - 6) + '" text-anchor="end" style="fill:var(--bad);font:600 11px var(--f-body)">' + esc(v.line.label) + '</text>';
+    }
+    svg += '<text x="' + (padL + pw / 2) + '" y="' + (H - 10) + '" text-anchor="middle" style="fill:var(--muted);font:12px var(--f-en)">' + esc(v.axis) + '</text>' +
+      '<text x="12" y="' + (padT + ph / 2) + '" text-anchor="middle" transform="rotate(-90 12 ' + (padT + ph / 2) + ')" style="fill:var(--muted);font:12px var(--f-en)">' + esc(v.unit) + '</text></svg>';
+    return svg;
+  }
+  function visualHTML(v) {
+    var inner = v.kind === 'bar' ? barChart(v)
+      : '<table><thead><tr>' + v.head.map(function (h) { return '<th scope="col">' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
+        v.rows.map(function (r) { return '<tr>' + r.map(function (c, i) { return i ? '<td>' + esc(c) + '</td>' : '<th scope="row" style="text-align:left;color:var(--ink);font-size:.92rem">' + esc(c) + '</th>'; }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+    return '<figure class="viz" style="margin:0" id="viz"><figcaption class="viz-cap">' + esc(v.title) + '</figcaption>' + inner + '<p class="viz-note">' + esc(v.note || '') + '</p></figure>';
+  }
+
+  function renderPassage(view) {
+    var p = EP.reading.filter(function (x) { return x.id === S.r.id; })[0];
+    if (!rQuiz || rQuiz.id !== p.id) rQuiz = { id: p.id, qs: p.q.map(function (q) { return prepQuestion(q, true); }), ans: p.q.map(function () { return null; }), ev: [] };
+    var idx = EP.reading.indexOf(p);
+    var answered = rQuiz.ans.filter(function (a) { return a != null; }).length;
+    var sents = p.s.map(function (s, i) {
+      var label = p.label && p.label[i] ? '<p class="para-label">' + esc(p.label[i]) + '</p>' : '';
+      return label + '<div class="sent' + (rQuiz.ev.indexOf(i) >= 0 ? ' ev' : '') + '" id="s-' + i + '"><span class="no">' + (i + 1) + '</span><span>' + esc(s) + '</span>' + sayBtn(s, true) +
+        (S.r.showTh ? '<span class="tr">' + esc(p.th[i]) + '</span>' : '') + '</div>';
+    }).join('');
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-rback="1">' + ICON.back + 'กลับไปรายการบทอ่าน</button>' +
+      '<header class="stack" style="gap:6px"><div class="row"><span class="subj" data-s="' + p.subject + '">' + p.subject + '</span>' + lvBadge(p.level) + '<span class="tag practice">แบบฝึกแต่งขึ้น</span></div>' +
+      '<h2 class="en">' + esc(p.title) + '</h2><p class="small muted">ทักษะ: ' + p.skill + (p.intro ? ' · ' + esc(p.intro) : '') + '</p></header>' +
+      '<section class="panel stack">' +
+      '<div class="row" style="justify-content:space-between"><h3>บทอ่าน</h3><button type="button" class="btn" style="min-height:40px" aria-pressed="' + S.r.showTh + '" data-rth="1">' + (S.r.showTh ? 'ซ่อนคำแปลไทย' : 'แสดงคำแปลไทย') + '</button></div>' +
+      '<div class="passage" lang="en">' + sents + '</div>' +
+      (p.visual ? visualHTML(p.visual) : '') +
+      '<div class="stack" style="gap:6px"><p class="eyebrow">คำศัพท์ช่วยอ่าน</p><div class="gloss">' + p.gloss.map(function (g) { return '<span><span class="en">' + esc(g[0]) + '</span> ' + esc(g[1]) + sayBtn(g[0], true) + '</span>'; }).join('') + '</div></div>' +
+      '</section>' +
+      '<section class="panel stack" aria-labelledby="rq-h"><h3 id="rq-h">คำถาม ' + p.q.length + ' ข้อ</h3><p class="small muted">คำถามเป็นภาษาอังกฤษแบบ GED มีคำอธิบายไทยใต้คำถาม หลังตอบจะเห็นว่าคำตอบมาจากประโยคไหน</p>' +
+      '<div id="rq">' + rQuiz.qs.map(function (pq, i) { return rQuestionHTML(pq, i, rQuiz.ans[i], p); }).join('') + '</div>' +
+      '<div id="rq-foot">' + readingFoot(p, answered, idx) + '</div></section></div>';
+  }
+  function rQuestionHTML(pq, i, chosen, p) {
+    return '<div class="q" id="rq-' + i + '"><p class="q-num">ข้อ ' + (i + 1) + '</p><p class="q-stem en">' + esc(pq.src.q).replace(/___/g, '<span class="blank">?</span>') + '</p><p class="qth">' + esc(pq.src.qth) + '</p>' +
+      optionsHTML(pq, i, chosen, true) +
+      (chosen != null ? readingFeedback(pq, chosen, p) : '') + '</div>';
+  }
+  function readingFoot(p, answered, idx) {
+    var total = p.q.length;
+    if (answered < total) return '<p class="gate">ตอบแล้ว ' + answered + '/' + total + ' ข้อ</p>';
+    var score = rQuiz.ans.reduce(function (s, a, i) { return s + (rQuiz.qs[i].items[a].correct ? 1 : 0); }, 0);
+    var next = EP.reading[idx + 1];
+    return '<div class="score-card"><p class="eyebrow">คะแนนบทนี้</p><p class="score-big">' + score + '<small>/' + total + '</small></p>' + savedNote() +
+      '<div class="row" style="justify-content:center"><button type="button" class="btn" data-rretry="1">ทำใหม่</button>' +
+      (next ? '<button type="button" class="btn primary" data-rid="' + next.id + '">บทถัดไป: <span class="en">' + esc(next.title) + '</span></button>' : '<button type="button" class="btn primary" data-rback="1">กลับไปรายการ</button>') + '</div></div>';
+  }
+  function answerReading(qi, oi) {
+    if (rQuiz.ans[qi] != null) return;
+    rQuiz.ans[qi] = oi;
+    var p = EP.reading.filter(function (x) { return x.id === S.r.id; })[0];
+    rQuiz.ev = p.q[qi].ev.filter(function (e) { return e !== 'visual'; });
+    $all('.sent').forEach(function (el, i) { el.classList.toggle('ev', rQuiz.ev.indexOf(i) >= 0); });
+    $('#rq-' + qi).outerHTML = rQuestionHTML(rQuiz.qs[qi], qi, oi, p);
+    var answered = rQuiz.ans.filter(function (a) { return a != null; }).length;
+    if (answered === p.q.length) {
+      var score = rQuiz.ans.reduce(function (s, a, i) { return s + (rQuiz.qs[i].items[a].correct ? 1 : 0); }, 0);
+      var rec = Store.data.reading[p.id] || {};
+      rec.best = Math.max(rec.best || 0, score);
+      rec.last = score;
+      Store.data.reading[p.id] = rec;
+      Store.save();
+    }
+    $('#rq-foot').innerHTML = readingFoot(p, answered, EP.reading.indexOf(p));
+    var fb = $('#rq-' + qi + ' .fb');
+    if (fb) { fb.setAttribute('tabindex', '-1'); fb.focus({ preventScroll: true }); fb.scrollIntoView({ block: 'nearest', behavior: reduceMotion() ? 'auto' : 'smooth' }); }
+  }
+  function showEvidence(list) {
+    var ids = list.split(',');
+    var nums = ids.filter(function (x) { return x !== 'visual'; }).map(Number);
+    $all('.sent').forEach(function (el, i) { el.classList.toggle('ev', nums.indexOf(i) >= 0); });
+    var target = nums.length ? $('#s-' + nums[0]) : $('#viz');
+    if (target) target.scrollIntoView({ block: 'center', behavior: reduceMotion() ? 'auto' : 'smooth' });
+  }
+
+  /* ---------- ชื่อเล่นและตารางคะแนนสูงสุด (เก็บในเครื่อง) ---------- */
+  function initial(nick) { return esc((nick || '?').trim().charAt(0).toUpperCase()); }
+  function savedNote() {
+    return Store.root.current === GUEST
+      ? '<p class="small muted">ยังไม่ได้ใส่ชื่อเล่น คะแนนนี้จึงไม่ขึ้นตารางอันดับ ใส่ชื่อได้ที่หน้าแรกของแต่ละ Part</p>'
+      : '<p class="small muted">บันทึกคะแนนให้ <b>' + esc(Store.data.nick) + '</b> แล้ว' + (Remote.enabled() ? ' และส่งเข้าตารางรวม' : '') + '</p>';
+  }
+  function playerBar(part) {
+    var named = Store.root.current !== GUEST;
+    var max = partMax(part);
+    var head = '<p class="eyebrow">ผู้เล่น · ' + PARTS[part].label + '</p>';
+    if (named && !S.p.editing) {
+      var sc = partScore(Store.data, part);
+      return '<section class="panel player" aria-label="ผู้เล่น">' + head +
+        '<div class="row" style="flex-wrap:nowrap"><span class="avatar" aria-hidden="true">' + initial(Store.data.nick) + '</span>' +
+        '<div style="min-width:0;flex:1"><b class="nick">' + esc(Store.data.nick) + '</b><br><span class="small muted">คะแนน ' + PARTS[part].label + ' ของคุณ <b class="en" style="color:var(--ink)">' + sc + '</b>/' + max + '</span></div>' +
+        '<button type="button" class="btn" style="min-height:42px;padding:0 14px" data-pedit="1">เปลี่ยนผู้เล่น</button></div></section>';
+    }
+    var others = Store.named().filter(function (x) { return x.key !== Store.root.current; });
+    return '<section class="panel player stack" aria-label="ใส่ชื่อเล่น">' + head +
+      '<form class="nick-form" data-pform="1" novalidate>' +
+      '<label for="nick-input" class="small" style="font-weight:600">' + (named ? 'เปลี่ยนเป็นชื่อเล่นอื่น' : 'ใส่ชื่อเล่นเพื่อบันทึกสถิติคะแนนสูงสุด') + '</label>' +
+      '<div class="row" style="flex-wrap:nowrap"><input id="nick-input" name="nick" type="text" maxlength="20" autocomplete="nickname" placeholder="เช่น มะลิ, Ton, น้องเก่ง" aria-describedby="nick-help">' +
+      '<button type="submit" class="btn primary" style="flex:0 0 auto">ใช้ชื่อนี้</button></div>' +
+      '<p id="nick-help" class="small muted">1–20 ตัวอักษร ความคืบหน้าและคะแนนแยกตามชื่อเล่น หลายคนใช้เครื่องเดียวกันได้</p></form>' +
+      (others.length ? '<div class="stack" style="gap:6px"><p class="small" style="font-weight:600">หรือเลือกชื่อที่เคยใช้ในเครื่องนี้</p><div class="chips" style="flex-wrap:wrap">' +
+        others.map(function (x) { return '<button type="button" class="chip" data-puse="' + esc(x.key) + '"><span class="avatar sm" aria-hidden="true">' + initial(x.p.nick) + '</span> ' + esc(x.p.nick) + '</button>'; }).join('') + '</div></div>' : '') +
+      (named ? '<div class="row"><button type="button" class="link-btn" data-pcancel="1">ยกเลิก</button><button type="button" class="link-btn" style="color:var(--muted)" data-pguest="1">เล่นแบบไม่ระบุชื่อ</button></div>'
+             : '<p class="small muted">ยังไม่ใส่ชื่อก็เรียนได้ แต่คะแนนจะไม่ขึ้นตารางอันดับ</p>') +
+      '</section>';
+  }
+  function leaderboard(part) {
+    Remote.load(false);
+    return '<div id="lbw-' + part + '">' + leaderboardInner(part) + '</div>';
+  }
+  function boardRows(rows, max, local) {
+    return '<ol class="board">' + rows.map(function (r, i) {
+      var pct = max ? Math.round(r.score / max * 100) : 0;
+      var del = local && S.p.del === r.key
+        ? '<span class="confirm" style="grid-column:1/-1"><span>ลบ ' + esc(r.nick) + ' และคะแนนทั้งหมดของชื่อนี้ในเครื่องนี้?</span><button type="button" class="btn" data-pdelyes="' + esc(r.key) + '">ลบ</button><button type="button" class="btn ghost" data-pdelno="1">ยกเลิก</button></span>'
+        : '';
+      return '<li class="' + (r.me ? 'me' : '') + (local ? '' : ' nox') + '"><span class="rank' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</span>' +
+        '<span class="who"><span class="nick">' + esc(r.nick) + '</span>' + (r.me ? ' <span class="tag">คุณ</span>' : '') +
+        '<span class="bar" aria-hidden="true"><span style="width:' + pct + '%"></span></span></span>' +
+        '<span class="pts en"><b>' + r.score + '</b><small>/' + max + '</small></span>' +
+        (local ? '<button type="button" class="x" data-pdel="' + esc(r.key) + '" aria-label="ลบ ' + esc(r.nick) + ' ออกจากตาราง">×</button>' + del : '') + '</li>';
+    }).join('') + '</ol>';
+  }
+  function leaderboardInner(part) {
+    var max = partMax(part);
+    var myNick = Store.root.current === GUEST ? null : Store.data.nick.toLowerCase();
+    var head = function (title, note) {
+      return '<div><p class="eyebrow">สถิติคะแนนสูงสุด</p><h3 id="lb-' + part + '">' + title + '</h3><p class="small muted">' + PARTS[part].unit + ' (เต็ม ' + max + ') · ' + note + '</p></div>';
+    };
+    if (Remote.enabled() && Remote.status !== 'error' && (Remote.rows || Remote.status === 'loading')) {
+      if (!Remote.rows) return '<section class="panel stack" aria-labelledby="lb-' + part + '">' + head('ตารางอันดับรวม ' + PARTS[part].label, 'กำลังโหลด') + '<p class="muted small" role="status">กำลังโหลดคะแนนของทุกคน…</p></section>';
+      var list = Remote.rows.map(function (r) { return { nick: String(r.nick || ''), score: Math.max(0, Math.floor(+r[part] || 0)), me: !!myNick && String(r.nick || '').toLowerCase() === myNick }; });
+      if (myNick) { // คะแนนในเครื่องที่ยังส่งไม่ถึงชีต ให้แสดงค่าที่สูงกว่า
+        var mine = list.filter(function (r) { return r.me; })[0];
+        var local = partScore(Store.data, part);
+        if (mine) mine.score = Math.max(mine.score, local); else if (local > 0) list.push({ nick: Store.data.nick, score: local, me: true });
+      }
+      list = list.filter(function (r) { return r.nick && (r.score > 0 || r.me); }).sort(function (a, b) { return b.score - a.score || a.nick.localeCompare(b.nick); });
+      var myRank = -1; list.forEach(function (r, i) { if (r.me) myRank = i; });
+      var top = list.slice(0, 20);
+      var t = new Date(Remote.fetchedAt);
+      var when = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
+      return '<section class="panel stack" aria-labelledby="lb-' + part + '">' + head('ตารางอันดับรวม ' + PARTS[part].label, 'รวมทุกคนที่เล่นผ่านลิงก์นี้ · อัปเดต ' + when) +
+        (top.length ? boardRows(top, max, false) : '<p class="muted small">ยังไม่มีใครมีคะแนนใน Part นี้ เริ่มเป็นคนแรกได้เลย</p>') +
+        (myRank >= 20 ? '<p class="small">อันดับของคุณ: <b>' + (myRank + 1) + '</b> จาก ' + list.length + ' คน</p>' : '') +
+        (!myNick ? '<p class="small muted">ใส่ชื่อเล่นด้านบน คะแนนของคุณจะขึ้นตารางนี้</p>' : '') +
+        '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">รีเฟรชตาราง</button></section>';
+    }
+    var rows = Store.named().map(function (x) { return { key: x.key, nick: x.p.nick, score: partScore(x.p, part), updated: x.p.updated || 0, me: x.key === Store.root.current }; })
+      .sort(function (a, b) { return b.score - a.score || a.updated - b.updated || a.nick.localeCompare(b.nick); });
+    var note = Remote.enabled() ? 'เชื่อมตารางรวมไม่ได้ตอนนี้ จึงแสดงเฉพาะในเครื่องนี้' : 'เก็บในเบราว์เซอร์ของเครื่องนี้ ไม่รวมกับเครื่องอื่น';
+    var body = rows.length ? boardRows(rows.slice(0, 10), max, true) + (rows.length > 10 ? '<p class="small muted">แสดง 10 อันดับแรกจาก ' + rows.length + ' ชื่อ</p>' : '')
+      : '<p class="muted small">ยังไม่มีชื่อในตาราง ใส่ชื่อเล่นด้านบนแล้วเริ่มทำแบบฝึก คะแนนสูงสุดจะขึ้นที่นี่</p>';
+    return '<section class="panel stack" aria-labelledby="lb-' + part + '">' + head('ตารางอันดับ ' + PARTS[part].label, note) + body +
+      (Remote.enabled() ? '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">ลองเชื่อมตารางรวมอีกครั้ง</button>' : '') + '</section>';
+  }
+
+  /* ---------- ล้างความคืบหน้า (มีขั้นยืนยันในหน้า) ---------- */
+  var confirming = null;
+  function resetBlock(part, label) {
+    if (confirming === part) {
+      return '<div class="confirm" role="alert"><span>ลบคะแนนและความคืบหน้าส่วนนี้ในเครื่องนี้ใช่ไหม ย้อนกลับไม่ได้</span><button type="button" class="btn" data-reset-yes="' + part + '">ลบ</button><button type="button" class="btn ghost" data-reset-no="1">ยกเลิก</button></div>';
+    }
+    return '<button type="button" class="link-btn small" data-reset="' + part + '" style="color:var(--muted);justify-self:start">' + label + '</button>';
+  }
+
+  /* ---------- ต่อจากที่ค้างไว้ ---------- */
+  function renderContinue() {
+    var gNext = null;
+    EP.grammar.some(function (c, ci) {
+      return c.lessons.some(function (l, li) { if (!lessonDone(l.id)) { gNext = { ci: ci, li: li, l: l }; return true; } return false; });
+    });
+    var rNext = EP.reading.filter(function (p) { return !Store.data.reading[p.id]; })[0];
+    var html = '<span class="small muted" style="width:100%"><b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท → คำศัพท์ ~10 คำ → อ่านสั้น 1 บท แล้วทบทวนเหตุผล</span>';
+    html += gNext ? '<button type="button" class="chip" data-go-lesson="' + gNext.ci + '-' + gNext.li + '"><small>1 · Grammar ต่อไป</small><span class="en">' + gNext.l.title + '</span></button>' : '<span class="chip"><small>1 · Grammar</small>เรียนครบทุกบทแล้ว</span>';
+    html += '<button type="button" class="chip" data-go-vocab="1"><small>2 · คำศัพท์</small>' + S.v.lv + ' ชุด ' + (S.v.set + 1) + '</button>';
+    html += rNext ? '<button type="button" class="chip" data-rid="' + rNext.id + '"><small>3 · บทอ่านต่อไป</small><span class="en">' + esc(rNext.title) + '</span></button>' : '<span class="chip"><small>3 · อ่าน</small>อ่านครบ 12 บทแล้ว</span>';
+    $('#continue').innerHTML = html;
+  }
+
+  /* ---------- วาดหน้า ---------- */
+  function render() {
+    var view = $('#view');
+    view.setAttribute('aria-labelledby', 'tab-' + S.tab);
+    if (S.tab === 'grammar') renderGrammar(view);
+    else if (S.tab === 'vocab') renderVocab(view);
+    else renderReading(view);
+    renderContinue();
+  }
+  function focusHeading() {
+    var h = $('#view h2');
+    if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+    window.scrollTo(0, Math.max(0, $('#view').getBoundingClientRect().top + window.scrollY - 12));
+  }
+  function reduceMotion() { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  /* ---------- ตัวจัดการคลิกรวม ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target.closest('button, a');
+    if (!t) return;
+    var d = t.dataset;
+    if (d.say != null) { e.preventDefault(); Speech.speak(d.say, t); return; }
+    if (d.tab) { setTab(d.tab, true); return; }
+
+    if (d.reset) { confirming = d.reset; render(); var y = $('[data-reset-yes]'); if (y) y.focus(); return; }
+    if (d.resetNo) { confirming = null; render(); return; }
+    if (d.resetYes) {
+      var part = d.resetYes;
+      Store.data[part] = {};
+      if (part === 'grammar') { Store.data.gpost = {}; gQuiz = null; gPost = null; }
+      if (part === 'reading') rQuiz = null;
+      Store.save(); confirming = null; render(); toast('ล้างความคืบหน้าแล้ว'); return;
+    }
+
+    if (d.lbrefresh) { Remote.status = 'idle'; Remote.load(true); refreshBoards(); return; }
+    if (d.pedit) { S.p.editing = true; render(); var ni = $('#nick-input'); if (ni) ni.focus(); return; }
+    if (d.pcancel) { S.p.editing = false; render(); return; }
+    if (d.puse) { var pr = Store.root.profiles[d.puse]; if (pr) { Store.use(pr.nick); afterSwitch('สลับเป็น ' + pr.nick + ' แล้ว'); } return; }
+    if (d.pguest) { Store.guest(); afterSwitch('เล่นแบบไม่ระบุชื่อ คะแนนจะไม่ขึ้นตารางอันดับ'); return; }
+    if (d.pdel) { S.p.del = d.pdel; render(); var dy = $('[data-pdelyes]'); if (dy) dy.focus(); return; }
+    if (d.pdelno) { S.p.del = null; render(); return; }
+    if (d.pdelyes) { var gone = (Store.root.profiles[d.pdelyes] || {}).nick; Store.remove(d.pdelyes); S.p.del = null; resetSessions(); render(); toast('ลบ ' + gone + ' ออกจากเครื่องนี้แล้ว'); return; }
+    if (d.goLesson) { var gl = d.goLesson.split('-'); S.tab = 'grammar'; S.g.cat = +gl[0]; S.g.lesson = +gl[1]; S.g.view = 'lesson'; gQuiz = null; renderNav(); render(); focusHeading(); return; }
+    if (d.goVocab) { S.tab = 'vocab'; S.v.phase = game ? S.v.phase : 'setup'; renderNav(); render(); focusHeading(); return; }
+
+    // Grammar
+    if (d.gcat != null) { S.g.cat = +d.gcat; S.g.view = 'list'; confirming = null; render(); var c = $('[data-gcat="' + d.gcat + '"]'); if (c) { c.focus(); c.scrollIntoView({ inline: 'nearest', block: 'nearest' }); } return; }
+    if (d.lesson != null) { S.g.lesson = +d.lesson; S.g.view = 'lesson'; gQuiz = null; render(); focusHeading(); return; }
+    if (d.gback) { S.g.view = 'list'; render(); focusHeading(); return; }
+    if (d.gnext) { S.g.lesson++; gQuiz = null; render(); focusHeading(); return; }
+    if (d.gretry) { gQuiz = null; render(); var q0 = $('#gq-0'); if (q0) q0.scrollIntoView({ block: 'start' }); return; }
+    if (d.gpost) {
+      if (t.getAttribute('aria-disabled') === 'true') { toast('ทำ mini-test ให้ครบทุกบทในหมวดนี้ก่อน Post-test จึงจะเปิด'); return; }
+      S.g.view = 'post'; gPost = null; render(); focusHeading(); return;
+    }
+    if (d.gpostnext) { finishGPost(); return; }
+    if (d.gpostretry) { gPost = null; render(); focusHeading(); return; }
+    if (d.q != null && d.o != null) {
+      if (S.tab === 'grammar' && S.g.view === 'lesson') answerLesson(+d.q, +d.o);
+      else if (S.tab === 'grammar' && S.g.view === 'post') answerGPost(+d.o);
+      else if (S.tab === 'reading') answerReading(+d.q, +d.o);
+      return;
+    }
+
+    // Vocab
+    if (d.vlv) { S.v.lv = d.vlv; S.v.set = 0; render(); var lb = $('[data-vlv="' + d.vlv + '"]'); if (lb) lb.focus(); return; }
+    if (d.vset != null) { S.v.set = +d.vset; render(); var sb = $('[data-vset="' + d.vset + '"]'); if (sb) sb.focus(); return; }
+    if (d.vdir) { S.v.dir = d.vdir; render(); var db = $('[data-vdir="' + d.vdir + '"]'); if (db) db.focus(); return; }
+    if (d.vch) { S.v.choices = +d.vch; render(); var cb = $('[data-vch="' + d.vch + '"]'); if (cb) cb.focus(); return; }
+    if (d.vstart) { startGame(false); return; }
+    if (d.vcard != null) { answerCard(+d.vcard); return; }
+    if (d.vnext) { nextCard(); return; }
+    if (d.vpost) { startPost(); return; }
+    if (d.vhint) { game.hint = true; render(); return; }
+    if (d.vpostans != null) { answerPost(+d.vpostans); return; }
+    if (d.vpostnext) { nextPost(); return; }
+    if (d.vreview) { S.v.lv = game.lv; S.v.set = game.set; S.v.dir = game.dir; S.v.choices = game.choices; startGame(true); return; }
+    if (d.vreplay) { S.v.lv = game.lv; S.v.set = game.set; S.v.dir = game.dir; S.v.choices = game.choices; startGame(false); return; }
+    if (d.vnextset) { var ns = d.vnextset.split('-'); S.v.lv = ns[0]; S.v.set = +ns[1]; startGame(false); return; }
+    if (d.vquit) { game = null; S.v.phase = 'setup'; render(); focusHeading(); return; }
+
+    // Reading
+    if (d.rfil) { S.r.filter = d.rfil; render(); var f = $('[data-rfil="' + d.rfil + '"]'); if (f) f.focus(); return; }
+    if (d.rid) { S.tab = 'reading'; S.r.id = d.rid; S.r.view = 'passage'; rQuiz = null; renderNav(); render(); focusHeading(); return; }
+    if (d.rback) { S.r.view = 'list'; render(); focusHeading(); return; }
+    if (d.rth) { S.r.showTh = !S.r.showTh; render(); var th = $('[data-rth]'); if (th) th.focus(); return; }
+    if (d.rretry) { rQuiz = null; render(); var rq0 = $('#rq-0'); if (rq0) rq0.scrollIntoView({ block: 'start' }); return; }
+    if (d.showEv) { showEvidence(d.showEv); return; }
+  });
+
+  function resetSessions() { gQuiz = null; gPost = null; rQuiz = null; game = null; S.v.phase = 'setup'; S.g.view = 'list'; S.r.view = 'list'; }
+  function afterSwitch(msg) { S.p.editing = false; S.p.del = null; confirming = null; resetSessions(); render(); toast(msg); }
+  document.addEventListener('submit', function (e) {
+    var f = e.target.closest('[data-pform]');
+    if (!f) return;
+    e.preventDefault();
+    var input = f.querySelector('#nick-input');
+    var nick = cleanNick(input.value);
+    if (!nick) { input.setAttribute('aria-invalid', 'true'); toast('พิมพ์ชื่อเล่นอย่างน้อย 1 ตัวอักษร'); input.focus(); return; }
+    var res = Store.use(nick);
+    afterSwitch(res.existed ? 'สลับเป็น ' + nick + ' แล้ว' : res.moved ? 'สวัสดี ' + nick + ' ย้ายความคืบหน้าที่ทำไว้ก่อนหน้ามาไว้ที่ชื่อนี้แล้ว' : 'สวัสดี ' + nick + ' เริ่มบันทึกคะแนนแล้ว');
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var group = e.target.closest && e.target.closest('#nav, #gcats, #rfil');
+    if (!group) return;
+    var sel = group.id === 'nav' ? '[role="tab"]' : '.chip';
+    var fake = { key: e.key, currentTarget: group, preventDefault: function () { e.preventDefault(); } };
+    if (tabKeys(fake, sel) && group.id === 'nav') {
+      var cur = $('#nav [aria-selected="true"]');
+      if (cur) cur.focus();
+    }
+  });
+
+  /* ---------- เริ่มต้น ---------- */
+  Store.load();
+  var hash = (location.hash || '').replace('#', '');
+  if (['grammar', 'vocab', 'reading'].indexOf(hash) >= 0) S.tab = hash;
+  renderRoute();
+  renderNav();
+  render();
+  Remote.queue();
+})();
