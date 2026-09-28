@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Path — สถิติผู้เรียน</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 900px; margin: 24px auto; padding: 0 16px; color: #1a2433; }
+  h1 { font-size: 1.25rem; }
+  table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid #ddd; font-size: .9rem; }
+  th { color: #555; font-weight: 600; }
+  .err { color: #b00020; }
+  .muted { color: #777; font-size: .85rem; }
+  input, button { font-size: 1rem; padding: 8px 10px; }
+</style>
+</head>
+<body>
+<h1>English Path — สถิติผู้เรียน (สำหรับครู)</h1>
+<div id="gate">
+  <p class="muted">ใส่รหัสผ่านที่ตั้งไว้บน server</p>
+  <input id="key" type="password" placeholder="รหัสผ่าน" autocomplete="off">
+  <button id="go">เข้าดู</button>
+  <p id="err" class="err" role="alert"></p>
+</div>
+<div id="out"></div>
+<script>
+(function () {
+  var KEY_STORAGE = 'eng-ged-admin-key';
+  var gate = document.getElementById('gate');
+  var out = document.getElementById('out');
+  var err = document.getElementById('err');
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  function relTime(iso) {
+    var diffMs = Date.now() - new Date(iso).getTime();
+    var min = Math.round(diffMs / 60000);
+    if (min < 1) return 'เมื่อสักครู่';
+    if (min < 60) return min + ' นาทีที่แล้ว';
+    var hr = Math.round(min / 60);
+    if (hr < 24) return hr + ' ชั่วโมงที่แล้ว';
+    return Math.round(hr / 24) + ' วันที่แล้ว';
+  }
+
+  function render(data) {
+    var dm = data.doneMax;
+    var rows = data.rows.map(function (r) {
+      return '<tr><td>' + esc(r.nick) + '</td>' +
+        '<td>' + r.grammarDone + '/' + dm.grammar + '</td>' +
+        '<td>' + r.vocabDone + '/' + dm.vocab + '</td>' +
+        '<td>' + r.readingDone + '/' + dm.reading + '</td>' +
+        '<td>' + (r.grammar + r.vocab + r.reading) + '</td>' +
+        '<td>' + esc(relTime(r.updatedAt)) + '</td></tr>';
+    }).join('');
+    out.innerHTML = '<table><thead><tr><th>ชื่อเล่น</th><th>Grammar</th><th>คำศัพท์</th><th>อ่าน</th>' +
+      '<th>คะแนนรวม</th><th>ใช้งานล่าสุด</th></tr></thead><tbody>' +
+      (rows || '<tr><td colspan="6" class="muted">ยังไม่มีข้อมูล</td></tr>') + '</tbody></table>';
+  }
+
+  function load(key) {
+    err.textContent = '';
+    fetch('/api/admin/players', { headers: { 'X-Admin-Key': key } })
+      .then(function (r) {
+        if (r.status === 401) { sessionStorage.removeItem(KEY_STORAGE); throw new Error('unauthorized'); }
+        return r.json();
+      })
+      .then(function (data) {
+        if (!data || !data.ok) throw new Error('bad');
+        gate.hidden = true;
+        render(data);
+      })
+      .catch(function () {
+        err.textContent = 'รหัสผ่านไม่ถูกต้อง หรือเชื่อมต่อไม่ได้';
+        gate.hidden = false;
+      });
+  }
+
+  document.getElementById('go').addEventListener('click', function () {
+    var key = document.getElementById('key').value.trim();
+    if (!key) return;
+    try { sessionStorage.setItem(KEY_STORAGE, key); } catch (e) {}
+    load(key);
+  });
+
+  var saved = null;
+  try { saved = sessionStorage.getItem(KEY_STORAGE); } catch (e) {}
+  if (saved) load(saved);
+})();
+</script>
+</body>
+</html>
