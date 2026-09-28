@@ -110,7 +110,7 @@ async function handleRequest(req, res, store, publicDir) {
 export function createServer({ publicDir, dataFile }) {
   const store = createStore(dataFile);
 
-  return http.createServer((req, res) => {
+  const server = http.createServer((req, res) => {
     handleRequest(req, res, store, publicDir).catch(() => {
       if (!res.headersSent) {
         sendJson(res, 500, { ok: false, error: 'server_error' });
@@ -119,6 +119,12 @@ export function createServer({ publicDir, dataFile }) {
       }
     });
   });
+  // Release the SQLite file handle when the HTTP server shuts down — mainly
+  // so tests can delete their temp database file right after server.close()
+  // (unclosed handles block deletion on Windows); the long-running production
+  // process never triggers this since it never calls server.close().
+  server.on('close', () => { store.close().catch(() => {}); });
+  return server;
 }
 
 function main() {

@@ -1,17 +1,19 @@
 // docker/store.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm, access, readFile } from 'node:fs/promises';
+import { mkdtemp, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createStore } from './store.mjs';
 
 async function withTempStore(fn) {
   const dir = await mkdtemp(join(tmpdir(), 'eng-ged-store-'));
-  const file = join(dir, 'scores.json');
+  const file = join(dir, 'scores.db');
+  const store = createStore(file);
   try {
-    await fn(createStore(file));
+    await fn(store);
   } finally {
+    await store.close();
     await rm(dir, { recursive: true, force: true });
   }
 }
@@ -37,6 +39,17 @@ test('submit keeps the higher score across two calls for the same nickname (case
   });
 });
 
+test('submit keeps the higher "done" counts across two calls, independently of scores', async () => {
+  await withTempStore(async (store) => {
+    await store.submit('Ann', { grammar: 0, vocab: 0, reading: 0, grammarDone: 3, vocabDone: 1, readingDone: 0 });
+    await store.submit('Ann', { grammar: 0, vocab: 0, reading: 0, grammarDone: 1, vocabDone: 5, readingDone: 2 });
+    const players = await store.players();
+    assert.equal(players.rows[0].grammarDone, 3);
+    assert.equal(players.rows[0].vocabDone, 5);
+    assert.equal(players.rows[0].readingDone, 2);
+  });
+});
+
 test('concurrent submits for the same nickname do not lose an update', async () => {
   await withTempStore(async (store) => {
     await Promise.all([
@@ -51,7 +64,21 @@ test('concurrent submits for the same nickname do not lose an update', async () 
   });
 });
 
-test('top() returns an empty list and the MAX table when the file does not exist yet', async () => {
+test('concurrent submits for two DIFFERENT nicknames both persist (neither is dropped)', async () => {
+  await withTempStore(async (store) => {
+    await Promise.all([
+      store.submit('Ann', { grammar: 10, vocab: 0, reading: 0 }),
+      store.submit('Bob', { grammar: 0, vocab: 20, reading: 0 })
+    ]);
+    const top = await store.top();
+    assert.equal(top.rows.length, 2);
+    const byNick = Object.fromEntries(top.rows.map((r) => [r.nick, r]));
+    assert.equal(byNick.Ann.grammar, 10);
+    assert.equal(byNick.Bob.vocab, 20);
+  });
+});
+
+test('top() returns an empty list and the MAX table when the database is brand new', async () => {
   await withTempStore(async (store) => {
     const top = await store.top();
     assert.deepEqual(top.rows, []);
@@ -59,27 +86,30 @@ test('top() returns an empty list and the MAX table when the file does not exist
   });
 });
 
-test('a successful submit leaves no leftover .tmp file behind (atomic write)', async () => {
-  const dir = await mkdtemp(join(tmpdir(), 'eng-ged-store-'));
-  const file = join(dir, 'scores.json');
-  try {
-    const store = createStore(file);
-    await store.submit('Ann', { grammar: 10, vocab: 0, reading: 0 });
-    await assert.rejects(() => access(`${file}.tmp`), /ENOENT/);
-    const onDisk = JSON.parse(await readFile(file, 'utf8'));
-    assert.equal(onDisk.ann.grammar, 10);
-  } finally {
-    await rm(dir, { recursive: true, force: true });
-  }
+test('players() returns the DONE_MAX table and per-player done counts, sorted by most recently active', async () => {
+  await withTempStore(async (store) => {
+    await store.submit('Ann', { grammar: 5, vocab: 0, reading: 0, grammarDone: 1, vocabDone: 0, readingDone: 0 });
+    await new Promise((r) => setTimeout(r, 5)); // ensure a strictly later updatedAt timestamp
+    await store.submit('Bob', { grammar: 1, vocab: 0, reading: 0, grammarDone: 1, vocabDone: 0, readingDone: 0 });
+    const players = await store.players();
+    assert.deepEqual(players.doneMax, { grammar: 31, vocab: 16, reading: 12 });
+    assert.equal(players.rows[0].nick, 'Bob');
+    assert.equal(players.rows[1].nick, 'Ann');
+  });
 });
 
-test('top() reflects a fully-written state, never a mid-write one, immediately after an unawaited submit', async () => {
-  await withTempStore(async (store) => {
-    const submitPromise = store.submit('Ann', { grammar: 50, vocab: 0, reading: 0 });
-    const top = await store.top();
-    // Whatever top() sees, it must be a fully valid, parseable snapshot —
-    // either pre-submit ([]) or post-submit ([Ann]) — never a partial one.
-    assert.ok(top.rows.length === 0 || (top.rows.length === 1 && top.rows[0].nick === 'Ann'));
-    await submitPromise;
-  });
+test('data persists across store instances pointed at the same database file', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'eng-ged-store-'));
+  const file = join(dir, 'scores.db');
+  const first = createStore(file);
+  const reopened = createStore(file);
+  try {
+    await first.submit('Ann', { grammar: 42, vocab: 0, reading: 0 });
+    await first.close();
+    const top = await reopened.top();
+    assert.equal(top.rows[0].grammar, 42);
+  } finally {
+    await reopened.close();
+    await rm(dir, { recursive: true, force: true });
+  }
 });
