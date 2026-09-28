@@ -1,4 +1,4 @@
-FROM node:20-alpine
+FROM node:22-alpine
 WORKDIR /app
 COPY docker/scores-logic.mjs docker/store.mjs docker/server.mjs ./
 COPY docs/ ./public/

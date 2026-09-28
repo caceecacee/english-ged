@@ -5,6 +5,7 @@ services:
       dockerfile: docker/Dockerfile
     image: eng-ged:latest
     container_name: eng-ged
+    init: true
     restart: unless-stopped
     ports:
       - "127.0.0.1:3010:8080"
