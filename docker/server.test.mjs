@@ -80,3 +80,41 @@ test('POST /api/scores with an oversized body is rejected with 413', async () =>
     assert.equal(res.status, 413);
   });
 });
+
+test('POST /api/scores with a JSON body that is not an object does not crash the server', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/api/scores`, { method: 'POST', body: 'null' });
+    const json = await res.json();
+    assert.equal(json.ok, false);
+
+    // the process must still be alive and serving requests afterward
+    const followUp = await fetch(`${base}/api/scores?action=top`);
+    assert.equal(followUp.status, 200);
+  });
+});
+
+test('POST /api/scores with a non-string nick (object with a non-callable toString) does not crash', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/api/scores`, {
+      method: 'POST',
+      body: JSON.stringify({ nick: { toString: 1 }, grammar: 5 })
+    });
+    const json = await res.json();
+    assert.equal(json.ok, false);
+
+    const followUp = await fetch(`${base}/api/scores?action=top`);
+    assert.equal(followUp.status, 200);
+  });
+});
+
+test('POST /api/scores with a non-numeric score field is clamped to 0, not crashed', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/api/scores`, {
+      method: 'POST',
+      body: JSON.stringify({ nick: 'Ann', grammar: { valueOf: 1 } })
+    });
+    const json = await res.json();
+    assert.equal(json.ok, true);
+    assert.equal(json.saved.grammar, 0);
+  });
+});

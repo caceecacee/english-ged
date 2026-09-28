@@ -66,45 +66,58 @@ async function serveStatic(publicDir, pathname, res) {
   }
 }
 
+async function handleRequest(req, res, store, publicDir) {
+  const url = new URL(req.url, 'http://localhost');
+
+  if (url.pathname === '/api/scores') {
+    if (req.method === 'GET' && url.searchParams.get('action') === 'top') {
+      return sendJson(res, 200, await store.top());
+    }
+    if (req.method === 'POST') {
+      let raw;
+      try {
+        raw = await readBody(req);
+      } catch (err) {
+        return sendJson(res, err.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { ok: false, error: 'bad_request' });
+      }
+      let data;
+      try {
+        data = JSON.parse(raw);
+      } catch {
+        data = null;
+      }
+      if (!data || typeof data !== 'object') {
+        return sendJson(res, 200, { ok: false, error: 'bad_json' });
+      }
+      const result = await store.submit(data.nick, {
+        grammar: data.grammar,
+        vocab: data.vocab,
+        reading: data.reading
+      });
+      return sendJson(res, 200, result);
+    }
+    res.writeHead(405);
+    return res.end('Method not allowed');
+  }
+
+  if (req.method !== 'GET') {
+    res.writeHead(405);
+    return res.end('Method not allowed');
+  }
+  return serveStatic(publicDir, url.pathname, res);
+}
+
 export function createServer({ publicDir, dataFile }) {
   const store = createStore(dataFile);
 
-  return http.createServer(async (req, res) => {
-    const url = new URL(req.url, 'http://localhost');
-
-    if (url.pathname === '/api/scores') {
-      if (req.method === 'GET' && url.searchParams.get('action') === 'top') {
-        return sendJson(res, 200, await store.top());
+  return http.createServer((req, res) => {
+    handleRequest(req, res, store, publicDir).catch(() => {
+      if (!res.headersSent) {
+        sendJson(res, 500, { ok: false, error: 'server_error' });
+      } else {
+        res.end();
       }
-      if (req.method === 'POST') {
-        let raw;
-        try {
-          raw = await readBody(req);
-        } catch (err) {
-          return sendJson(res, err.code === 'PAYLOAD_TOO_LARGE' ? 413 : 400, { ok: false, error: 'bad_request' });
-        }
-        let data;
-        try {
-          data = JSON.parse(raw);
-        } catch {
-          return sendJson(res, 200, { ok: false, error: 'bad_json' });
-        }
-        const result = await store.submit(data.nick, {
-          grammar: data.grammar,
-          vocab: data.vocab,
-          reading: data.reading
-        });
-        return sendJson(res, 200, result);
-      }
-      res.writeHead(405);
-      return res.end('Method not allowed');
-    }
-
-    if (req.method !== 'GET') {
-      res.writeHead(405);
-      return res.end('Method not allowed');
-    }
-    return serveStatic(publicDir, url.pathname, res);
+    });
   });
 }
 

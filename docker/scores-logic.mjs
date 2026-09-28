@@ -3,7 +3,8 @@ export const MAX = { grammar: 205, vocab: 640, reading: 53 };
 export const PARTS = ['grammar', 'vocab', 'reading'];
 
 export function cleanNick(n) {
-  return String(n || '')
+  const s = (typeof n === 'string' || typeof n === 'number') ? String(n) : '';
+  return s
     .replace(/\s+/g, ' ')
     .trim()
     .replace(/^[=+\-@\s]+/, '')
@@ -13,7 +14,8 @@ export function cleanNick(n) {
 export function mergeScore(existing, incoming, nick) {
   const next = { nick, updated: new Date().toISOString() };
   for (const p of PARTS) {
-    const raw = Number(incoming[p]);
+    const v = incoming[p];
+    const raw = (typeof v === 'number' || typeof v === 'string') ? Number(v) : NaN;
     const safe = Number.isFinite(raw) ? raw : 0;
     const inc = Math.max(0, Math.min(MAX[p], Math.floor(safe)));
     const cur = existing ? (Number(existing[p]) || 0) : 0;
