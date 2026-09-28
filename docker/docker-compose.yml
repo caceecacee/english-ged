@@ -1,0 +1,15 @@
+services:
+  eng-ged:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: eng-ged:latest
+    container_name: eng-ged
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3010:8080"
+    volumes:
+      - eng_ged_data:/data
+
+volumes:
+  eng_ged_data:
