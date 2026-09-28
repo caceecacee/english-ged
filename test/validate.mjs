@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { MAX as DOCKER_MAX } from '../docker/scores-logic.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const ctx = { console };
@@ -66,6 +67,7 @@ console.log(`  บทเรียน ${lessonCount} บท · mini-test ${miniCo
 ok(lessonCount >= 29, 'บทเรียนต้องไม่น้อยกว่า 29');
 ok(miniCount >= 145, 'mini-test ต้องไม่น้อยกว่า 145');
 ok(postCount === 50, 'Post-test ต้องเป็น 50');
+ok(DOCKER_MAX.grammar === miniCount + postCount, 'docker/scores-logic.mjs MAX.grammar (' + DOCKER_MAX.grammar + ') ต้องเท่ากับ mini-test+Post-test จริง (' + (miniCount + postCount) + ')');
 
 /* ---------- Vocabulary ---------- */
 section('Vocabulary');
@@ -98,6 +100,8 @@ for (const lv of LEVELS) {
 }
 ok(totalWords === 400, 'รวมคำต้องเป็น 400 (พบ ' + totalWords + ')');
 ok(totalSentences === 400, 'รวมประโยคคลังต้องเป็น 400 (พบ ' + totalSentences + ')');
+const totalVocabSets = LEVELS.length * 4;
+ok(DOCKER_MAX.vocab === totalVocabSets * 40, 'docker/scores-logic.mjs MAX.vocab (' + DOCKER_MAX.vocab + ') ต้องเท่ากับ ' + totalVocabSets + ' ชุด × 40 คะแนน (' + (totalVocabSets * 40) + ')');
 console.log(`  รวม ${totalWords} คำ · คลังประโยค ${totalSentences} ข้อ (16 ชุด × 25)`);
 
 /* ---------- Game logic simulation ---------- */
@@ -170,6 +174,7 @@ for (const p of EP.reading) {
 }
 console.log('  ' + Object.entries(bySubj).map(([k, v]) => k + ' ' + v).join(' · ') + ` · คำถามรวม ${rq} ข้อ`);
 ok(bySubj['RLA'] === 4 && bySubj['Science'] === 4 && bySubj['Social Studies'] === 4, 'ต้องมีวิชาละ 4 บท');
+ok(DOCKER_MAX.reading === rq, 'docker/scores-logic.mjs MAX.reading (' + DOCKER_MAX.reading + ') ต้องเท่ากับจำนวนคำถามอ่านจริง (' + rq + ')');
 
 console.log(`\n${fails === 0 ? '✓ ผ่านทั้งหมด' : '✗ ไม่ผ่าน ' + fails + ' รายการ'} (${checks} การตรวจ)`);
 process.exit(fails ? 1 : 0);

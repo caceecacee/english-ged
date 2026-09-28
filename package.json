@@ -7,8 +7,9 @@
   "scripts": {
     "build": "node build.mjs",
     "validate": "node test/validate.mjs",
+    "test:docker": "node --test docker/scores-logic.test.mjs docker/store.test.mjs docker/server.test.mjs docker/config.test.mjs",
     "test:e2e": "npm run build && python3 test/e2e.py && python3 test/e2e_players.py && python3 test/e2e_sheet.py",
-    "test": "npm run validate && npm run test:e2e",
+    "test": "npm run validate && npm run test:docker && npm run test:e2e",
     "dev": "npm run build && python3 -m http.server 8080 --directory docs"
   },
   "engines": { "node": ">=18" }
