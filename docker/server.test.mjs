@@ -11,7 +11,7 @@ async function withServer(fn) {
   await writeFile(join(dir, 'index.html'), '<h1>hi</h1>');
   await mkdir(join(dir, 'sub'));
   await writeFile(join(dir, 'sub', 'file.txt'), 'hello');
-  const dataFile = join(dir, '..', `${Date.now()}-scores.json`);
+  const dataFile = join(dir, '..', `${Date.now()}-scores.db`);
   const server = createServer({ publicDir: dir, dataFile });
   await new Promise((resolve) => server.listen(0, resolve));
   const port = server.address().port;
@@ -117,4 +117,72 @@ test('POST /api/scores with a non-numeric score field is clamped to 0, not crash
     assert.equal(json.ok, true);
     assert.equal(json.saved.grammar, 0);
   });
+});
+
+test('POST /api/scores accepts and clamps the three "done" count fields', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/api/scores`, {
+      method: 'POST',
+      body: JSON.stringify({ nick: 'Ann', grammar: 5, vocab: 0, reading: 0, grammarDone: 999, vocabDone: -3, readingDone: 'x' })
+    });
+    const json = await res.json();
+    assert.equal(json.ok, true);
+
+    // done-counts aren't in the POST response (saved only echoes scores, same as before),
+    // so confirm the clamp landed by reading it back through the admin endpoint.
+    process.env.ADMIN_KEY = 'test-key';
+    try {
+      const admin = await fetch(`${base}/api/admin/players`, { headers: { 'X-Admin-Key': 'test-key' } });
+      const adminJson = await admin.json();
+      assert.equal(adminJson.rows[0].grammarDone, 31); // clamped to DONE_MAX.grammar
+      assert.equal(adminJson.rows[0].vocabDone, 0);     // negative clamped to 0
+      assert.equal(adminJson.rows[0].readingDone, 0);   // non-numeric clamped to 0
+    } finally {
+      delete process.env.ADMIN_KEY;
+    }
+  });
+});
+
+test('GET /api/admin/players without ADMIN_KEY configured on the server returns 503, never falls open', async () => {
+  await withServer(async (base) => {
+    const res = await fetch(`${base}/api/admin/players`);
+    assert.equal(res.status, 503);
+    const json = await res.json();
+    assert.equal(json.ok, false);
+  });
+});
+
+test('GET /api/admin/players with a missing or wrong key returns 401', async () => {
+  process.env.ADMIN_KEY = 'secret123';
+  try {
+    await withServer(async (base) => {
+      const noKey = await fetch(`${base}/api/admin/players`);
+      assert.equal(noKey.status, 401);
+      const wrongKey = await fetch(`${base}/api/admin/players`, { headers: { 'X-Admin-Key': 'nope' } });
+      assert.equal(wrongKey.status, 401);
+    });
+  } finally {
+    delete process.env.ADMIN_KEY;
+  }
+});
+
+test('GET /api/admin/players with the correct key returns player rows with done-counts and doneMax', async () => {
+  process.env.ADMIN_KEY = 'secret123';
+  try {
+    await withServer(async (base) => {
+      await fetch(`${base}/api/scores`, {
+        method: 'POST',
+        body: JSON.stringify({ nick: 'Ann', grammar: 5, vocab: 0, reading: 0, grammarDone: 2, vocabDone: 1, readingDone: 0 })
+      });
+      const res = await fetch(`${base}/api/admin/players`, { headers: { 'X-Admin-Key': 'secret123' } });
+      assert.equal(res.status, 200);
+      const json = await res.json();
+      assert.equal(json.ok, true);
+      assert.deepEqual(json.doneMax, { grammar: 31, vocab: 16, reading: 12 });
+      assert.equal(json.rows[0].nick, 'Ann');
+      assert.equal(json.rows[0].grammarDone, 2);
+    });
+  } finally {
+    delete process.env.ADMIN_KEY;
+  }
 });

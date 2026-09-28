@@ -69,6 +69,13 @@ async function serveStatic(publicDir, pathname, res) {
 async function handleRequest(req, res, store, publicDir) {
   const url = new URL(req.url, 'http://localhost');
 
+  if (url.pathname === '/api/admin/players' && req.method === 'GET') {
+    const adminKey = process.env.ADMIN_KEY;
+    if (!adminKey) return sendJson(res, 503, { ok: false, error: 'admin_not_configured' });
+    if (req.headers['x-admin-key'] !== adminKey) return sendJson(res, 401, { ok: false, error: 'unauthorized' });
+    return sendJson(res, 200, await store.players());
+  }
+
   if (url.pathname === '/api/scores') {
     if (req.method === 'GET' && url.searchParams.get('action') === 'top') {
       return sendJson(res, 200, await store.top());
@@ -92,7 +99,10 @@ async function handleRequest(req, res, store, publicDir) {
       const result = await store.submit(data.nick, {
         grammar: data.grammar,
         vocab: data.vocab,
-        reading: data.reading
+        reading: data.reading,
+        grammarDone: data.grammarDone,
+        vocabDone: data.vocabDone,
+        readingDone: data.readingDone
       });
       return sendJson(res, 200, result);
     }
