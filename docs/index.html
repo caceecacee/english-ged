@@ -383,6 +383,7 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   </header>
   <div class="route" id="route" aria-label="เส้นทางระดับ A1 A2 B1 B2 ถึง GED" role="img"></div>
   <div class="row" id="continue" style="margin-bottom:16px;gap:8px" aria-label="ต่อจากที่ค้างไว้"></div>
+  <div id="lbtotal" style="margin-bottom:16px"></div>
   <nav class="nav" id="nav" role="tablist" aria-label="ส่วนหลัก"></nav>
   <main id="view" role="tabpanel" tabindex="-1"></main>
   <p class="foot">บทอ่าน คำถาม และคลังประโยคในเว็บนี้แต่งขึ้นเพื่อการฝึก ไม่ใช่ข้อสอบ GED จริง ระดับ A1–B2 จัดเพื่อการฝึกเรียนและไม่ใช่การรับรอง CEFR ทางการ ความคืบหน้าบันทึกไว้ในเบราว์เซอร์ของอุปกรณ์นี้เท่านั้น ไม่ต้องสมัครสมาชิก GED® เป็นเครื่องหมายการค้าของเจ้าของสิทธิ์ เว็บนี้ไม่ได้มีส่วนเกี่ยวข้องกับ GED Testing Service</p>
@@ -3305,6 +3306,8 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
       var el = document.getElementById('lbw-' + part);
       if (el) el.innerHTML = leaderboardInner(part);
     });
+    var totalEl = document.getElementById('lbw-total');
+    if (totalEl) totalEl.innerHTML = totalLeaderboardInner();
   }
   function cleanNick(n) { return String(n || '').replace(/\s+/g, ' ').trim().replace(/^[=+\-@\s]+/, '').slice(0, 20); }
 
@@ -4108,6 +4111,50 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     return '<section class="panel stack" aria-labelledby="lb-' + part + '">' + head('ตารางอันดับ ' + PARTS[part].label, note) + body +
       (Remote.enabled() ? '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">ลองเชื่อมตารางรวมอีกครั้ง</button>' : '') + '</section>';
   }
+  function leaderboardTotal() {
+    Remote.load(false);
+    return '<div id="lbw-total">' + totalLeaderboardInner() + '</div>';
+  }
+  function totalLeaderboardInner() {
+    var totalMax = partMax('grammar') + partMax('vocab') + partMax('reading');
+    var myNick = Store.root.current === GUEST ? null : Store.data.nick.toLowerCase();
+    var head = function (note) {
+      return '<div><p class="eyebrow">สถิติคะแนนรวม</p><h3 id="lb-total">ตารางอันดับรวมทุก Part</h3><p class="small muted">Grammar + คำศัพท์ + ฝึกอ่าน (เต็ม ' + totalMax + ') · ' + note + '</p></div>';
+    };
+    if (Remote.enabled() && Remote.status !== 'error' && (Remote.rows || Remote.status === 'loading')) {
+      if (!Remote.rows) return '<section class="panel stack" aria-labelledby="lb-total">' + head('กำลังโหลด') + '<p class="muted small" role="status">กำลังโหลดคะแนนของทุกคน…</p></section>';
+      var list = Remote.rows.map(function (r) {
+        var me = !!myNick && String(r.nick || '').toLowerCase() === myNick;
+        return { nick: String(r.nick || ''), g: Math.max(0, Math.floor(+r.grammar || 0)), v: Math.max(0, Math.floor(+r.vocab || 0)), rd: Math.max(0, Math.floor(+r.reading || 0)), me: me };
+      });
+      if (myNick) { // คะแนนในเครื่องที่ยังส่งไม่ถึงชีต ให้ใช้ค่าที่สูงกว่าต่อ part ก่อนรวม
+        var mine = list.filter(function (r) { return r.me; })[0];
+        var lg = partScore(Store.data, 'grammar'), lv = partScore(Store.data, 'vocab'), lr = partScore(Store.data, 'reading');
+        if (mine) { mine.g = Math.max(mine.g, lg); mine.v = Math.max(mine.v, lv); mine.rd = Math.max(mine.rd, lr); }
+        else if (lg || lv || lr) list.push({ nick: Store.data.nick, g: lg, v: lv, rd: lr, me: true });
+      }
+      var rows = list.map(function (r) { return { nick: r.nick, score: r.g + r.v + r.rd, me: r.me }; })
+        .filter(function (r) { return r.nick && (r.score > 0 || r.me); })
+        .sort(function (a, b) { return b.score - a.score || a.nick.localeCompare(b.nick); });
+      var myRank = -1; rows.forEach(function (r, i) { if (r.me) myRank = i; });
+      var top = rows.slice(0, 20);
+      var t = new Date(Remote.fetchedAt);
+      var when = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
+      return '<section class="panel stack" aria-labelledby="lb-total">' + head('รวมทุกคนที่เล่นผ่านลิงก์นี้ · อัปเดต ' + when) +
+        (top.length ? boardRows(top, totalMax, false) : '<p class="muted small">ยังไม่มีใครมีคะแนนรวม เริ่มเป็นคนแรกได้เลย</p>') +
+        (myRank >= 20 ? '<p class="small">อันดับของคุณ: <b>' + (myRank + 1) + '</b> จาก ' + rows.length + ' คน</p>' : '') +
+        (!myNick ? '<p class="small muted">ใส่ชื่อเล่นในแต่ละ Part คะแนนรวมของคุณจะขึ้นตารางนี้</p>' : '') +
+        '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">รีเฟรชตาราง</button></section>';
+    }
+    var localRows = Store.named().map(function (x) {
+      return { key: x.key, nick: x.p.nick, score: partScore(x.p, 'grammar') + partScore(x.p, 'vocab') + partScore(x.p, 'reading'), updated: x.p.updated || 0, me: x.key === Store.root.current };
+    }).sort(function (a, b) { return b.score - a.score || a.updated - b.updated || a.nick.localeCompare(b.nick); });
+    var note = Remote.enabled() ? 'เชื่อมตารางรวมไม่ได้ตอนนี้ จึงแสดงเฉพาะในเครื่องนี้' : 'เก็บในเบราว์เซอร์ของเครื่องนี้ ไม่รวมกับเครื่องอื่น';
+    var body = localRows.length ? boardRows(localRows.slice(0, 10), totalMax, true) + (localRows.length > 10 ? '<p class="small muted">แสดง 10 อันดับแรกจาก ' + localRows.length + ' ชื่อ</p>' : '')
+      : '<p class="muted small">ยังไม่มีชื่อในตาราง ใส่ชื่อเล่นแล้วเริ่มทำแบบฝึก คะแนนรวมจะขึ้นที่นี่</p>';
+    return '<section class="panel stack" aria-labelledby="lb-total">' + head(note) + body +
+      (Remote.enabled() ? '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">ลองเชื่อมตารางรวมอีกครั้ง</button>' : '') + '</section>';
+  }
 
   /* ---------- ล้างความคืบหน้า (มีขั้นยืนยันในหน้า) ---------- */
   var confirming = null;
@@ -4140,6 +4187,11 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     else if (S.tab === 'vocab') renderVocab(view);
     else renderReading(view);
     renderContinue();
+    renderTotalBoard();
+  }
+  function renderTotalBoard() {
+    var el = $('#lbtotal');
+    if (el) el.innerHTML = leaderboardTotal();
   }
   function focusHeading() {
     var h = $('#view h2');

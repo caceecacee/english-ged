@@ -7,8 +7,8 @@ fails = []
 def check(c, m):
     if not c: fails.append(m); print('  ✗', m)
 
-def board_rows(page):
-    return page.eval_on_selector_all('.board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent, e.classList.contains('me')])")
+def board_rows(page, part='grammar'):
+    return page.eval_on_selector_all(f'#lbw-{part} .board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent, e.classList.contains('me')])")
 
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -48,7 +48,7 @@ with sync_playwright() as p:
     for i in range(4): page.click(f'#rq-{i} .opt >> nth=0')
     check('บันทึกคะแนนให้' in page.locator('#rq-foot').inner_text(), 'ผลบทอ่านต้องบอกว่าบันทึกให้ใคร')
     page.click('[data-rback] >> nth=0')
-    rows = board_rows(page)
+    rows = board_rows(page, 'reading')
     ton = [r for r in rows if r[0] == 'Ton'][0]
     check(len(rows) == 2 and ton[2] and (ton[1] == 0 or rows[0][0] == 'Ton'), f'ตาราง Reading ผิด: {rows}')
 
@@ -68,9 +68,9 @@ with sync_playwright() as p:
     check(board_rows(page)[0][1] == mali_g, 'โหลดใหม่แล้วคะแนนเปลี่ยน')
 
     # ลบผู้เล่น (มีขั้นยืนยัน)
-    page.click('.board li:has-text("Ton") [data-pdel]')
-    check(page.locator('[data-pdelyes]').count() == 1, 'ลบต้องมีขั้นยืนยัน')
-    page.click('[data-pdelyes]')
+    page.click('#lbw-grammar .board li:has-text("Ton") [data-pdel]')
+    check(page.locator('#lbw-grammar [data-pdelyes]').count() == 1, 'ลบต้องมีขั้นยืนยัน')
+    page.click('#lbw-grammar [data-pdelyes]')
     check([r[0] for r in board_rows(page)] == ['มะลิ'], 'ลบ Ton ไม่สำเร็จ')
 
     # ชื่อยาว/อักขระพิเศษไม่ทำให้หน้าเสีย

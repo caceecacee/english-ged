@@ -45,8 +45,8 @@ CFG = "window.EP_CONFIG = { scoreEndpoint: 'http://127.0.0.1:8765/exec' };"
 fails = []
 def check(c, m):
     if not c: fails.append(m); print('  ✗', m)
-def board(page):
-    return page.eval_on_selector_all('.board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent])")
+def board(page, part):
+    return page.eval_on_selector_all(f'#lbw-{part} .board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent])")
 
 with sync_playwright() as p:
     b = p.chromium.launch()
@@ -69,7 +69,7 @@ with sync_playwright() as p:
     B = device('B')
     check('ตารางอันดับรวม' in B.locator('#lb-grammar').inner_text(), 'เครื่อง B ต้องเห็นหัวข้อตารางอันดับรวม')
     B.wait_for_selector('#lbw-grammar .board li')
-    check(board(B) == [['มะลิ', g_mali]], f'เครื่อง B ต้องเห็นคะแนนมะลิจากเครื่อง A: {board(B)}')
+    check(board(B, 'grammar') == [['มะลิ', g_mali]], f'เครื่อง B ต้องเห็นคะแนนมะลิจากเครื่อง A: {board(B, "grammar")}')
     B.fill('#nick-input', 'Ton'); B.press('#nick-input', 'Enter')
     B.click('#tab-reading'); B.click('.pass-list [data-rid="r1"]')
     for i in range(4): B.click(f'#rq-{i} .opt >> nth=0')
@@ -79,9 +79,16 @@ with sync_playwright() as p:
 
     A.click('[data-gback]'); A.click('#tab-reading')
     A.click('[data-lbrefresh]'); A.wait_for_timeout(500)
-    names = [r[0] for r in board(A)]
-    check('Ton' in names, f'เครื่อง A ต้องเห็น Ton ในตารางอ่าน: {board(A)}')
+    names = [r[0] for r in board(A, 'reading')]
+    check('Ton' in names, f'เครื่อง A ต้องเห็น Ton ในตารางอ่าน: {board(A, "reading")}')
     check(A.locator('#lbw-reading .board li.me').count() == 0 or 'มะลิ' in A.locator('#lbw-reading .board li.me').inner_text(), 'ไฮไลต์ "คุณ" ผิดคน')
+
+    # ตารางคะแนนรวมทุก Part (บนสุด เหนือแท็บ) ต้องรวมคะแนนข้ามเครื่องของทั้งสองคน
+    check('ตารางอันดับรวมทุก Part' in A.locator('#lb-total').inner_text(), 'ต้องมีหัวข้อตารางรวมทุก Part')
+    total = {r[0]: r[1] for r in board(A, 'total')}
+    r_ton = SHEET.get('ton', {}).get('reading', 0)
+    check(total.get('มะลิ') == g_mali and total.get('Ton') == r_ton,
+          f'ตารางรวมทุก Part ต้องรวมคะแนนข้ามเครื่องถูกต้อง: {total} (SHEET ton.reading={r_ton})')
 
     # ส่งคะแนนต่ำกว่าเดิมต้องไม่ลดคะแนนในชีต
     before = SHEET['มะลิ']['grammar']
@@ -100,6 +107,7 @@ with sync_playwright() as p:
     pc.goto('http://127.0.0.1:8766/index.html')
     pc.wait_for_timeout(1500)
     check('เชื่อมตารางรวมไม่ได้' in pc.locator('#lbw-grammar').inner_text(), 'เมื่อเชื่อมชีตไม่ได้ต้องแจ้งและแสดงตารางในเครื่อง')
+    check('เชื่อมตารางรวมไม่ได้' in pc.locator('#lbw-total').inner_text(), 'ตารางรวมทุก Part ก็ต้องแจ้งเชื่อมไม่ได้เช่นกัน')
     pc.click('[data-lesson="0"]'); pc.click('#gq-0 .opt >> nth=0')
     check(pc.locator('#gq-0 .fb').count() == 1, 'เชื่อมชีตไม่ได้แล้วเรียนต่อไม่ได้')
     A.click('#tab-grammar')
