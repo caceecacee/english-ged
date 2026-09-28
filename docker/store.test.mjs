@@ -1,7 +1,7 @@
 // docker/store.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, access, readFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createStore } from './store.mjs';
@@ -56,5 +56,30 @@ test('top() returns an empty list and the MAX table when the file does not exist
     const top = await store.top();
     assert.deepEqual(top.rows, []);
     assert.deepEqual(top.max, { grammar: 205, vocab: 640, reading: 53 });
+  });
+});
+
+test('a successful submit leaves no leftover .tmp file behind (atomic write)', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'eng-ged-store-'));
+  const file = join(dir, 'scores.json');
+  try {
+    const store = createStore(file);
+    await store.submit('Ann', { grammar: 10, vocab: 0, reading: 0 });
+    await assert.rejects(() => access(`${file}.tmp`), /ENOENT/);
+    const onDisk = JSON.parse(await readFile(file, 'utf8'));
+    assert.equal(onDisk.ann.grammar, 10);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('top() reflects a fully-written state, never a mid-write one, immediately after an unawaited submit', async () => {
+  await withTempStore(async (store) => {
+    const submitPromise = store.submit('Ann', { grammar: 50, vocab: 0, reading: 0 });
+    const top = await store.top();
+    // Whatever top() sees, it must be a fully valid, parseable snapshot —
+    // either pre-submit ([]) or post-submit ([Ann]) — never a partial one.
+    assert.ok(top.rows.length === 0 || (top.rows.length === 1 && top.rows[0].nick === 'Ann'));
+    await submitPromise;
   });
 });

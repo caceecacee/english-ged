@@ -1,5 +1,5 @@
 // docker/store.mjs
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, rename } from 'node:fs/promises';
 import { dirname } from 'node:path';
 import { cleanNick, mergeScore, topRows, MAX } from './scores-logic.mjs';
 
@@ -17,7 +17,9 @@ export function createStore(filePath) {
 
   async function writeAll(data) {
     await mkdir(dirname(filePath), { recursive: true });
-    await writeFile(filePath, JSON.stringify(data));
+    const tmpPath = `${filePath}.tmp`;
+    await writeFile(tmpPath, JSON.stringify(data));
+    await rename(tmpPath, filePath); // atomic replace — no reader ever sees a truncated file
   }
 
   function submit(rawNick, incoming) {
@@ -36,6 +38,7 @@ export function createStore(filePath) {
   }
 
   async function top() {
+    await queue; // wait for any write in flight so we never read mid-write
     return { ok: true, max: MAX, rows: topRows(await readAll()) };
   }
 
