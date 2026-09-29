@@ -147,6 +147,22 @@
     Object.keys(p.reading || {}).forEach(function (k) { sum += p.reading[k].best || 0; });
     return sum;
   }
+  function partDone(p, part) {
+    if (part === 'grammar') {
+      var n = 0;
+      EP.grammar.forEach(function (c) { c.lessons.forEach(function (l) { var r = (p.grammar || {})[l.id]; if (r && r.answered >= 5) n++; }); });
+      return n;
+    }
+    if (part === 'vocab') {
+      var sets = {};
+      Object.keys(p.vocab || {}).forEach(function (k) {
+        var r = p.vocab[k];
+        if (r && r.post != null) sets[k.split('-').slice(0, 2).join('-')] = true;
+      });
+      return Object.keys(sets).length;
+    }
+    return Object.keys(p.reading || {}).length;
+  }
 
   /* ---------- ตารางคะแนนรวมผ่าน Google Sheet (ใช้เมื่อ config.js ระบุ scoreEndpoint) ----------
      ส่ง: POST {action:'submit', nick, grammar, vocab, reading} แบบ text/plain (ไม่ต้องขอ CORS preflight)
@@ -182,10 +198,14 @@
     send: function () {
       var p = Store.data;
       if (!p || !p.nick || Store.root.current === GUEST) return;
-      var body = { action: 'submit', nick: p.nick, grammar: partScore(p, 'grammar'), vocab: partScore(p, 'vocab'), reading: partScore(p, 'reading') };
-      var sig = p.nick + '|' + body.grammar + '/' + body.vocab + '/' + body.reading;
+      var body = {
+        action: 'submit', nick: p.nick,
+        grammar: partScore(p, 'grammar'), vocab: partScore(p, 'vocab'), reading: partScore(p, 'reading'),
+        grammarDone: partDone(p, 'grammar'), vocabDone: partDone(p, 'vocab'), readingDone: partDone(p, 'reading')
+      };
+      var sig = p.nick + '|' + body.grammar + '/' + body.vocab + '/' + body.reading + '|' + body.grammarDone + '/' + body.vocabDone + '/' + body.readingDone;
       if (p.sent === sig) return;
-      if (!body.grammar && !body.vocab && !body.reading) return; // ยังไม่มีคะแนน ไม่ต้องสร้างแถว
+      if (!body.grammar && !body.vocab && !body.reading && !body.grammarDone && !body.vocabDone && !body.readingDone) return; // ยังไม่มีคะแนน ไม่ต้องสร้างแถว
       var self = this;
       fetch(this.url, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(body) })
         .then(function (r) { return r.json(); })

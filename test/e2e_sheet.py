@@ -8,6 +8,7 @@ from playwright.sync_api import sync_playwright
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = ROOT / 'docs'
 MAX = {'grammar': 205, 'vocab': 640, 'reading': 53}
+DONE_MAX = {'grammar': 31, 'vocab': 16, 'reading': 12}
 SHEET = {}          # key -> row  (จำลองแท็บ Scores)
 LOG = {'post': 0, 'options': 0, 'bad_ct': 0}
 
@@ -31,8 +32,11 @@ class Api(BaseHTTPRequestHandler):
         d = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
         nick = str(d.get('nick', '')).strip()[:20]
         key = nick.lower()
-        old = SHEET.get(key, {'nick': nick, 'grammar': 0, 'vocab': 0, 'reading': 0})
+        old = SHEET.get(key, {'nick': nick, 'grammar': 0, 'vocab': 0, 'reading': 0, 'grammarDone': 0, 'vocabDone': 0, 'readingDone': 0})
         for p in MAX: old[p] = max(old[p], min(MAX[p], int(d.get(p, 0))))
+        for p in DONE_MAX:
+            dk = p + 'Done'
+            old[dk] = max(old.get(dk, 0), min(DONE_MAX[p], int(d.get(dk, 0))))
         old['nick'] = nick; SHEET[key] = old
         self._json({'ok': True, 'saved': old})
 
@@ -65,6 +69,7 @@ with sync_playwright() as p:
     check('มะลิ' in [k['nick'] for k in SHEET.values()], f'เครื่อง A ส่งคะแนนเข้าชีตไม่สำเร็จ {SHEET}')
     g_mali = SHEET.get('มะลิ', {}).get('grammar', 0)
     check(g_mali > 0, 'คะแนน Grammar ของมะลิในชีตต้องมากกว่า 0')
+    check(SHEET.get('มะลิ', {}).get('grammarDone', 0) >= 1, f'เครื่อง A ต้องส่ง grammarDone (จำนวนบทที่ทำแล้ว) เข้า sheet ด้วย: {SHEET.get("มะลิ")}')
 
     B = device('B')
     check('ตารางอันดับรวม' in B.locator('#lb-grammar').inner_text(), 'เครื่อง B ต้องเห็นหัวข้อตารางอันดับรวม')
@@ -76,6 +81,7 @@ with sync_playwright() as p:
     check('ส่งเข้าตารางรวม' in B.locator('#rq-foot').inner_text(), 'ผลบทอ่านต้องบอกว่าส่งเข้าตารางรวม')
     B.wait_for_timeout(1800)
     check(SHEET.get('ton', {}).get('reading', 0) > 0, 'เครื่อง B ส่งคะแนนอ่านไม่สำเร็จ')
+    check(SHEET.get('ton', {}).get('readingDone', 0) >= 1, f'เครื่อง B ต้องส่ง readingDone เข้า sheet ด้วย: {SHEET.get("ton")}')
 
     A.click('[data-gback]'); A.click('#tab-reading')
     A.click('[data-lbrefresh]'); A.wait_for_timeout(500)
