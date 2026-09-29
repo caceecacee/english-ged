@@ -7,8 +7,8 @@ from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = ROOT / 'docs'
-MAX = {'grammar': 245, 'vocab': 640, 'reading': 53}
-DONE_MAX = {'grammar': 39, 'vocab': 16, 'reading': 12}
+MAX = {'grammar': 300, 'vocab': 640, 'reading': 53}
+DONE_MAX = {'grammar': 50, 'vocab': 16, 'reading': 12}
 SHEET = {}          # key -> row  (จำลองแท็บ Scores)
 LOG = {'post': 0, 'options': 0, 'bad_ct': 0}
 
@@ -49,6 +49,27 @@ CFG = "window.EP_CONFIG = { scoreEndpoint: 'http://127.0.0.1:8765/exec' };"
 fails = []
 def check(c, m):
     if not c: fails.append(m); print('  ✗', m)
+def click_correct_grammar(page, cat_idx, lesson_idx, qi):
+    # ตัวเลือกถูกสลับตำแหน่งทุกครั้งที่ render ดังนั้นเดา nth คงที่ (เช่น nth=0) มีโอกาสผิดครบทุกข้อสูงมาก
+    # (ผิดทั้ง 5 ข้อ ~24% ต่อรอบ) ทำให้คะแนนเป็น 0 โดยบังเอิญและ assertion "ต้องมากกว่า 0" ล้มเหลว
+    # จึงอ่านคำตอบที่ถูกจริงจากข้อมูลต้นทาง (window.EP) มาหาแล้วคลิกปุ่มที่ข้อความตรงกัน
+    text = page.evaluate(
+        "([ci, li, qi]) => { const q = window.EP.grammar[ci].lessons[li].quiz[qi]; return q.o[q.a]; }",
+        [cat_idx, lesson_idx, qi]
+    )
+    page.evaluate(
+        "([qi, text]) => { const opt = Array.from(document.querySelectorAll('#gq-' + qi + ' .opt')).find(o => o.querySelectorAll('span')[1].textContent === text); if (opt) opt.click(); else throw new Error('correct option not found: ' + text); }",
+        [qi, text]
+    )
+def click_correct_reading(page, passage_id, qi):
+    text = page.evaluate(
+        "([pid, qi]) => { const p = window.EP.reading.find(x => x.id === pid); const q = p.q[qi]; return q.o[q.a]; }",
+        [passage_id, qi]
+    )
+    page.evaluate(
+        "([qi, text]) => { const opt = Array.from(document.querySelectorAll('#rq-' + qi + ' .opt')).find(o => o.querySelectorAll('span')[1].textContent === text); if (opt) opt.click(); else throw new Error('correct option not found: ' + text); }",
+        [qi, text]
+    )
 def board(page, part):
     return page.eval_on_selector_all(f'#lbw-{part} .board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent])")
 
@@ -64,7 +85,7 @@ with sync_playwright() as p:
     A = device('A')
     A.fill('#nick-input', 'มะลิ'); A.press('#nick-input', 'Enter')
     A.click('[data-lesson="0"]')
-    for i in range(5): A.click(f'#gq-{i} .opt >> nth=0')
+    for i in range(5): click_correct_grammar(A, 0, 0, i)
     A.wait_for_timeout(1800)
     check('มะลิ' in [k['nick'] for k in SHEET.values()], f'เครื่อง A ส่งคะแนนเข้าชีตไม่สำเร็จ {SHEET}')
     g_mali = SHEET.get('มะลิ', {}).get('grammar', 0)
@@ -77,7 +98,8 @@ with sync_playwright() as p:
     check(board(B, 'grammar') == [['มะลิ', g_mali]], f'เครื่อง B ต้องเห็นคะแนนมะลิจากเครื่อง A: {board(B, "grammar")}')
     B.fill('#nick-input', 'Ton'); B.press('#nick-input', 'Enter')
     B.click('#tab-reading'); B.click('.pass-list [data-rid="r1"]')
-    for i in range(4): B.click(f'#rq-{i} .opt >> nth=0')
+    n_questions = B.evaluate("window.EP.reading.find(p => p.id === 'r1').q.length")
+    for i in range(n_questions): click_correct_reading(B, 'r1', i)
     check('ส่งเข้าตารางรวม' in B.locator('#rq-foot').inner_text(), 'ผลบทอ่านต้องบอกว่าส่งเข้าตารางรวม')
     B.wait_for_timeout(1800)
     check(SHEET.get('ton', {}).get('reading', 0) > 0, 'เครื่อง B ส่งคะแนนอ่านไม่สำเร็จ')

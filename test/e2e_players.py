@@ -10,6 +10,27 @@ def check(c, m):
 def board_rows(page, part='grammar'):
     return page.eval_on_selector_all(f'#lbw-{part} .board li', "els => els.map(e => [e.querySelector('.nick').textContent, +e.querySelector('.pts b').textContent, e.classList.contains('me')])")
 
+def click_correct_grammar(page, cat_idx, lesson_idx, qi):
+    # ตัวเลือกถูกสลับทุกครั้งที่ render เดา nth คงที่มีโอกาสผิดครบทุกข้อสูงมาก (ทำให้คะแนนเป็น 0 โดยบังเอิญ)
+    # จึงอ่านคำตอบที่ถูกจริงจาก window.EP มาคลิกปุ่มที่ข้อความตรงกันแทน
+    text = page.evaluate(
+        "([ci, li, qi]) => { const q = window.EP.grammar[ci].lessons[li].quiz[qi]; return q.o[q.a]; }",
+        [cat_idx, lesson_idx, qi]
+    )
+    page.evaluate(
+        "([qi, text]) => { const opt = Array.from(document.querySelectorAll('#gq-' + qi + ' .opt')).find(o => o.querySelectorAll('span')[1].textContent === text); if (opt) opt.click(); else throw new Error('correct option not found: ' + text); }",
+        [qi, text]
+    )
+def click_correct_reading(page, passage_id, qi):
+    text = page.evaluate(
+        "([pid, qi]) => { const p = window.EP.reading.find(x => x.id === pid); const q = p.q[qi]; return q.o[q.a]; }",
+        [passage_id, qi]
+    )
+    page.evaluate(
+        "([qi, text]) => { const opt = Array.from(document.querySelectorAll('#rq-' + qi + ' .opt')).find(o => o.querySelectorAll('span')[1].textContent === text); if (opt) opt.click(); else throw new Error('correct option not found: ' + text); }",
+        [qi, text]
+    )
+
 with sync_playwright() as p:
     b = p.chromium.launch()
     ctx = b.new_context(viewport={'width': 390, 'height': 844})
@@ -22,7 +43,7 @@ with sync_playwright() as p:
     check(page.locator('#nick-input').count() == 1, 'หน้าแรก Grammar ต้องมีช่องใส่ชื่อเล่น')
     check('ยังไม่มีชื่อในตาราง' in page.locator('.board, section:has(#lb-grammar)').first.inner_text(), 'ตารางว่างต้องมีข้อความแนะนำ')
     page.click('[data-lesson="0"]')
-    for i in range(5): page.click(f'#gq-{i} .opt >> nth=0')
+    for i in range(5): click_correct_grammar(page, 0, 0, i)
     page.click('[data-gback]')
     page.fill('#nick-input', '   ')
     page.click('[data-pform] button[type=submit]')
@@ -45,7 +66,8 @@ with sync_playwright() as p:
     # Ton ทำบทอ่าน 1 บท → ขึ้นอันดับ 1 ในตาราง Reading
     page.click('#tab-reading')
     page.click('.pass-list [data-rid="r1"]')
-    for i in range(4): page.click(f'#rq-{i} .opt >> nth=0')
+    n_questions = page.evaluate("window.EP.reading.find(p => p.id === 'r1').q.length")
+    for i in range(n_questions): click_correct_reading(page, 'r1', i)
     check('บันทึกคะแนนให้' in page.locator('#rq-foot').inner_text(), 'ผลบทอ่านต้องบอกว่าบันทึกให้ใคร')
     page.click('[data-rback] >> nth=0')
     rows = board_rows(page, 'reading')
