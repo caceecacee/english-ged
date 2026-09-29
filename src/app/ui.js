@@ -4,9 +4,10 @@
   'use strict';
   var EP = window.EP;
   var L = EP.logic;
-  var LEVELS = ['A1', 'A2', 'B1', 'B2'];
+  var LEVELS = ['A1', 'A2', 'B1', 'B2']; // ระดับคำศัพท์ (4 ระดับ)
+  var GLEVELS = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1']; // ระดับ Grammar (ข้ามหมวด ใช้จัดเส้นทางเรียน)
   var KEYS = ['A', 'B', 'C', 'D'];
-  var THAI_MARK = ['ก', 'ข', 'ค', 'ง', 'จ'];
+  var THAI_MARK = ['ก', 'ข', 'ค', 'ง', 'จ', 'ฉ'];
 
   /* ---------- เครื่องมือเล็ก ๆ ---------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -44,7 +45,16 @@
      root = { v:2, current:<key>, profiles:{ <key>: {nick, updated, grammar, gpost, vocab, reading} } }
      key '__guest' = ยังไม่ใส่ชื่อเล่น (ไม่ขึ้นตารางอันดับ) */
   var GUEST = '__guest';
-  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {} }; }
+  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {} }; }
+  // "จำกฎได้" = โจทย์ที่ถามกฎตรง ๆ (ไม่มีช่องว่างให้เติม) · "ใช้ในประโยคได้" = โจทย์เติมคำ/ใช้ในบริบทจริง (มี ___)
+  function quizType(q) { return /___/.test(q.q) ? 'usage' : 'rule'; }
+  function recordReview(key, title, wrongPqs) {
+    if (!Store.data.review) Store.data.review = {};
+    var ruleWrong = 0, usageWrong = 0;
+    wrongPqs.forEach(function (pq) { if (quizType(pq.src) === 'rule') ruleWrong++; else usageWrong++; });
+    Store.data.review[key] = { title: title, ruleWrong: ruleWrong, usageWrong: usageWrong, at: Date.now() };
+    Store.save();
+  }
   function nickKey(nick) { return 'n:' + nick.trim().toLowerCase(); }
   var Store = {
     key: 'english-path:v2',
@@ -421,16 +431,83 @@
   function lessonDone(id) { var r = Store.data.grammar[id]; return r && r.answered >= 5; }
   function catProgress(cat) { return cat.lessons.filter(function (l) { return lessonDone(l.id); }).length; }
 
+  function reviewCount() {
+    var review = Store.data.review || {};
+    return Object.keys(review).filter(function (k) { return (review[k].ruleWrong + review[k].usageWrong) > 0; }).length;
+  }
+  function catIndexById(id) { for (var i = 0; i < EP.grammar.length; i++) if (EP.grammar[i].id === id) return i; return 0; }
+  function lessonLocatorById(id) {
+    for (var ci = 0; ci < EP.grammar.length; ci++) {
+      var li = EP.grammar[ci].lessons.map(function (l) { return l.id; }).indexOf(id);
+      if (li >= 0) return ci + '-' + li;
+    }
+    return '0-0';
+  }
+  function renderGReview(view) {
+    var review = Store.data.review || {};
+    var entries = Object.keys(review).map(function (k) { return { key: k, r: review[k] }; })
+      .filter(function (e) { return (e.r.ruleWrong + e.r.usageWrong) > 0; })
+      .sort(function (a, b) { return b.r.at - a.r.at; });
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหน้าหมวด Grammar</button>' +
+      '<h2>ทบทวนของฉัน</h2>' +
+      '<p class="small muted">หัวข้อที่ยังตอบผิดจากครั้งล่าสุด แยกให้เห็นว่า <b>จำกฎได้</b> (ตอบคำถามเกี่ยวกับกฎตรง ๆ) กับ <b>ใช้ในประโยคได้</b> (เติมคำ/เลือกใช้ในบริบทจริง) ต่างกันอย่างไร — ทำเรื่องเดิมใหม่ให้ถูกครบ เรื่องนั้นจะหายจากลิสต์นี้เอง</p>' +
+      (entries.length ? '<div class="lesson-list">' + entries.map(function (e) {
+        var parts = [];
+        if (e.r.ruleWrong) parts.push('จำกฎได้: ผิด ' + e.r.ruleWrong + ' ข้อ');
+        if (e.r.usageWrong) parts.push('ใช้ในประโยคได้: ผิด ' + e.r.usageWrong + ' ข้อ');
+        var isLesson = e.key.indexOf('lesson:') === 0;
+        var attr = isLesson ? 'data-go-lesson="' + lessonLocatorById(e.key.slice(7)) + '"' : 'data-review-cat="' + catIndexById(e.key.slice(5)) + '"';
+        return '<button type="button" class="lesson-item" ' + attr + '><span class="num" aria-hidden="true">!</span><span class="t"><span class="en">' + esc(e.r.title) + '</span><small>' + parts.join(' · ') + '</small></span></button>';
+      }).join('') + '</div>' : '<p class="muted small">ยังไม่มีข้อที่ตอบผิดค้างไว้ตอนนี้ เยี่ยมมาก!</p>') +
+      '</div>';
+  }
+  var GLEVEL_TH = { Basic: 'พื้นฐาน', A1: 'A1', A2: 'A2', B1: 'B1', B2: 'B2', C1: 'C1 · วิชาการ' };
+  function allGrammarLessons() {
+    var out = [];
+    EP.grammar.forEach(function (c, ci) { c.lessons.forEach(function (l, li) { out.push({ ci: ci, li: li, l: l, cat: c }); }); });
+    return out;
+  }
+  function renderGPath(view) {
+    var all = allGrammarLessons();
+    var totalDone = all.filter(function (x) { return lessonDone(x.l.id); }).length;
+    var next = nextGrammarLesson();
+    var groups = GLEVELS.map(function (lv) { return { lv: lv, items: all.filter(function (x) { return x.l.level === lv; }) }; })
+      .filter(function (g) { return g.items.length > 0; });
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหน้าหมวด Grammar</button>' +
+      '<div class="row" style="justify-content:space-between"><h2>เส้นทาง Grammar ทุกระดับ</h2><span class="small muted">รวมทุกหมวด เรียงจากพื้นฐานไปสูงสุด</span></div>' +
+      '<p class="small muted">เรียนแล้ว ' + totalDone + '/' + all.length + ' บท ทุกหมวด — เลือกเรียนบทไหนก่อนก็ได้ ไม่บังคับต้องเรียงตามหมวด</p>' +
+      (next ? '<div class="panel stack" style="border:2px solid var(--accent)"><p class="eyebrow">แนะนำบทต่อไป (ระดับต่ำสุดที่ยังไม่ได้เรียน)</p><button type="button" class="btn primary" data-go-lesson="' + next.ci + '-' + next.li + '">' + lvBadge(next.l.level) + ' <span class="en">' + next.l.title + '</span> · ' + next.cat.th + '</button></div>' : '') +
+      groups.map(function (g) {
+        var done = g.items.filter(function (x) { return lessonDone(x.l.id); }).length;
+        return '<section class="panel stack"><div class="row" style="justify-content:space-between">' +
+          '<h3>' + lvBadge(g.lv) + ' ' + GLEVEL_TH[g.lv] + '</h3><span class="small muted">' + done + '/' + g.items.length + '</span></div>' +
+          '<div class="lesson-list">' + g.items.map(function (x) {
+            var d = lessonDone(x.l.id);
+            return '<button type="button" class="lesson-item' + (d ? ' done' : '') + '" data-go-lesson="' + x.ci + '-' + x.li + '">' +
+              '<span class="num" aria-hidden="true">' + (d ? '✓' : '·') + '</span>' +
+              '<span class="t"><span class="en">' + x.l.title + '</span><small>' + x.cat.th + ' · ' + x.l.th + '</small></span></button>';
+          }).join('') + '</div></section>';
+      }).join('') +
+      '</div>';
+  }
   function renderGrammar(view) {
     var cat = EP.grammar[S.g.cat];
     if (S.g.view === 'lesson') return renderLesson(view, cat, S.g.lesson);
     if (S.g.view === 'post') return renderGPost(view, cat);
+    if (S.g.view === 'path') return renderGPath(view);
+    if (S.g.view === 'review') return renderGReview(view);
     var done = catProgress(cat);
     var postBest = Store.data.gpost[cat.id];
     var unlocked = done === cat.lessons.length;
     view.innerHTML =
       '<div class="stack">' +
       '<div class="row" style="justify-content:space-between"><h2>เรียน Grammar</h2><span class="small muted">5 หมวด · mini-test บทละ 5 ข้อ · Post-test หมวดละ 10 ข้อ</span></div>' +
+      '<div class="row" style="gap:16px">' +
+      '<button type="button" class="link-btn small" data-gpath="1">ดูเส้นทางเรียนทุกระดับ (ข้ามหมวด) →</button>' +
+      '<button type="button" class="link-btn small" data-greview="1">ทบทวนของฉัน' + (reviewCount() ? ' (' + reviewCount() + ')' : '') + ' →</button>' +
+      '</div>' +
       playerBar('grammar') +
       '<div class="chips" role="tablist" aria-label="หมวด Grammar" id="gcats">' +
       EP.grammar.map(function (c, i) {
@@ -483,8 +560,9 @@
         }).join('') +
         '<p class="small muted">ป้ายใต้แต่ละคำบอกหน้าที่ของคำนั้น สีเป็นตัวช่วยเสริม</p>') +
       part(3, 'จุดที่มักสับสน', '<ul class="confuse">' + l.confuse.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ul>') +
+      (l.writing ? part(4, 'ลองแต่งประโยคเอง', writingHTML(l)) : '') +
       '</section>' +
-      '<section class="panel stack" aria-labelledby="mt-h"><div class="part-head"><span class="part-mark">' + THAI_MARK[4] + '</span><h3 id="mt-h">Mini-test 5 ข้อ</h3></div>' +
+      '<section class="panel stack" aria-labelledby="mt-h"><div class="part-head"><span class="part-mark">' + THAI_MARK[5] + '</span><h3 id="mt-h">Mini-test 5 ข้อ</h3></div>' +
       '<p class="small muted">ถามเฉพาะเรื่องในบทนี้ ตอบครบ 5 ข้อเพื่อไปบทถัดไป</p>' +
       '<div id="mt">' + gQuiz.qs.map(function (pq, i) { return gQuestionHTML(pq, i, gQuiz.ans[i]); }).join('') + '</div>' +
       '<div class="stack" id="mt-foot">' + lessonFoot(answered, score, idx, isLast, cat) + '</div>' +
@@ -492,6 +570,16 @@
   }
   function part(i, title, body) {
     return '<div class="part"><div class="part-head"><span class="part-mark">' + THAI_MARK[i] + '</span><h3>' + title + '</h3></div>' + body + '</div>';
+  }
+  function writingHTML(l) {
+    return '<p class="small muted">ลองแต่งประโยคเองในกระดาษ/สมุด ไม่มีคะแนน ไม่มีการตรวจอัตโนมัติ เพราะคำตอบที่ถูกมีได้หลายแบบ — ใช้ checklist ตรวจตัวเองแทน</p>' +
+      l.writing.map(function (w, i) {
+        return '<div class="write-task"><p><b>' + (i + 1) + '.</b> ' + esc(w.prompt) + '</p>' +
+          '<details><summary>ดูตัวอย่างคำตอบ + checklist ตรวจตัวเอง</summary>' +
+          '<p class="en" style="margin-top:8px">' + esc(w.sample) + '</p>' + sayBtn(w.sample, true) +
+          '<ul class="confuse">' + w.checklist.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
+          '</details></div>';
+      }).join('');
   }
   function gQuestionHTML(pq, i, chosen) {
     return '<div class="q" id="gq-' + i + '"><p class="q-num">ข้อ ' + (i + 1) + '</p><p class="q-stem">' + pq.src.q.replace(/___/g, '<span class="blank en">?</span>') + '</p>' +
@@ -531,6 +619,8 @@
       rec.best = Math.max(rec.best || 0, score);
       Store.data.grammar[gQuiz.id] = rec;
       Store.save();
+      var wrongPqs = gQuiz.qs.filter(function (pq, i) { return !pq.items[gQuiz.ans[i]].correct; });
+      recordReview('lesson:' + gQuiz.id, cat.lessons[idx].title + ' · ' + cat.lessons[idx].th, wrongPqs);
     }
     $('#mt-foot').innerHTML = lessonFoot(answered, score, idx, idx === cat.lessons.length - 1, cat);
     var fb = $('#gq-' + qi + ' .fb');
@@ -544,6 +634,7 @@
     if (gPost.i >= total) {
       var score = gPost.ans.reduce(function (s, a, i) { return s + (gPost.qs[i].items[a].correct ? 1 : 0); }, 0);
       var wrong = gPost.qs.map(function (pq, i) { return { pq: pq, i: i, a: gPost.ans[i] }; }).filter(function (x) { return !x.pq.items[x.a].correct; });
+      if (!gPost.recorded) { gPost.recorded = true; recordReview('post:' + cat.id, 'Post-test ' + cat.name + ' · ' + cat.th, wrong.map(function (x) { return x.pq; })); }
       view.innerHTML = '<div class="stack">' +
         '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหมวด ' + cat.name + '</button>' +
         '<h2>Post-test: <span class="en">' + cat.name + '</span></h2>' +
@@ -1081,11 +1172,18 @@
   }
 
   /* ---------- ต่อจากที่ค้างไว้ ---------- */
-  function renderContinue() {
-    var gNext = null;
-    EP.grammar.some(function (c, ci) {
-      return c.lessons.some(function (l, li) { if (!lessonDone(l.id)) { gNext = { ci: ci, li: li, l: l }; return true; } return false; });
+  function nextGrammarLesson() {
+    // แนะนำบทที่ยังไม่ทำโดยไล่ตามระดับก่อน (Basic→A1→...→C1) แล้วค่อยไล่ตามหมวด
+    // ไม่ใช่ไล่ตามหมวดก่อน — กันไม่ให้ต้องเก็บหมวดเดิมจนถึง B2 ก่อนจึงจะเห็นหมวดอื่นที่เป็น A1
+    var candidates = [];
+    EP.grammar.forEach(function (c, ci) {
+      c.lessons.forEach(function (l, li) { if (!lessonDone(l.id)) candidates.push({ ci: ci, li: li, l: l, cat: c, lv: GLEVELS.indexOf(l.level) }); });
     });
+    candidates.sort(function (a, b) { return a.lv - b.lv || a.ci - b.ci || a.li - b.li; });
+    return candidates[0] || null;
+  }
+  function renderContinue() {
+    var gNext = nextGrammarLesson();
     var rNext = EP.reading.filter(function (p) { return !Store.data.reading[p.id]; })[0];
     var html = '<span class="small muted" style="width:100%"><b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท → คำศัพท์ ~10 คำ → อ่านสั้น 1 บท แล้วทบทวนเหตุผล</span>';
     html += gNext ? '<button type="button" class="chip" data-go-lesson="' + gNext.ci + '-' + gNext.li + '"><small>1 · Grammar ต่อไป</small><span class="en">' + gNext.l.title + '</span></button>' : '<span class="chip"><small>1 · Grammar</small>เรียนครบทุกบทแล้ว</span>';
@@ -1148,6 +1246,9 @@
     if (d.gcat != null) { S.g.cat = +d.gcat; S.g.view = 'list'; confirming = null; render(); var c = $('[data-gcat="' + d.gcat + '"]'); if (c) { c.focus(); c.scrollIntoView({ inline: 'nearest', block: 'nearest' }); } return; }
     if (d.lesson != null) { S.g.lesson = +d.lesson; S.g.view = 'lesson'; gQuiz = null; render(); focusHeading(); return; }
     if (d.gback) { S.g.view = 'list'; render(); focusHeading(); return; }
+    if (d.gpath) { S.g.view = 'path'; render(); focusHeading(); return; }
+    if (d.greview) { S.g.view = 'review'; render(); focusHeading(); return; }
+    if (d.reviewCat != null) { S.g.cat = +d.reviewCat; S.g.view = 'post'; gPost = null; render(); focusHeading(); return; }
     if (d.gnext) { S.g.lesson++; gQuiz = null; render(); focusHeading(); return; }
     if (d.gretry) { gQuiz = null; render(); var q0 = $('#gq-0'); if (q0) q0.scrollIntoView({ block: 'start' }); return; }
     if (d.gpost) {

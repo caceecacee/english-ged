@@ -18,10 +18,12 @@
   --accent: #e8572a;
   --accent-ink: #ffffff;
   --accent-soft: #fde6dc;
+  --basic: #5d6c83;
   --a1: #17905f;
   --a2: #2667c9;
   --b1: #b87400;
   --b2: #bf3761;
+  --c1: #5b3aa0;
   --ged: #12243b;
   --ok: #107a52;
   --ok-soft: #dcf3e8;
@@ -50,7 +52,7 @@
     color-scheme: dark;
     --ground: #0d1524; --surface: #152136; --surface-2: #1c2a43; --ink: #e8eef8; --ink-2: #c3cedf; --muted: #93a2ba; --line: #283955;
     --accent: #ff7a4d; --accent-ink: #1a0d06; --accent-soft: #3a2218;
-    --a1: #3cc98d; --a2: #6aa2ff; --b1: #f0b440; --b2: #ff7aa3; --ged: #e8eef8;
+    --basic: #93a2ba; --a1: #3cc98d; --a2: #6aa2ff; --b1: #f0b440; --b2: #ff7aa3; --c1: #b69bff; --ged: #e8eef8;
     --ok: #4fd49a; --ok-soft: #123427; --bad: #ff7d72; --bad-soft: #3a1b1a; --hl: #4a3f12;
     --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
     --c-n: #6aa2ff; --c-v: #ff8a70; --c-adj: #3cc98d; --c-adv: #b690ff; --c-pro: #3fc7d6; --c-prep: #f0b440; --c-conj: #ff7ab8; --c-int: #e2b35a; --c-det: #9fb0c8;
@@ -60,7 +62,7 @@
   color-scheme: dark;
   --ground: #0d1524; --surface: #152136; --surface-2: #1c2a43; --ink: #e8eef8; --ink-2: #c3cedf; --muted: #93a2ba; --line: #283955;
   --accent: #ff7a4d; --accent-ink: #1a0d06; --accent-soft: #3a2218;
-  --a1: #3cc98d; --a2: #6aa2ff; --b1: #f0b440; --b2: #ff7aa3; --ged: #e8eef8;
+  --basic: #93a2ba; --a1: #3cc98d; --a2: #6aa2ff; --b1: #f0b440; --b2: #ff7aa3; --c1: #b69bff; --ged: #e8eef8;
   --ok: #4fd49a; --ok-soft: #123427; --bad: #ff7d72; --bad-soft: #3a1b1a; --hl: #4a3f12;
   --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.25);
   --c-n: #6aa2ff; --c-v: #ff8a70; --c-adj: #3cc98d; --c-adv: #b690ff; --c-pro: #3fc7d6; --c-prep: #f0b440; --c-conj: #ff7ab8; --c-int: #e2b35a; --c-det: #9fb0c8;
@@ -145,7 +147,7 @@ p { margin: 0; }
 .small { font-size: .85rem; }
 .eyebrow { font: 600 .75rem/1.2 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
 .lv { display: inline-flex; align-items: center; gap: 4px; font: 700 .72rem/1 var(--f-en); letter-spacing: .03em; padding: 5px 8px; border-radius: 999px; color: var(--surface); background: var(--c); white-space: nowrap; }
-.lv[data-lv="A1"] { --c: var(--a1); } .lv[data-lv="A2"] { --c: var(--a2); } .lv[data-lv="B1"] { --c: var(--b1); } .lv[data-lv="B2"] { --c: var(--b2); }
+.lv[data-lv="Basic"] { --c: var(--basic); } .lv[data-lv="A1"] { --c: var(--a1); } .lv[data-lv="A2"] { --c: var(--a2); } .lv[data-lv="B1"] { --c: var(--b1); } .lv[data-lv="B2"] { --c: var(--b2); } .lv[data-lv="C1"] { --c: var(--c1); }
 .tag { display: inline-block; font-size: .72rem; font-weight: 600; padding: 3px 8px; border-radius: 999px; background: var(--surface-2); color: var(--ink-2); white-space: nowrap; }
 .tag.practice { background: var(--accent-soft); color: var(--accent); }
 .tag.official { background: var(--ok-soft); color: var(--ok); }
@@ -221,6 +223,8 @@ p { margin: 0; }
 .confuse li::before { content: '!'; position: absolute; left: 0; top: 2px; width: 20px; height: 20px; border-radius: 50%; background: var(--b1); color: var(--surface); font: 700 .75rem/20px var(--f-en); text-align: center; }
 
 .example { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; }
+.write-task { border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 8px; }
+.write-task summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; color: var(--accent); }
 .diagram { display: flex; flex-wrap: wrap; gap: 6px 4px; align-items: flex-start; }
 .tok { display: inline-flex; flex-direction: column; align-items: center; min-width: 0; }
 .tok .w { font: 500 1.05rem/1.3 var(--f-en); padding: 3px 8px; border-radius: 8px; border: 2px solid var(--c, var(--line)); background: color-mix(in srgb, var(--c, var(--line)) 12%, transparent); color: var(--ink); }
@@ -383,9 +387,9 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   </header>
   <div class="route" id="route" aria-label="เส้นทางระดับ A1 A2 B1 B2 ถึง GED" role="img"></div>
   <div class="row" id="continue" style="margin-bottom:16px;gap:8px" aria-label="ต่อจากที่ค้างไว้"></div>
-  <div id="lbtotal" style="margin-bottom:16px"></div>
   <nav class="nav" id="nav" role="tablist" aria-label="ส่วนหลัก"></nav>
   <main id="view" role="tabpanel" tabindex="-1"></main>
+  <div id="lbtotal" style="margin:16px 0"></div>
   <p class="foot">บทอ่าน คำถาม และคลังประโยคในเว็บนี้แต่งขึ้นเพื่อการฝึก ไม่ใช่ข้อสอบ GED จริง ระดับ A1–B2 จัดเพื่อการฝึกเรียนและไม่ใช่การรับรอง CEFR ทางการ ความคืบหน้าบันทึกไว้ในเบราว์เซอร์ของอุปกรณ์นี้เท่านั้น ไม่ต้องสมัครสมาชิก GED® เป็นเครื่องหมายการค้าของเจ้าของสิทธิ์ เว็บนี้ไม่ได้มีส่วนเกี่ยวข้องกับ GED Testing Service</p>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -900,6 +904,53 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     blurb: 'ดูคำบอกเวลาและรูปกริยา แล้วรู้ทันทีว่าเรื่องเกิดเมื่อไร',
     lessons: [
       {
+        id: 'tense-helpers', level: 'Basic', title: 'be, do, have — Helper Verbs', th: 'กริยาช่วยตัวหลัก be, do, have',
+        explain: 'be, do, have เป็นกริยาที่พิเศษ เพราะใช้ได้ 2 แบบ:<br>1) เป็น <b>กริยาแท้</b> ของประโยคเอง เช่น "She <b>is</b> tired." (be), "I <b>do</b> my homework." (do), "He <b>has</b> a car." (have)<br>2) เป็น <b>กริยาช่วย (helper)</b> ที่ไปอยู่กับกริยาอีกตัวเพื่อสร้างรูปประโยคใหม่ เช่น ปฏิเสธ/คำถาม/กำลังทำ — ใน<b>บทนี้เรียนแค่ให้จำหน้าตาไว้ก่อน</b> ส่วนวิธีใช้จริงแต่ละแบบจะเรียนละเอียดในบทถัดไป (Present Continuous ใช้ be, คำถาม/ปฏิเสธใช้ do, Present Perfect ใช้ have)',
+        formula: '<b>be</b>: am / is / are (ปัจจุบัน) · was / were (อดีต)<br><b>do</b>: do / does (ปัจจุบัน) · did (อดีต)<br><b>have</b>: have / has (ปัจจุบัน) · had (อดีต)',
+        examples: [
+          { en: 'S:She|V:is|C:a nurse', th: 'เธอเป็นพยาบาล (is = กริยาแท้)' },
+          { en: 'S:She|aux:is|V:working|T:now', th: 'เธอกำลังทำงานอยู่ตอนนี้ (is = กริยาช่วย + working)' },
+          { en: 'S:I|aux:don\'t|V:like|O:coffee', th: 'ฉันไม่ชอบกาแฟ (don\'t = do ที่ทำหน้าที่กริยาช่วยสร้างปฏิเสธ)' }
+        ],
+        confuse: [
+          'be/do/have ตัวเดียวกัน แต่ทำหน้าที่ต่างกันได้ในสองประโยค: "I <b>have</b> a dog." (have = กริยาแท้ แปลว่า "มี") กับ "I <b>have</b> finished." (have = กริยาช่วย ไม่ได้แปลว่ามี)',
+          'เมื่อ do/does ทำหน้าที่กริยาช่วย (ปฏิเสธ/คำถาม) กริยาแท้ที่ตามมาต้อง<b>กลับเป็นช่อง 1เสมอ</b> ไม่ว่าประธานจะเป็นใคร: He <b>doesn\'t like</b> it. (ไม่ใช่ doesn\'t likes)'
+        ],
+        quiz: [
+          { q: '"He has a car." คำว่า has ในที่นี้ทำหน้าที่ใด', o: ['กริยาช่วย', 'กริยาแท้ แปลว่า "มี"', 'คำนาม', 'คำคุณศัพท์'], a: 1,
+            clue: 'has ตามด้วย a car', rule: 'have/has ที่แปลว่า "มี" และเป็นกริยาหลักของประโยค คือกริยาแท้',
+            why: 'ประโยคนี้พูดว่าเขามีรถ has จึงเป็นกริยาแท้ ไม่ใช่กริยาช่วย',
+            n: ['ไม่มีกริยาอีกตัวให้ has ช่วย', '', 'has ทำหน้าที่กริยา ไม่ใช่ชื่อสิ่งของ', 'has ไม่ได้บอกลักษณะ'],
+            ex: 'They have two children. (have = มี)' },
+          { q: '"I don\'t like coffee." คำว่า don\'t มาจากคำช่วยตัวใด', o: ['be', 'do', 'have', 'will'], a: 1,
+            clue: "don't = do + not", rule: 'do/does/did เป็นกริยาช่วยหลักที่ใช้สร้างปฏิเสธ/คำถามของกริยาแท้',
+            why: "don't ย่อมาจาก do not",
+            n: ['be ย่อเป็น isn\'t/aren\'t/wasn\'t', '', "have ย่อเป็น haven't/hasn't", "will ย่อเป็น won't"],
+            ex: "She doesn't eat meat." },
+          { q: '"She is working now." คำว่า is ในที่นี้ทำหน้าที่ใด', o: ['กริยาแท้ของประโยค', 'กริยาช่วยที่ไปกับ working', 'คำนาม', 'คำบุพบท'], a: 1,
+            clue: 'is อยู่หน้ากริยา -ing', rule: 'be + V-ing คือ be ทำหน้าที่กริยาช่วยสร้างรูปกำลังทำ',
+            why: 'is ช่วยสร้างรูป "กำลังทำ" ร่วมกับ working ซึ่งเป็นกริยาแท้ของประโยคนี้',
+            n: ['working เป็นกริยาแท้ ไม่ใช่ is', '', 'is ไม่ใช่ชื่อสิ่งของ', 'is ไม่ใช่บุพบท'],
+            ex: 'They are studying English.' },
+          { q: 'ข้อใดใช้ have เป็น "กริยาแท้" (แปลว่ามี) ไม่ใช่กริยาช่วย', o: ['I have finished my homework.', 'I have a new phone.', 'Have you seen this movie?', 'She has already left.'], a: 1,
+            clue: 'have ตามด้วยสิ่งของที่เป็นเจ้าของ ไม่ใช่กริยาช่อง 3', rule: 'have + คำนาม (ของที่มี) = กริยาแท้ แปลว่ามี · have + กริยาช่อง 3 = กริยาช่วย',
+            why: '"a new phone" เป็นคำนาม ไม่ใช่กริยาช่อง 3 จึงเป็น have ที่แปลว่า "มี"',
+            n: ['finished เป็นกริยาช่อง 3 → have เป็นกริยาช่วย', '', 'seen เป็นกริยาช่อง 3 → Have เป็นกริยาช่วย', 'left เป็นกริยาช่อง 3 → has เป็นกริยาช่วย'],
+            ex: 'We have a big garden. (have = มี)' },
+          { q: '"Does he like tea?" กริยาแท้ของประโยคนี้คือคำใด', o: ['Does', 'he', 'like', 'tea'], a: 2,
+            clue: 'Does เป็นตัวช่วยสร้างคำถาม', rule: 'ในคำถามที่มี do/does/did กริยาแท้คือคำที่อยู่หลังประธาน ไม่ใช่ do/does/did เอง',
+            why: 'like เป็นกริยาแท้ (การกระทำ) ส่วน Does เป็นกริยาช่วยที่มาช่วยสร้างคำถามเท่านั้น',
+            n: ['Does เป็นกริยาช่วย ไม่ใช่กริยาแท้', 'he เป็นประธาน', '', 'tea เป็นกรรม'],
+            ex: 'Did she call you? (call = กริยาแท้)' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคที่ใช้ "have" เป็นกริยาแท้ (แปลว่า "มี")', sample: 'I have a small cat.',
+            checklist: ['have/has ตามด้วยคำนาม ไม่ใช่กริยาช่อง 3', 'ประโยคแปลว่า "มี...จริง ๆ"', 'เลือก have หรือ has ให้ตรงกับประธาน'] },
+          { prompt: 'แต่งประโยคปฏิเสธโดยใช้ "don\'t" หรือ "doesn\'t" (do เป็นกริยาช่วย)', sample: "My brother doesn't drink coffee.",
+            checklist: ["ใช้ don't (I/you/we/they) หรือ doesn't (he/she/it) ให้ตรงกับประธาน", 'กริยาแท้ที่ตามมาอยู่ในรูปช่อง 1 เสมอ', 'ประโยคมีความหมายชัดเจน'] }
+        ]
+      },
+      {
         id: 'tense-present', level: 'A1', title: 'Present Simple', th: 'ปัจจุบันกาลธรรมดา',
         explain: 'ใช้พูดถึง <b>สิ่งที่ทำเป็นประจำ</b> (นิสัย กิจวัตร) และ <b>ข้อเท็จจริงทั่วไป</b><br>• I/you/we/they + กริยาช่อง 1 (play)<br>• he/she/it หรือคำนามเอกพจน์ + กริยาเติม <b>-s</b> (plays)<br>• ลงท้าย s, x, ch, sh, o → เติม <b>-es</b> (watches, goes)<br>• พยัญชนะ + y → เปลี่ยน y เป็น <b>-ies</b> (study → studies)<br>คำบอกเวลาที่พบบ่อย: every day, usually, always, often, on Sundays',
         formula: 'I/You/We/They + <b>V1</b><br>He/She/It + <b>V1 + s/es</b><br>สัญญาณ: every ..., usually, always, often',
@@ -938,6 +989,53 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
             why: 'น้ำเดือดที่ 100°C เป็นจริงเสมอ และ water นับเป็นเอกพจน์ → boils',
             n: ['ขาด -s', '', 'boiled เป็นอดีต', 'boiling ต้องมี is'],
             ex: 'Plants need sunlight.' }
+        ]
+      },
+      {
+        id: 'tense-cont', level: 'A1', title: 'Present Continuous', th: 'ปัจจุบันกาลกำลังทำ',
+        explain: 'ใช้พูดถึง <b>สิ่งที่กำลังเกิดขึ้นตอนนี้เดี๋ยวนี้</b> (ขณะพูด) ต่างจาก Present Simple ที่พูดถึงสิ่งที่ทำ<b>เป็นประจำ</b><br>โครงสร้าง: <b>am/is/are + V-ing</b><br>• ลงท้าย e (ตัด e ทิ้ง) → make → mak<b>ing</b><br>• สระเดี่ยว+พยัญชนะเดี่ยว (พยางค์เดียว) → เพิ่มพยัญชนะซ้ำ → run → run<b>ning</b><br>คำบอกเวลาที่พบบ่อย: now, right now, at the moment, Look!, Listen!',
+        formula: 'S + <b>am/is/are</b> + V-<b>ing</b><br>สัญญาณ: now, right now, at the moment, Look! / Listen!',
+        examples: [
+          { en: 'S:I|aux:am|V:eating|O:lunch|T:right now', th: 'ฉันกำลังกินข้าวเที่ยงอยู่ตอนนี้' },
+          { en: 'S:They|aux:are|V:playing|O:football|Pl:in the park', th: 'พวกเขากำลังเล่นฟุตบอลอยู่ในสวน (ตอนนี้)' },
+          { en: 'q:Look!|S:It|aux:is|V:raining', th: 'ดูสิ! ฝนกำลังตก' }
+        ],
+        confuse: [
+          'Present Simple (นิสัย) vs Present Continuous (กำลังทำตอนนี้) — สังเกตคำบอกเวลา: "She <b>plays</b> tennis <b>every weekend</b>." (นิสัย) ต่างจาก "She <b>is playing</b> tennis <b>now</b>." (กำลังทำ)',
+          'กริยาบางกลุ่มไม่ใช้รูป -ing แม้จะพูดถึง "ตอนนี้" เช่น know, like, love, want, need, believe — ต้องใช้ Present Simple เสมอ: "I <b>know</b> the answer." ✓ · "I am knowing" ✗'
+        ],
+        quiz: [
+          { q: 'Look! It ___ outside.', o: ['rain', 'rains', 'is raining', 'rained'], a: 2,
+            clue: 'Look! = เห็นตอนนี้เลย', rule: 'สิ่งที่เกิดขึ้นตอนนี้ + สัญญาณ Look! ใช้ Present Continuous',
+            why: 'Look! บอกว่าเห็นเหตุการณ์เกิดขึ้นตรงหน้าตอนนี้ จึงใช้ is raining',
+            n: ['ขาด is และ -ing', 'เป็น Present Simple ไม่เข้ากับ Look!', '', 'rained เป็นอดีต'],
+            ex: 'Listen! The birds are singing.' },
+          { q: 'She usually ___ tennis on Sundays, but right now she ___ at home.', o: ['plays / is resting', 'is playing / rests', 'play / rest', 'played / rested'], a: 0,
+            clue: 'usually (นิสัย) ... right now (ตอนนี้)', rule: 'นิสัยประจำ → Present Simple · เกิดขึ้นตอนนี้ → Present Continuous',
+            why: 'usually บอกนิสัย → plays · right now บอกตอนนี้ → is resting',
+            n: ['', 'สลับกันผิด: usually ควรใช้ Present Simple ไม่ใช่ Continuous', 'ขาด s สำหรับ she และขาด is', 'เป็นอดีต ไม่ตรงกับ usually/right now'],
+            ex: 'I usually walk to school, but today I am taking the bus.' },
+          { q: 'ข้อใดถูกต้อง (know เป็นกริยาที่ไม่ใช้รูป -ing)', o: ['I am knowing her name.', 'I know her name.', 'I is knowing her name.', 'I knowing her name.'], a: 1,
+            clue: 'know = รู้ (สภาวะ ไม่ใช่การกระทำที่เห็นได้)', rule: 'know, like, want, need, believe ไม่ใช้รูป -ing ใช้ Present Simple เสมอ',
+            why: 'know ไม่ใช้รูป -ing แม้จะพูดถึงตอนนี้ จึงใช้ know เฉย ๆ',
+            n: ['know ไม่ใช้รูป -ing', '', 'know ไม่ใช้รูป -ing และประธาน I ไม่ใช้ is', 'ขาดกริยาช่วย am และไม่ควรใช้ -ing กับ know'],
+            ex: 'I like this song. (ไม่ใช่ I am liking)' },
+          { q: 'รูป -ing ของ run คือข้อใด', o: ['runing', 'runming', 'running', 'runeing'], a: 2,
+            clue: 'run = สระเดี่ยว u + พยัญชนะเดี่ยว n (พยางค์เดียว)', rule: 'สระเดี่ยว+พยัญชนะเดี่ยว พยางค์เดียว → เพิ่มพยัญชนะซ้ำ + ing',
+            why: 'run → runn (เพิ่ม n ซ้ำ) → running',
+            n: ['ขาดตัว n ซ้ำ', 'ไม่มีรูปนี้', '', 'run ไม่มี e ท้ายคำ จึงไม่ตัด e'],
+            ex: 'swim → swimming, sit → sitting' },
+          { q: 'เรียงคำให้ถูก: is / She / a letter / writing', o: ['She is writing a letter.', 'She writing is a letter.', 'Is she writing a letter.', 'She a letter is writing.'], a: 0,
+            clue: 'S + is + V-ing + O', rule: 'S + am/is/are + V-ing (+O)',
+            why: 'She (S) → is (aux) → writing (V-ing) → a letter (O)',
+            n: ['', 'is ต้องอยู่หน้ากริยา -ing ไม่ใช่หลัง', 'รูปนี้เป็นคำถาม ไม่ใช่บอกเล่า', 'กรรมต้องอยู่หลังกริยา -ing'],
+            ex: 'He is cooking dinner.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคบอกว่าคุณกำลังทำอะไรอยู่ตอนนี้ โดยใช้ Present Continuous', sample: 'I am doing my English homework right now.',
+            checklist: ['มี am/is/are ตรงกับประธาน', 'กริยาหลักอยู่ในรูป -ing', 'มีคำบอกเวลาอย่าง now/right now (จะมีหรือไม่มีก็ได้ แต่ช่วยให้ชัดเจน)'] },
+          { prompt: 'แต่งประโยค 1 คู่ เทียบ Present Simple (นิสัย) กับ Present Continuous (กำลังทำตอนนี้) ของกิจกรรมเดียวกัน', sample: 'I usually cook dinner at 6 pm, but today I am cooking at 7 pm.',
+            checklist: ['ประโยคแรกใช้ Present Simple พร้อมคำบอกความถี่ (usually/every day)', 'ประโยคสองใช้ Present Continuous พร้อมคำบอกตอนนี้ (now/today)', 'ทั้งสองประโยคพูดถึงกิจกรรมเดียวกัน'] }
         ]
       },
       {
@@ -1023,6 +1121,53 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         ]
       },
       {
+        id: 'tense-past-cont', level: 'A2', title: 'Past Continuous', th: 'อดีตกาลกำลังทำ',
+        explain: 'ใช้พูดถึง <b>สิ่งที่กำลังทำอยู่ ณ จุดหนึ่งในอดีต</b> โครงสร้าง: <b>was/were + V-ing</b><br>ใช้บ่อยเมื่อพูดว่า <b>"กำลังทำอย่างหนึ่งอยู่ แล้วมีอีกเหตุการณ์หนึ่ง (สั้นกว่า) แทรกเข้ามา"</b> — เหตุการณ์ที่ "กำลังทำอยู่" (ยาวกว่า) ใช้ Past Continuous ส่วนเหตุการณ์ที่ "แทรกเข้ามา" (สั้น จบไปแล้ว) ใช้ Past Simple',
+        formula: 'S + <b>was/were</b> + V-<b>ing</b><br>Past Continuous (เหตุการณ์ยาวกว่า) + <b>while/when</b> + Past Simple (เหตุการณ์สั้นแทรกเข้ามา)',
+        examples: [
+          { en: 'S:I|aux:was|V:sleeping|T:at 10 pm', th: 'ฉันกำลังนอนอยู่ตอน 4 ทุ่ม' },
+          { en: 'S:I|aux:was|V:cooking|T:when|S:the phone|V:rang', th: 'ฉันกำลังทำอาหารอยู่ตอนที่โทรศัพท์ดัง (ทำอาหาร = ยาวกว่า, โทรศัพท์ดัง = สั้นแทรกเข้ามา)' },
+          { en: 'T:While|S:she|aux:was|V:studying,|S:her sister|V:watched|O:TV', th: 'ขณะที่เธอกำลังเรียนอยู่ น้องสาวของเธอดูทีวี' }
+        ],
+        confuse: [
+          'สังเกตคำเชื่อม: <b>when</b> มักนำหน้าเหตุการณ์สั้น (Past Simple) ส่วน <b>while</b> มักนำหน้าเหตุการณ์ยาว (Past Continuous): "I was reading <b>when</b> she called." / "<b>While</b> I was reading, she called."',
+          'ถ้าสองเหตุการณ์เกิดพร้อมกันตลอดช่วงเวลา (ไม่มีอันไหนแทรก) ใช้ Past Continuous ทั้งคู่ได้: "While I was cooking, he was cleaning."'
+        ],
+        quiz: [
+          { q: 'I ___ dinner when the phone rang.', o: ['cook', 'cooked', 'was cooking', 'cooking'], a: 2,
+            clue: 'when the phone rang = เหตุการณ์สั้นแทรกเข้ามา', rule: 'เหตุการณ์ที่กำลังทำอยู่ (ยาวกว่า) ก่อนถูกแทรก ใช้ Past Continuous',
+            why: 'ฉันกำลังทำอาหารอยู่ (ยาวกว่า) แล้วโทรศัพท์ดังแทรกเข้ามา (สั้นกว่า) จึงใช้ was cooking',
+            n: ['เป็นปัจจุบัน ไม่ตรงกับ rang (อดีต)', 'เหตุการณ์นี้ควรเป็นกำลังทำอยู่ ไม่ใช่จบแล้ว', '', 'ขาด was'],
+            ex: 'She was walking home when it started to rain.' },
+          { q: '___ you sleeping at 11 pm last night?', o: ['Do', 'Did', 'Were', 'Are'], a: 2,
+            clue: 'at 11 pm last night + sleeping', rule: 'คำถาม Past Continuous ใช้ Was/Were นำหน้าประธาน',
+            why: 'ถามว่ากำลังทำอะไรอยู่ ณ ช่วงเวลาหนึ่งในอดีต ใช้ Were you sleeping',
+            n: ['Do ใช้กับปัจจุบัน', 'Did ต้องตามด้วยกริยาช่อง 1 ไม่ใช่ V-ing', '', 'Are ใช้กับปัจจุบัน'],
+            ex: 'Were they watching a movie at 9?' },
+          { q: 'เลือกคำเชื่อมที่เหมาะสม: ___ I was walking to school, it started to rain.', o: ['When', 'While', 'Because', 'So'], a: 1,
+            clue: 'I was walking = เหตุการณ์ยาว', rule: 'While มักนำหน้าเหตุการณ์ที่กำลังดำเนินอยู่ (Past Continuous)',
+            why: 'While นำหน้าเหตุการณ์ยาวกว่าได้เหมาะสมที่สุดในที่นี้',
+            n: ['When มักนำหน้าเหตุการณ์สั้นกว่าที่แทรกเข้ามา', '', 'Because บอกเหตุผล ไม่ใช่ช่วงเวลา', 'So บอกผลลัพธ์ ไม่ใช่ช่วงเวลา'],
+            ex: 'While I was walking to school, it started to rain.' },
+          { q: 'ข้อใดถูกต้องที่สุด (สองเหตุการณ์ ความยาวไม่เท่ากัน)', o: ['She was cooking when the guests arrived.', 'She cooked when the guests were arriving.', 'She was cooking when the guests were arriving.', 'She cooks when the guests arrived.'], a: 0,
+            clue: 'guests arrived = แทรกเข้ามาแบบสั้น', rule: 'เหตุการณ์ยาว (Past Continuous) + when + เหตุการณ์สั้น (Past Simple)',
+            why: 'cooking เป็นเหตุการณ์ที่ทำอยู่นาน arrived เป็นการมาถึงที่เกิดแค่ครั้งเดียว',
+            n: ['', 'สลับผิด: guests ควรเป็น Past Simple (แทรกเข้ามา)', 'ทั้งคู่เป็น Continuous ไม่เห็นว่าอันไหนแทรก', 'ผสมปัจจุบันกับอดีตผิด'],
+            ex: 'He was driving when he saw the accident.' },
+          { q: 'เรียงคำให้ถูก: was / studying / She / when / I / called', o: ['She was studying when I called.', 'She studying was when I called.', 'When She was studying I called.', 'She was studying I called when.'], a: 0,
+            clue: 'S + was + V-ing + when + S + V-ed', rule: 'Past Continuous + when + Past Simple',
+            why: 'She (S) → was studying (Past Continuous) → when I called (Past Simple แทรกเข้ามา)',
+            n: ['', 'was ต้องอยู่หน้ากริยา -ing', 'when ไม่ควรอยู่ต้นประโยคในโครงสร้างนี้ (ได้แต่ต้องสลับลำดับส่วนอื่นด้วย)', 'ลำดับ when กับ I called ผิดที่'],
+            ex: 'They were watching TV when I arrived.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคบอกว่าคุณกำลังทำอะไรอยู่ ณ เวลาหนึ่งเมื่อวาน โดยใช้ Past Continuous', sample: 'I was watching a movie at 9 pm yesterday.',
+            checklist: ['ใช้ was/were ให้ตรงกับประธาน', 'กริยาหลักอยู่ในรูป -ing', 'ระบุช่วงเวลาในอดีตให้ชัดเจน'] },
+          { prompt: 'แต่งประโยคที่มี 2 เหตุการณ์: เหตุการณ์หนึ่งกำลังทำอยู่ (Past Continuous) แล้วมีอีกเหตุการณ์สั้นแทรกเข้ามา (Past Simple) โดยใช้ when หรือ while', sample: 'While I was doing my homework, my friend called me.',
+            checklist: ['เหตุการณ์ที่ยาวกว่าอยู่ในรูป Past Continuous', 'เหตุการณ์ที่แทรกเข้ามาอยู่ในรูป Past Simple', 'ใช้ when หรือ while เชื่อมสองเหตุการณ์อย่างเหมาะสม'] }
+        ]
+      },
+      {
         id: 'tense-future', level: 'A2', title: 'Future: will / be going to', th: 'อนาคตกาล',
         explain: '<b>will + V1</b> ใช้เมื่อ <b>ตัดสินใจตอนพูด</b> สัญญา หรือคาดการณ์ทั่วไป<br><b>be going to + V1</b> ใช้กับ <b>แผนที่ตั้งใจไว้แล้ว</b> หรือสิ่งที่ <b>มีหลักฐานให้เห็นตอนนี้</b> (เมฆดำ → ฝนจะตก)<br>คำบอกเวลา: tomorrow, next week, soon, in 2030<br>หลัง will ใช้ช่อง 1 เสมอ: will <b>be</b>, will <b>go</b>',
         formula: 'S + <b>will</b> + V1<br>S + <b>am/is/are going to</b> + V1<br>สัญญาณ: tomorrow, next ..., soon',
@@ -1061,6 +1206,100 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
             why: 'ผู้พูดตัดสินใจรับโทรศัพท์ตอนที่ได้ยินเสียง จึงใช้ will answer (พูดสั้นว่า I\'ll)',
             n: ['', 'am ตามด้วย answer ตรง ๆ ไม่ได้', 'did ใช้กับอดีต', 'was เป็นอดีต'],
             ex: 'It\'s cold. I\'ll close the window.' }
+        ]
+      },
+      {
+        id: 'tense-modals1', level: 'A2', title: 'Modals: can / should / must', th: 'กริยาช่วยแสดงความหมาย: ทำได้ ควรทำ ต้องทำ',
+        explain: 'Modal verbs เป็นกริยาช่วยที่เติมความหมายพิเศษให้กริยาแท้ <b>ตามด้วยกริยาช่อง 1 เสมอ ไม่เติม -s/-ed ไม่ว่าประธานจะเป็นใคร</b><br>• <b>can</b> = ทำได้ / มีความสามารถ (ปฏิเสธ: can\'t)<br>• <b>should</b> = ควรทำ (คำแนะนำ) (ปฏิเสธ: shouldn\'t)<br>• <b>must / have to</b> = ต้องทำ (จำเป็น/มีกฎ) (ปฏิเสธ mustn\'t = ห้ามทำ, don\'t have to = ไม่จำเป็นต้องทำ — <b>ความหมายต่างกันมาก</b>)',
+        formula: 'S + <b>can/should/must</b> + <b>V1</b> (ไม่เติม s แม้ประธานเป็น he/she/it)',
+        examples: [
+          { en: 'S:She|aux:can|V:swim|M:very well', th: 'เธอว่ายน้ำได้เก่งมาก (มีความสามารถ)' },
+          { en: 'S:You|aux:should|V:see|O:a doctor', th: 'คุณควรไปหาหมอ (คำแนะนำ)' },
+          { en: 'S:Students|aux:must|V:wear|O:a uniform', th: 'นักเรียนต้องใส่ชุดนักเรียน (กฎ/ข้อบังคับ)' }
+        ],
+        confuse: [
+          'หลัง modal verb ใช้กริยาช่อง 1 เสมอ แม้ประธานเป็น he/she/it: "He <b>can swim</b>." ✓ ไม่ใช่ "He can swims" หรือ "He cans swim"',
+          '<b>mustn\'t</b> (ห้ามทำ) กับ <b>don\'t have to</b> (ไม่จำเป็นต้องทำ) ความหมายต่างกันคนละเรื่อง: "You mustn\'t smoke here." (ห้ามสูบ ผิดกฎ) ≠ "You don\'t have to come." (มาหรือไม่มาก็ได้ ไม่บังคับ)'
+        ],
+        quiz: [
+          { q: 'She ___ speak three languages.', o: ['can', 'cans', 'canning', 'is can'], a: 0,
+            clue: 'She (he/she/it) + modal', rule: 'Modal verb ไม่เติม -s แม้ประธานเป็น she',
+            why: 'can ไม่เปลี่ยนรูปตามประธาน',
+            n: ['', 'modal verb ไม่เติม s', 'ไม่มีรูปนี้', 'can ไม่ใช้กับ be'],
+            ex: 'He can play the guitar.' },
+          { q: 'You look tired. You ___ get some rest.', o: ['should', 'shoulds', 'must to', 'can to'], a: 0,
+            clue: 'ให้คำแนะนำ', rule: 'should = ให้คำแนะนำ ตามด้วย V1',
+            why: 'เป็นคำแนะนำที่ดีต่อผู้ฟัง จึงใช้ should',
+            n: ['', 'modal ไม่เติม s', 'must ตามด้วย V1 ตรง ๆ ไม่มี to', 'can ตามด้วย V1 ตรง ๆ ไม่มี to'],
+            ex: 'You should drink more water.' },
+          { q: 'This is a hospital. You ___ smoke here. (ห้ามเด็ดขาด)', o: ['don\'t have to', 'mustn\'t', 'shouldn\'t always', 'can'], a: 1,
+            clue: 'ห้ามเด็ดขาด ไม่ใช่แค่ไม่จำเป็น', rule: 'mustn\'t = ห้ามทำ (ผิดกฎ) ต่างจาก don\'t have to = ไม่จำเป็นต้องทำ',
+            why: 'โรงพยาบาลห้ามสูบบุหรี่โดยกฎ จึงใช้ mustn\'t ไม่ใช่แค่ "ไม่จำเป็น"',
+            n: ['หมายความว่าไม่จำเป็นต้องทำ ไม่ใช่ห้าม ความหมายผิด', '', 'shouldn\'t เบากว่านี้ (แค่คำแนะนำ ไม่ใช่ข้อห้ามเด็ดขาด)', 'can หมายความว่าทำได้ ตรงข้ามกับที่ต้องการ'],
+            ex: 'You mustn\'t park here. (ห้ามจอด)' },
+          { q: 'Students ___ (จำเป็นต้อง) wear a uniform at this school.', o: ['can', 'should', 'must', 'may'], a: 2,
+            clue: 'จำเป็นต้อง = มีกฎบังคับ', rule: 'must = ต้องทำ (จำเป็น/มีกฎ) หนักแน่นกว่า should',
+            why: 'เป็นกฎของโรงเรียน (บังคับ) จึงใช้ must ไม่ใช่แค่คำแนะนำอย่าง should',
+            n: ['can หมายถึงความสามารถ ไม่ใช่ข้อบังคับ', 'should เป็นแค่คำแนะนำ เบากว่าข้อบังคับ', '', 'may หมายถึงอาจจะ/ขออนุญาต ไม่ใช่ข้อบังคับ'],
+            ex: 'Drivers must wear a seatbelt.' },
+          { q: 'เรียงคำให้ถูก: help / you / I / can', o: ['I can help you.', 'I help can you.', 'Can I you help.', 'I can you help.'], a: 0,
+            clue: 'S + modal + V1 + O', rule: 'S + can/should/must + V1 (+O)',
+            why: 'I (S) → can (modal) → help (V1) → you (O)',
+            n: ['', 'modal ต้องอยู่หน้ากริยาแท้', 'รูปนี้เป็นคำถาม ไม่ใช่บอกเล่า', 'กรรมต้องอยู่หลังกริยา ไม่ใช่หลัง modal'],
+            ex: 'You must finish this today.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคให้คำแนะนำเพื่อนโดยใช้ "should"', sample: 'You should sleep earlier.',
+            checklist: ['ใช้ should ตามด้วยกริยาช่อง 1', 'เนื้อหาเป็นคำแนะนำที่สมเหตุสมผล', 'ไม่เติม -s หลัง should'] },
+          { prompt: 'แต่งประโยค 1 คู่ เทียบ "mustn\'t" (ห้ามทำ) กับ "don\'t have to" (ไม่จำเป็นต้องทำ)', sample: "You mustn't be late for the exam, but you don't have to arrive very early.",
+            checklist: ["ประโยคแรกใช้ mustn't แปลว่าห้ามทำ", "ประโยคสองใช้ don't have to แปลว่าไม่จำเป็นต้องทำ", 'ความหมายทั้งสองประโยคต่างกันชัดเจน ไม่ใช่ความหมายเดียวกัน'] }
+        ]
+      },
+      {
+        id: 'tense-perfect1', level: 'A2', title: 'Present Perfect (introduction)', th: 'ปัจจุบันสมบูรณ์ (เบื้องต้น)',
+        explain: 'ใช้พูดถึง <b>ประสบการณ์ในชีวิต</b> (เคยทำไหม) โดย<b>ไม่สนใจว่าเกิดขึ้นเมื่อไรที่แน่นอน</b> — ถ้าอยากรู้ว่า "เคยไหม" ใช้โครงสร้างนี้ ถ้าอยากบอกว่า "เกิดขึ้นเมื่อไร" ให้ใช้ Past Simple แทน (บทที่เทียบสองกาลนี้แบบละเอียดจะเรียนในระดับ B1)<br>โครงสร้าง: <b>have/has + V3 (กริยาช่อง 3)</b>',
+        formula: 'I/You/We/They + <b>have</b> + V3<br>He/She/It + <b>has</b> + V3<br>คำที่ใช้บ่อย: ever, never, already, just',
+        examples: [
+          { en: 'q:Have|S:you|M:ever|V:visited|O:Japan?', th: 'คุณเคยไปญี่ปุ่นไหม (ไม่สนว่าเมื่อไร)' },
+          { en: 'S:I|aux:have|neg:never|V:eaten|O:durian', th: 'ฉันไม่เคยกินทุเรียนเลย' },
+          { en: 'S:She|aux:has|M:already|V:finished|O:her homework', th: 'เธอทำการบ้านเสร็จแล้ว' }
+        ],
+        confuse: [
+          'Present Perfect ไม่บอกเวลาที่แน่นอน ถ้าอยากบอกว่า "เมื่อไร" ต้องเปลี่ยนไปใช้ Past Simple: "I <b>have visited</b> Japan." (เคย ไม่บอกเมื่อไร) แต่ "I <b>visited</b> Japan <b>last year</b>." (บอกเมื่อไรชัดเจน) — <b>ห้ามใช้คำบอกเวลาที่แน่นอนอย่าง yesterday/last year กับ Present Perfect</b>',
+          'กริยาช่อง 3 ของกริยาไม่ปกติต้องจำเพิ่มจากช่อง 2: go → gone (ไม่ใช่ went), eat → eaten, see → seen, do → done'
+        ],
+        quiz: [
+          { q: 'Have you ever ___ to Japan?', o: ['go', 'went', 'been', 'going'], a: 2,
+            clue: 'Have you ever + กริยาช่อง 3', rule: 'Present Perfect ใช้ have/has + V3',
+            why: 'go ช่อง 3 คือ been (สำหรับพูดถึงการไปแล้วกลับมา) ตามหลัง have',
+            n: ['ต้องเป็นช่อง 3 ไม่ใช่ช่อง 1', 'went เป็นช่อง 2 ใช้กับ Past Simple ไม่ใช้กับ have', '', 'ต้องเป็นช่อง 3 ไม่ใช่ -ing'],
+            ex: 'I have been to Korea twice.' },
+          { q: 'I ___ never ___ durian.', o: ['have / eaten', 'has / eaten', 'have / ate', 'did / eat'], a: 0,
+            clue: 'I + never + กริยาช่อง 3', rule: 'I/you/we/they ใช้ have + V3',
+            why: 'ประธาน I ใช้ have และ eat ช่อง 3 คือ eaten',
+            n: ['', 'I ใช้ have ไม่ใช่ has', 'ต้องใช้ V3 (eaten) ไม่ใช่ V2 (ate)', 'โครงสร้างนี้ไม่ใช่ Present Perfect'],
+            ex: 'They have never seen snow.' },
+          { q: 'ข้อใดผิด (ใช้ Present Perfect กับคำบอกเวลาที่แน่นอนไม่ได้)', o: ['I have visited Japan.', 'I have visited Japan yesterday.', 'I have already visited Japan.', 'Have you ever visited Japan?'], a: 1,
+            clue: 'yesterday = เวลาที่แน่นอน', rule: 'ห้ามใช้ yesterday, last year, in 2020 กับ Present Perfect',
+            why: 'yesterday บอกเวลาที่แน่นอน ต้องใช้ Past Simple: "I visited Japan yesterday." ไม่ใช่ Present Perfect',
+            n: ['ประโยคนี้ถูก ไม่มีคำบอกเวลาที่แน่นอน', '', 'already ใช้กับ Present Perfect ได้ตามปกติ', 'ever ใช้กับ Present Perfect ได้ตามปกติ'],
+            ex: 'I visited Japan last year. (ไม่ใช่ have visited)' },
+          { q: 'She ___ already ___ her homework.', o: ['have / finish', 'has / finished', 'has / finish', 'have / finished'], a: 1,
+            clue: 'She (he/she/it)', rule: 'he/she/it ใช้ has + V3',
+            why: 'She ใช้ has และ finish ช่อง 3 คือ finished',
+            n: ['She ใช้ has ไม่ใช่ have', '', 'ต้องเป็น V3 (finished) ไม่ใช่ V1', 'She ใช้ has ไม่ใช่ have'],
+            ex: 'He has already left.' },
+          { q: 'เรียงคำให้ถูก: seen / that / have / I / movie', o: ['I have seen that movie.', 'I seen have that movie.', 'Have I seen that movie.', 'I have that movie seen.'], a: 0,
+            clue: 'S + have + V3 + O', rule: 'S + have/has + V3 (+O)',
+            why: 'I (S) → have (aux) → seen (V3) → that movie (O)',
+            n: ['', 'have ต้องอยู่หน้า V3', 'รูปนี้เป็นคำถาม ไม่ใช่บอกเล่า', 'กรรมต้องอยู่หลังกริยาช่อง 3'],
+            ex: 'We have finished the project.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคถามว่าเพื่อนคุณ "เคย" ทำอะไรมาก่อนไหม โดยใช้ Have you ever...?', sample: 'Have you ever tried Korean food?',
+            checklist: ['ขึ้นต้นด้วย Have you ever', 'กริยาหลักอยู่ในรูปช่อง 3', 'ไม่มีคำบอกเวลาที่แน่นอน เช่น yesterday/last year'] },
+          { prompt: 'แต่งประโยคบอกประสบการณ์ของตัวเองโดยใช้ I have never... (ไม่เคย)', sample: 'I have never seen snow in real life.',
+            checklist: ["ใช้ have (ไม่ใช่ has เพราะประธานคือ I)", 'มี never อยู่ระหว่าง have กับกริยาช่อง 3', 'กริยาหลักอยู่ในรูปช่อง 3 ไม่ใช่ช่อง 2'] }
         ]
       },
       {
@@ -1147,51 +1386,51 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
       }
     ],
     post: [
-      { q: 'Now he ___ English every day.', o: ['study', 'studies', 'studied', 'studys'], a: 1,
-        clue: 'Now + every day + he', rule: 'Present Simple, he + V-s (y → ies)',
-        why: 'เป็นกิจวัตรในปัจจุบัน และ study → studies',
-        n: ['ขาด -s สำหรับ he', '', 'studied เป็นอดีต ขัดกับ Now', 'ต้องเปลี่ยน y เป็น ies'],
-        ex: 'She tries hard every day.' },
-      { q: 'They ___ at home yesterday.', o: ['are', 'were', 'was', 'is'], a: 1,
-        clue: 'They + yesterday', rule: 'อดีตของ be: you/we/they → were',
-        why: 'ประธาน They และเป็นอดีต → were',
-        n: ['are เป็นปัจจุบัน', '', 'was ใช้กับ I/he/she/it', 'is เป็นปัจจุบัน'],
-        ex: 'We were hungry.' },
-      { q: 'รูปอดีตของ carry คือข้อใด', o: ['carryed', 'carried', 'carryd', 'carries'], a: 1,
-        clue: 'r + y (พยัญชนะ + y)', rule: 'พยัญชนะ + y → -ied',
-        why: 'carry → carried',
-        n: ['ต้องเปลี่ยน y เป็น i', '', 'ไม่ใช่รูปที่ถูกต้อง', 'carries เป็นปัจจุบัน'],
-        ex: 'try → tried' },
-      { q: 'I didn\'t ___ the email.', o: ['see', 'saw', 'seen', 'sees'], a: 0,
-        clue: 'didn\'t', rule: 'didn\'t + V1',
-        why: 'หลัง didn\'t ใช้ see',
-        n: ['', 'saw ซ้ำอดีตกับ didn\'t', 'seen เป็นช่อง 3', 'sees ไม่ใช้หลัง didn\'t'],
-        ex: 'He didn\'t call.' },
-      { q: 'Tomorrow we ___ a test.', o: ['will have', 'had', 'has', 'having'], a: 0,
-        clue: 'Tomorrow', rule: 'อนาคต → will + V1',
-        why: 'Tomorrow เป็นอนาคต',
-        n: ['', 'had เป็นอดีต', 'has ใช้กับ he/she/it และไม่ใช่อนาคต', 'having ต้องมี be'],
-        ex: 'Tomorrow it will be hot.' },
-      { q: 'Look! The bus ___ leave. Hurry!', o: ['is going to', 'went', 'did', 'was'], a: 0,
-        clue: 'Look! + Hurry! (เห็นหลักฐานตอนนี้)', rule: 'หลักฐานตรงหน้า → be going to',
-        why: 'เห็นว่ารถกำลังจะออก จึงใช้ is going to leave',
-        n: ['', 'went เป็นอดีต', 'did ใช้กับอดีต', 'was เป็นอดีต'],
-        ex: 'Look out! That glass is going to fall.' },
-      { q: '___ she call you last night?', o: ['Did', 'Does', 'Do', 'Is'], a: 0,
-        clue: 'last night + call (V1)', rule: 'คำถามอดีต: Did + S + V1',
-        why: 'เป็นอดีตและกริยาคือ call',
-        n: ['', 'Does เป็นปัจจุบัน', 'Do เป็นปัจจุบันและไม่ใช้กับ she', 'Is ใช้กับ be ไม่ใช้กับ call'],
-        ex: 'Did they win?' },
+      { q: 'She ___ coffee every morning.', o: ['drink', 'drinks', 'drank', 'drinking'], a: 1,
+        clue: 'every morning + She', rule: 'กิจวัตร + he/she/it → V1 + s',
+        why: 'เป็นกิจวัตรประจำ และประธาน She ต้องเติม -s',
+        n: ['ขาด -s สำหรับ She', '', 'drank เป็นอดีต ขัดกับ every morning', 'drinking ต้องมี be นำหน้า'],
+        ex: 'He drinks tea every day.' },
+      { q: 'Listen! The baby ___ .', o: ['cries', 'is crying', 'cried', 'cry'], a: 1,
+        clue: 'Listen! = ได้ยินตอนนี้เลย', rule: 'เหตุการณ์ที่เกิดขึ้นตอนนี้ + สัญญาณ Listen!/Look! → Present Continuous',
+        why: 'Listen! บอกว่าเหตุการณ์กำลังเกิดขึ้นตรงหน้าตอนนี้ จึงใช้ is crying',
+        n: ['เป็น Present Simple ไม่ตรงกับ Listen!', '', 'cried เป็นอดีต', 'ขาด is'],
+        ex: 'Look! They are dancing.' },
+      { q: 'I ___ to school by bike yesterday.', o: ['go', 'goes', 'went', 'going'], a: 2,
+        clue: 'yesterday', rule: 'yesterday → Past Simple · go เป็นกริยาไม่ปกติ → went',
+        why: 'yesterday บอกว่าเป็นอดีต และ go ช่อง 2 คือ went',
+        n: ['go เป็นปัจจุบัน', 'goes เป็นปัจจุบันสำหรับ he/she/it', '', 'going ต้องมี was นำหน้า'],
+        ex: 'She went home early yesterday.' },
+      { q: 'I ___ TV when you called.', o: ['watch', 'watched', 'was watching', 'am watching'], a: 2,
+        clue: 'when you called = เหตุการณ์สั้นแทรกเข้ามา', rule: 'เหตุการณ์ที่กำลังทำอยู่ (ยาวกว่า) ก่อนถูกแทรก → Past Continuous',
+        why: 'ฉันกำลังดูทีวีอยู่ (ยาวกว่า) แล้วคุณโทรมาแทรก (สั้นกว่า) จึงใช้ was watching',
+        n: ['เป็นปัจจุบัน ไม่ตรงกับ called (อดีต)', 'บอกว่าดูจบแล้ว ไม่ใช่กำลังดูอยู่ตอนที่ถูกแทรก', '', 'am เป็นปัจจุบัน ไม่ตรงกับ called'],
+        ex: 'She was cooking when the fire alarm rang.' },
+      { q: 'Look at those clouds! It ___ rain soon.', o: ['is going to', 'will', 'was going to', 'rained'], a: 0,
+        clue: 'เห็นหลักฐาน (clouds) ตรงหน้า', rule: 'มีหลักฐานตรงหน้าตอนพูด → be going to',
+        why: 'เห็นเมฆครึ้มเป็นหลักฐานตอนนี้ จึงใช้ is going to แทนการทายเฉย ๆ ด้วย will',
+        n: ['', 'will เหมาะกับการทำนาย/ตัดสินใจตอนพูด ไม่ใช่เมื่อมีหลักฐานตรงหน้าแบบนี้', 'was going to เป็นอดีต', 'rained เป็นอดีต'],
+        ex: 'Watch out! That glass is going to fall.' },
+      { q: 'Riding a motorbike without a helmet is illegal here. You ___ wear one.', o: ['can', 'should', 'must', 'may'], a: 2,
+        clue: 'illegal = ผิดกฎหมาย (บังคับ ไม่ใช่แค่แนะนำ)', rule: 'ข้อบังคับตามกฎหมาย/กฎเข้มงวด → must',
+        why: 'เป็นข้อบังคับตามกฎหมาย ไม่ใช่แค่คำแนะนำ จึงใช้ must ไม่ใช่ should',
+        n: ['can บอกความสามารถ ไม่ใช่ข้อบังคับ', 'should เป็นแค่คำแนะนำ เบากว่ากฎหมาย', '', 'may บอกความเป็นไปได้/ขออนุญาต ไม่ใช่ข้อบังคับ'],
+        ex: 'Passengers must fasten their seatbelts.' },
+      { q: '___ you ever ___ sushi?', o: ['Do / eat', 'Have / eaten', 'Did / eat', 'Are / eating'], a: 1,
+        clue: 'ever = เคยไหม (ไม่สนว่าเมื่อไร)', rule: 'ประสบการณ์ (เคยไหม) → Have/Has + V3',
+        why: 'ever เป็นสัญญาณของ Present Perfect และ eat ช่อง 3 คือ eaten',
+        n: ['Do/eat เป็น Present Simple ไม่ใช้กับ ever แบบนี้', '', 'Did/eat ถามเหตุการณ์เฉพาะ ไม่ใช่ถามประสบการณ์ทั่วไป', 'Are/eating เป็น Present Continuous'],
+        ex: 'Have you ever visited Korea?' },
+      { q: 'You ___ smoke in the hospital, but you ___ bring your own food.', o: ["mustn't / don't have to", "don't have to / mustn't", "shouldn't / must", "can't / can"], a: 0,
+        clue: 'ห้ามเด็ดขาด vs ไม่บังคับ', rule: "mustn't = ห้ามทำ (ผิดกฎ) ต่างจาก don't have to = ไม่จำเป็นต้องทำ",
+        why: 'สูบบุหรี่ในโรงพยาบาลผิดกฎ (ห้ามเด็ดขาด) ส่วนการพกอาหารเองไม่บังคับ (จะทำหรือไม่ก็ได้)',
+        n: ['', 'สลับความหมายกัน', 'เบากว่าและหนักกว่าความหมายจริงตามลำดับ', 'can\'t/can ไม่ตรงกับบริบทกฎของโรงพยาบาล'],
+        ex: "You mustn't run in the corridor, but you don't have to whisper." },
       { q: 'In 2015, the town ___ a new school. Today, the school ___ 800 students.', o: ['built / has', 'builds / had', 'will build / has', 'built / had'], a: 0,
         clue: 'In 2015 (อดีต) · Today (ปัจจุบัน)', rule: 'แต่ละประโยคใช้กาลตามคำบอกเวลาของตัวเอง',
         why: '2015 → built (อดีต) · Today → has (ปัจจุบัน)',
         n: ['', 'สลับกาลกัน', '2015 ผ่านมาแล้ว ใช้ will ไม่ได้', 'Today ต้องใช้ปัจจุบัน ไม่ใช่ had'],
         ex: 'In 2000, he moved here. Now he owns a shop.' },
-      { q: 'Many people believe that exercise ___ stress.', o: ['reduces', 'reduce', 'reduced', 'reducing'], a: 0,
-        clue: 'ความจริงทั่วไป + exercise (เอกพจน์)', rule: 'ความจริงทั่วไป → Present Simple',
-        why: 'การออกกำลังกายลดความเครียดเป็นความจริงทั่วไป และ exercise เป็นเอกพจน์ → reduces',
-        n: ['', 'ขาด -s', 'reduced เป็นอดีต', 'reducing ต้องมี be'],
-        ex: 'Doctors say that sleep improves memory.' },
       { q: '"The factory closed in 2010. Now, the building is a museum. Next year, it will add a café." ตอนนี้อาคารเป็นอะไร', o: ['โรงงาน', 'พิพิธภัณฑ์', 'คาเฟ่', 'อาคารว่าง'], a: 1,
         clue: 'Now, the building is a museum', rule: 'Now + is (ปัจจุบัน) บอกสภาพตอนนี้',
         why: 'ประโยคที่ใช้ Now และ is ระบุว่าเป็นพิพิธภัณฑ์',
@@ -1214,6 +1453,54 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     blurb: 'ใคร → ทำอะไร → กับอะไร → เพราะอะไร แยกชิ้นประโยคให้เห็นแกนก่อน',
     lessons: [
       {
+        id: 'sent-core', level: 'Basic', title: 'What a Sentence Needs', th: 'ประโยคหนึ่งประโยคต้องมีอะไรบ้าง',
+        explain: 'ประโยคภาษาอังกฤษที่บอกเล่าเรื่องราวต้องมีอย่างน้อย <b>Subject (ประธาน = ใคร)</b> และ <b>Verb (กริยา = ทำอะไร)</b> สองส่วนนี้พอจะเป็นประโยคได้แล้ว เช่น "Birds fly."<br>กริยาบางตัวต้องมีคำต่อท้ายอีกส่วนหนึ่งจึงจะได้ความสมบูรณ์ แบ่งเป็น 2 แบบที่มักสับสน:<br>• <b>Object (กรรม)</b> = สิ่งที่<b>ถูกกระทำ</b>โดยกริยานั้น เช่น hit <b>the ball</b> (ลูกบอลถูกตี)<br>• <b>Complement (ส่วนเติมเต็ม)</b> = คำที่บอกว่า<b>ประธานเป็นใคร/เป็นอะไร/เป็นอย่างไร</b> ไม่ได้ถูกกระทำ เช่น is <b>happy</b> (เธอไม่ได้ "ทำ" ให้ happy เกิดขึ้น happy แค่อธิบายเธอ)',
+        formula: 'S + V &nbsp;(จบได้แล้ว)<br>S + V + <b>O</b> ถ้ากริยาต้องมีสิ่งถูกกระทำ<br>S + V + <b>C</b> ถ้ากริยาบอกว่าประธานเป็นอะไร/เป็นอย่างไร (มักตามหลัง be, become, look, seem)',
+        examples: [
+          { en: 'S:Birds|V:fly', th: 'นกบิน (มี S + V ก็เป็นประโยคสมบูรณ์แล้ว)' },
+          { en: 'S:She|V:is|C:happy', th: 'เธอมีความสุข (happy เติมเต็มบอกว่าเธอเป็นอย่างไร ไม่ใช่สิ่งที่ถูกกระทำ)' },
+          { en: 'S:He|V:hit|O:the ball', th: 'เขาตีลูกบอล (the ball ถูกตี = กรรม)' }
+        ],
+        confuse: [
+          'Object กับ Complement แยกกันด้วยคำถาม "สิ่งนี้ถูกกระทำไหม" — ถ้าใช่คือ Object (hit <u>the ball</u>) ถ้าเป็นแค่คำอธิบายประธานคือ Complement (is <u>happy</u>, is <u>a nurse</u>)',
+          'ประโยคที่ไม่มีประธานให้เห็น เช่น "Close the door." ไม่ได้แปลว่าอังกฤษไม่ต้องมีประธาน — เป็นประโยคขอ/สั่ง (imperative) ที่ทุกคนเข้าใจตรงกันว่าประธานคือ <b>you</b> จึงไม่พูดออกมา',
+          'ภาษาไทยละประธานได้บ่อยกว่า เช่น "หิวไหม" แต่อังกฤษที่ไม่ใช่ imperative ต้องพูดประธานเสมอ: <u>Are you</u> hungry?'
+        ],
+        quiz: [
+          { q: '"Birds fly." ประโยคนี้ขาดส่วนใดหรือไม่', o: ['ขาด Object', 'ขาด Complement', 'ไม่ขาด สมบูรณ์แล้วด้วย S+V', 'ขาดประธาน'], a: 2,
+            clue: 'fly ไม่ต้องมีกรรมหรือส่วนเติมเต็มก็ได้ความ', rule: 'บางกริยามี S+V ก็จบประโยคได้ ไม่ต้องมี O หรือ C',
+            why: 'fly เป็นกริยาที่ไม่ต้องมีอะไรตามหลัง ประโยคนี้จบสมบูรณ์แล้ว',
+            n: ['fly ไม่จำเป็นต้องมีกรรม', 'fly ไม่ใช่กริยาประเภทที่ต้องมี complement', '', 'Birds คือประธานอยู่แล้ว'],
+            ex: 'The baby cried. (S+V ก็จบได้)' },
+          { q: '"He is a teacher." คำว่า "a teacher" ทำหน้าที่ใด', o: ['Object เพราะถูกกระทำ', 'Complement เพราะบอกว่าประธานเป็นอะไร', 'Subject', 'Verb'], a: 1,
+            clue: 'a teacher ไม่ได้ถูกใครทำอะไร', rule: 'หลัง be มักเป็น Complement ที่บอกว่าประธานเป็นใคร/อะไร',
+            why: 'a teacher ไม่ถูกกระทำ แค่บอกว่า he เป็นอะไร จึงเป็น complement',
+            n: ['a teacher ไม่ถูกกระทำ จึงไม่ใช่ object', '', 'a teacher ไม่ใช่ประธาน', 'a teacher ไม่ใช่กริยา'],
+            ex: 'This is my bag. (my bag = complement)' },
+          { q: '"She kicked the ball." คำว่า "the ball" ทำหน้าที่ใด', o: ['Complement เพราะอธิบายประธาน', 'Object เพราะถูกเตะ (ถูกกระทำ)', 'Subject', 'Verb'], a: 1,
+            clue: 'the ball ถูกเตะ', rule: 'สิ่งที่ถูกกระทำโดยกริยาคือ Object',
+            why: 'the ball ถูกเตะ (ถูกกระทำ) จึงเป็น Object ไม่ใช่ Complement',
+            n: ['the ball ไม่ได้อธิบายว่า she เป็นอะไร', '', 'the ball ไม่ใช่ผู้ทำ', 'the ball ไม่ใช่การกระทำ'],
+            ex: 'I ate the cake. (the cake = object)' },
+          { q: 'ข้อใดเป็นประโยคขอ/สั่ง (imperative) ที่ประธาน "you" ถูกละไว้', o: ['You close the door.', 'Close the door.', 'She closes the door.', 'Is the door closed?'], a: 1,
+            clue: 'ไม่เห็นประธาน แต่ยังสั่งได้', rule: 'Imperative sentence ไม่พูดประธาน you ออกมา แต่ทุกคนเข้าใจว่าหมายถึงผู้ฟัง',
+            why: '"Close the door." ไม่มีประธานให้เห็น แต่เข้าใจว่าคือ you',
+            n: ['ข้อนี้พูด You ออกมาแล้ว ไม่ใช่ imperative', '', 'ข้อนี้มีประธาน She ชัดเจน', 'ข้อนี้เป็นประโยคคำถาม'],
+            ex: 'Sit down, please. (you ถูกละไว้)' },
+          { q: 'เรียงคำให้เป็นประโยคที่ถูกต้อง: is / My sister / a doctor', o: ['My sister is a doctor.', 'Is my sister a doctor.', 'A doctor my sister is.', 'My sister a doctor is.'], a: 0,
+            clue: 'S + V + C', rule: 'ประโยคบอกเล่าเรียง Subject + Verb (+Object/Complement)',
+            why: 'My sister (S) → is (V) → a doctor (C บอกว่าน้องสาวเป็นอะไร)',
+            n: ['', 'รูปนี้เป็นคำถาม ไม่ใช่ประโยคบอกเล่า', 'สลับตำแหน่ง complement มาไว้หน้าประธาน', 'complement ต้องอยู่หลัง verb ไม่ใช่หน้า is'],
+            ex: 'That book is interesting.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค 1 ประโยคที่มีแค่ S + V (ไม่ต้องมี Object หรือ Complement)', sample: 'The sun rises.',
+            checklist: ['มีประธาน (Subject) ชัดเจน', 'มีกริยา (Verb) ที่ไม่ต้องมีคำต่อท้ายก็ได้ความ', 'ไม่มีจุด (.) มากกว่า 1 ประโยค'] },
+          { prompt: 'แต่งประโยค 1 ประโยคที่มี Complement (บอกว่าประธานเป็นอะไร/เป็นอย่างไร) โดยใช้ is/am/are', sample: 'My father is kind.',
+            checklist: ['ใช้ be (is/am/are) เป็นกริยา', 'คำหลัง be บอกว่าประธานเป็นอะไร/เป็นอย่างไร ไม่ใช่สิ่งที่ถูกกระทำ', 'สะกดคำถูกต้องและมีจุดจบประโยค'] }
+        ]
+      },
+      {
         id: 'sent-svo', level: 'A1', title: 'Subject + Verb + Object', th: 'ประธาน + กริยา + กรรม',
         explain: 'ประโยคพื้นฐานของภาษาอังกฤษเรียงแบบ <b>ใคร (Subject) → ทำอะไร (Verb) → กับอะไร (Object)</b><br>• <b>Subject</b> = ผู้ทำ มักอยู่หน้าสุด<br>• <b>Verb</b> = การกระทำ<br>• <b>Object</b> = สิ่งที่ถูกกระทำ อยู่หลังกริยา<br>ข้อมูลอื่น เช่น ที่ไหน/เมื่อไร มักตามหลังกรรม',
         formula: '<b>S</b> ใคร → <b>V</b> ทำอะไร → <b>O</b> กับอะไร → ที่ไหน → เมื่อไร',
@@ -1223,7 +1510,7 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
           { en: 'S:Somchai|V:reads|O:the newspaper|Pl:in the kitchen', th: 'สมชายอ่านหนังสือพิมพ์ในครัว' }
         ],
         confuse: [
-          'ภาษาอังกฤษต้องมีประธานเสมอ ภาษาไทยพูด "กินข้าวแล้ว" ได้ แต่อังกฤษต้องเป็น <b>I</b> ate.',
+          'ประโยคบอกเล่า/คำถามทั่วไปต้องมีประธานเสมอ ภาษาไทยพูด "กินข้าวแล้ว" ได้โดยไม่พูดผู้พูด แต่อังกฤษต้องเป็น <b>I</b> ate. — <b>ข้อยกเว้น</b> คือประโยคขอ/สั่ง (imperative) เช่น "Close the door." ไม่มีประธานให้เห็น เพราะ<b>ผู้ฟัง (you) เป็นประธานที่เข้าใจตรงกันโดยไม่ต้องพูด</b> ไม่ใช่ว่าประโยคนี้ไม่มีประธานจริง ๆ',
           'สลับตำแหน่งแล้วความหมายเปลี่ยน: The dog bit the man. ≠ The man bit the dog.'
         ],
         quiz: [
@@ -1293,6 +1580,54 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
             why: 'พูดถึงอากาศใช้ It is',
             n: ['', 'are ใช้กับพหูพจน์', 'am ใช้กับ I', 'has ไม่ใช้บอกสภาพอากาศแบบนี้'],
             ex: 'It is sunny. It is late.' }
+        ]
+      },
+      {
+        id: 'sent-there', level: 'A1', title: 'There is / There are', th: 'มี... (บอกว่ามีอะไรอยู่ตรงนั้น)',
+        explain: 'เมื่อจะบอกว่า <b>"มีอะไรอยู่ที่หนึ่ง"</b> เป็นครั้งแรก (ผู้ฟังยังไม่รู้ว่ามี) ภาษาอังกฤษใช้ <b>There + is/are</b> นำหน้า ไม่ใช่เอาสิ่งของขึ้นต้นประโยคเหมือน "a cat is..." <br>• สิ่งเดียว/นับไม่ได้ → <b>There is (There\'s)</b><br>• หลายสิ่ง → <b>There are</b><br>คำว่า "there" ในโครงสร้างนี้ไม่ได้แปลว่า "ที่นั่น" มันเป็นแค่ตัวเปิดประโยค ส่วนสถานที่จริงจะพูดต่อท้าย: There is a cat <b>on the sofa</b>.',
+        formula: '<b>There is</b> + คำนามเอกพจน์/นับไม่ได้<br><b>There are</b> + คำนามพหูพจน์<br>ปฏิเสธ: There isn\'t / There aren\'t · คำถาม: Is there...? / Are there...?',
+        examples: [
+          { en: 'x:There|V:is|O:a cat|Pl:on the sofa', th: 'มีแมวตัวหนึ่งอยู่บนโซฟา' },
+          { en: 'x:There|V:are|O:three students|Pl:in the room', th: 'มีนักเรียนสามคนอยู่ในห้อง' },
+          { en: 'x:Is|x:there|O:any milk|Pl:in the fridge?', th: 'มีนมอยู่ในตู้เย็นไหม' }
+        ],
+        confuse: [
+          'ห้ามพูดว่า "A cat is on the sofa." เมื่อกำลัง<b>บอกครั้งแรกว่ามีอะไร</b> — โครงสร้างนี้ต้องขึ้นต้นด้วย There is/are: "There is a cat on the sofa." (ถ้าพูดถึงแมวตัวที่รู้จักอยู่แล้ว จึงพูด "The cat is on the sofa." ได้)',
+          'นับตามคำนามที่ตามหลัง ไม่ใช่ตาม "there": There <u>is</u> a book. / There <u>are</u> books. (books พหูพจน์ ใช้ are)',
+          'คำนามนับไม่ได้ (water, milk, money) ใช้ There is เสมอ แม้จะดูเหมือน "มีหลายอย่าง": There is some water in the bottle.'
+        ],
+        quiz: [
+          { q: '___ a book on the table.', o: ['There is', 'There are', 'It is', 'This is'], a: 0,
+            clue: 'a book (นับได้ เอกพจน์)', rule: 'สิ่งเดียวใช้ There is',
+            why: 'a book เป็นคำนามเอกพจน์ จึงใช้ There is',
+            n: ['', 'are ใช้กับพหูพจน์', 'It is ใช้พูดถึงของที่รู้จักแล้ว ไม่ใช่บอกว่ามีครั้งแรก', 'This is ชี้เฉพาะสิ่งที่อยู่ใกล้ ไม่ใช่โครงสร้างบอกว่ามีอะไร'],
+            ex: 'There is a pen in my bag.' },
+          { q: '___ many students in the class.', o: ['There is', 'There are', 'There has', 'It has'], a: 1,
+            clue: 'many students (พหูพจน์)', rule: 'หลายสิ่งใช้ There are',
+            why: 'students เป็นพหูพจน์ จึงใช้ There are',
+            n: ['is ใช้กับเอกพจน์', '', 'ไม่มีโครงสร้าง there has แบบนี้', 'it has ไม่ใช้บอกว่ามีอะไรอยู่ที่หนึ่ง'],
+            ex: 'There are five apples in the bowl.' },
+          { q: '___ any milk in the fridge?', o: ['Is there', 'Are there', 'Does there', 'There is'], a: 0,
+            clue: 'milk นับไม่ได้ + เป็นคำถาม', rule: 'คำถามสลับเป็น Is there / Are there และ milk นับไม่ได้ใช้ is',
+            why: 'milk นับไม่ได้ใช้ is และคำถามต้องสลับ is มาไว้หน้า there',
+            n: ['', 'milk นับไม่ได้ ไม่ใช้ are', 'ไม่มีโครงสร้าง does there', 'this is a statement form ไม่ใช่คำถาม'],
+            ex: 'Is there a doctor here?' },
+          { q: 'ข้อใดถูกต้องเมื่อบอกว่า "มีแมวตัวหนึ่งอยู่ใต้โต๊ะ" เป็นครั้งแรก', o: ['A cat is under the table.', 'There is a cat under the table.', 'The cat under the table.', 'Cat is under the table.'], a: 1,
+            clue: 'บอกครั้งแรกว่ามีอะไร', rule: 'บอกว่ามีอะไรครั้งแรกต้องขึ้นต้นด้วย There is/are ไม่ใช่เอาคำนามขึ้นต้น',
+            why: 'ประโยคนี้แนะนำแมวตัวนี้ครั้งแรก จึงต้องใช้ There is',
+            n: ['เอาคำนามขึ้นต้นแบบนี้ใช้ตอนที่ผู้ฟังรู้จักแมวตัวนี้อยู่แล้ว', '', 'ประโยคนี้ไม่มีกริยา', 'ขาดคำนำหน้านาม the/a และกริยา'],
+            ex: 'There is a surprise for you.' },
+          { q: 'เรียงคำให้ถูก: are / three / There / windows / in the room', o: ['There are three windows in the room.', 'Three there are windows in the room.', 'There three are windows in the room.', 'Windows are there three in the room.'], a: 0,
+            clue: 'There + are + จำนวน + คำนามพหูพจน์', rule: 'There are + คำนามพหูพจน์ + (สถานที่)',
+            why: 'There are (มี) → three windows (คำนามพหูพจน์) → in the room (สถานที่)',
+            n: ['', 'three ต้องอยู่หลัง are ไม่ใช่หน้า There', 'are ต้องอยู่หลัง There ไม่ใช่กลางประโยค', 'ลำดับผิดทั้งหมด'],
+            ex: 'There are two chairs by the window.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคบอกว่า "มีอะไรอยู่ที่ไหน" โดยใช้ There is + คำนามเอกพจน์', sample: 'There is a dog in the garden.',
+            checklist: ['ขึ้นต้นด้วย There is', 'คำนามที่ตามมาเป็นเอกพจน์หรือนับไม่ได้', 'มีการบอกสถานที่ต่อท้าย (in/on/at...)'] },
+          { prompt: 'แต่งคำถามโดยใช้ Is there หรือ Are there ถามว่ามีสิ่งของอะไรอยู่ในกระเป๋าของคุณ', sample: 'Are there any books in your bag?',
+            checklist: ['สลับ is/are มาไว้หน้า there (เพราะเป็นคำถาม)', 'เลือก is/are ให้ตรงกับคำนามที่ตามมา (เอกพจน์/พหูพจน์)', 'ลงท้ายด้วยเครื่องหมายคำถาม (?)'] }
         ]
       },
       {
@@ -1466,6 +1801,16 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         why: 'We (S) play (V) games (O)',
         n: ['', 'กรรมอยู่หน้ากริยา', 'กริยาอยู่หน้าประธาน', 'มีกริยาซ้ำ'],
         ex: 'They watch movies.' },
+      { q: '___ a letter for you on the table.', o: ["There's", 'It is', 'This is', 'There are'], a: 0,
+        clue: 'a letter (เอกพจน์) + บอกว่ามีอะไรครั้งแรก', rule: 'บอกว่ามีอะไรอยู่ที่หนึ่งเป็นครั้งแรก + เอกพจน์ → There is',
+        why: 'a letter เป็นเอกพจน์ และเป็นการบอกว่ามีจดหมายอยู่ตรงนั้นเป็นครั้งแรก จึงใช้ There is (There\'s)',
+        n: ['', 'It is ใช้พูดถึงสิ่งที่รู้จักอยู่แล้ว ไม่ใช่บอกว่ามีครั้งแรก', 'This is ชี้เฉพาะเจาะจง ไม่ใช่โครงสร้างบอกว่ามีอะไร', 'are ใช้กับพหูพจน์ แต่ a letter เป็นเอกพจน์'],
+        ex: "There's a message for you." },
+      { q: '"My father is a pilot." คำว่า "a pilot" ทำหน้าที่ใด', o: ['Object เพราะถูกกระทำ', 'Complement เพราะบอกว่าประธานเป็นอะไร', 'Subject', 'Verb'], a: 1,
+        clue: 'a pilot ไม่ได้ถูกใครทำอะไร', rule: 'หลัง be มักเป็น Complement ที่บอกว่าประธานเป็นใคร/เป็นอะไร ไม่ใช่ Object',
+        why: 'a pilot ไม่ถูกกระทำ เป็นแค่คำอธิบายว่า my father เป็นอาชีพอะไร จึงเป็น Complement',
+        n: ['a pilot ไม่ถูกกระทำโดยใคร', '', 'a pilot ไม่ใช่ผู้ทำ', 'a pilot ไม่ใช่การกระทำ'],
+        ex: 'This is my sister. (my sister = complement)' },
       { q: 'The weather ___ nice today.', o: ['is', 'are', 'am', 'be'], a: 0,
         clue: 'The weather (เอกพจน์) + nice (คุณศัพท์)', rule: 'S + be + คุณศัพท์',
         why: 'weather เป็นเอกพจน์ → is',
@@ -1481,21 +1826,11 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         why: 'they กับกริยาแท้ใช้ Do',
         n: ['', 'Does ใช้กับ he/she/it', 'Are ใช้กับ be', 'Is ใช้กับ be'],
         ex: 'Do you like coffee?' },
-      { q: 'Why ___ you late yesterday?', o: ['were', 'did', 'was', 'are'], a: 0,
-        clue: 'you + late (คุณศัพท์) + yesterday', rule: 'คำถามประโยค be อดีต: Wh- + was/were + S',
-        why: 'late เป็นคุณศัพท์ ต้องใช้ be และ you ในอดีต → were',
-        n: ['', 'did ต้องตามด้วยกริยาแท้', 'was ใช้กับ I/he/she/it', 'are เป็นปัจจุบัน ขัดกับ yesterday'],
-        ex: 'Where were you last night?' },
       { q: 'It was expensive, ___ I bought it.', o: ['but', 'so', 'because', 'or'], a: 0,
         clue: 'แพง ↔ ซื้อ (ขัดกัน)', rule: 'but เชื่อมความที่ขัดกัน',
         why: 'แพงแต่ก็ยังซื้อ จึงใช้ but',
         n: ['', 'so ทำให้ความหมายเป็น "แพงจึงซื้อ" ไม่สมเหตุผล', 'because ต้องตามด้วยเหตุ', 'or ใช้กับทางเลือก'],
         ex: 'He was tired, but he kept working.' },
-      { q: 'She didn\'t come ___ she was busy.', o: ['because', 'so', 'but', 'or'], a: 0,
-        clue: 'ไม่มา (ผล) ← ยุ่ง (เหตุ)', rule: 'because + เหตุ',
-        why: 'การยุ่งเป็นเหตุที่ไม่มา',
-        n: ['', 'so ต้องตามด้วยผล', 'but ใช้กับความที่ขัดกัน', 'or ใช้กับทางเลือก'],
-        ex: 'We left early because it was dark.' },
       { q: '"The man who lives next door works at a bank." — กริยาหลักคือข้อใด', o: ['lives', 'works', 'next', 'who'], a: 1,
         clue: 'ตัด "who lives next door" ออก', rule: 'กริยาใน who-clause ไม่ใช่กริยาหลัก',
         why: 'แกนคือ The man works at a bank',
@@ -1692,6 +2027,54 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         ]
       },
       {
+        id: 'det-compare', level: 'A2', title: 'Comparatives & Superlatives', th: 'การเปรียบเทียบขั้นกว่าและขั้นสุด',
+        explain: 'เปรียบเทียบ <b>2 สิ่ง</b> ใช้ <b>ขั้นกว่า (comparative)</b> + <b>than</b> · เปรียบเทียบ <b>3 สิ่งขึ้นไป</b> ใช้ <b>ขั้นสุด (superlative)</b> + <b>the</b><br>• คำสั้น (1 พยางค์) → เติม <b>-er / -est</b>: tall → tall<b>er</b> → the tall<b>est</b><br>• ลงท้าย e → เติมแค่ -r/-st: nice → nicer → the nicest<br>• พยัญชนะ+y → เปลี่ยน y เป็น i: happy → happ<b>ier</b> → the happ<b>iest</b><br>• คำยาว (2 พยางค์ขึ้นไปส่วนใหญ่) → ใช้ <b>more/the most</b> แทน: expensive → <b>more</b> expensive → <b>the most</b> expensive<br>• คำผิดปกติ: good → better → the best, bad → worse → the worst',
+        formula: 'ขั้นกว่า (2 สิ่ง): S + be + <b>adj-er / more adj</b> + than + ...<br>ขั้นสุด (3 สิ่งขึ้นไป): S + be + <b>the adj-est / the most adj</b>',
+        examples: [
+          { en: 'S:My brother|V:is|C:taller than me', th: 'พี่ชายฉันสูงกว่าฉัน (เทียบ 2 คน)' },
+          { en: 'S:This book|V:is|C:more interesting than that one', th: 'หนังสือเล่มนี้น่าสนใจกว่าเล่มนั้น (คำยาว ใช้ more)' },
+          { en: 'S:Mount Everest|V:is|C:the highest mountain|Pl:in the world', th: 'เอเวอเรสต์เป็นภูเขาที่สูงที่สุดในโลก (เทียบมากกว่า 2 แห่ง)' }
+        ],
+        confuse: [
+          'ห้ามใช้ -er กับ more พร้อมกัน: "more taller" ✗ ใช้แค่ "taller" หรือ "more tall" ไม่ได้ทั้งคู่พร้อมกัน (ที่จริง tall เป็นคำสั้น ต้องใช้ taller เท่านั้น)',
+          'ขั้นสุดต้องมี <b>the</b> นำหน้าเสมอ: "the tallest" ไม่ใช่แค่ "tallest" ลอย ๆ',
+          'good/bad ไม่เติม -er/-est แบบปกติ ต้องจำเป็นคำพิเศษ: good → better (ไม่ใช่ gooder), bad → worse (ไม่ใช่ badder)'
+        ],
+        quiz: [
+          { q: 'My brother is ___ than me. (tall)', o: ['tall', 'taller', 'more tall', 'the tallest'], a: 1,
+            clue: 'tall = คำสั้น 1 พยางค์ + than = เทียบ 2 คน', rule: 'คำสั้นเติม -er เมื่อเทียบ 2 สิ่งและมี than',
+            why: 'tall เป็นคำสั้น เติม -er และมี than บอกว่าเทียบ 2 คน',
+            n: ['ขาด -er และคำเปรียบเทียบต้องมีรูปเปรียบเทียบ', '', 'tall เป็นคำสั้น ไม่ใช้ more', 'the tallest ใช้เมื่อเทียบ 3 คนขึ้นไป ไม่มี than'],
+            ex: 'She is shorter than her sister.' },
+          { q: 'This book is ___ than that one. (interesting)', o: ['interestinger', 'more interesting', 'the most interesting', 'interesting'], a: 1,
+            clue: 'interesting = คำยาว', rule: 'คำยาว (2 พยางค์ขึ้นไปส่วนใหญ่) ใช้ more แทนการเติม -er',
+            why: 'interesting เป็นคำยาว จึงใช้ more interesting ไม่เติม -er',
+            n: ['คำยาวไม่เติม -er ตรง ๆ แบบนี้', '', 'the most ใช้เมื่อเทียบ 3 สิ่งขึ้นไป ไม่มี than', 'ขาดคำเปรียบเทียบ'],
+            ex: 'This exam is more difficult than the last one.' },
+          { q: 'Mount Everest is ___ mountain in the world. (high)', o: ['higher', 'more high', 'the highest', 'high'], a: 2,
+            clue: 'in the world = เทียบกับภูเขาทุกลูกในโลก (มากกว่า 2)', rule: 'เทียบ 3 สิ่งขึ้นไปใช้ the + adj-est',
+            why: '"in the world" บอกว่าเทียบกับภูเขาทุกลูก (มากกว่า 2) จึงใช้ขั้นสุด the highest',
+            n: ['higher ใช้เทียบแค่ 2 สิ่งและต้องมี than', 'high เป็นคำสั้น ไม่ใช้ more', '', 'ขาด the และรูปเปรียบเทียบ'],
+            ex: 'She is the best student in the class.' },
+          { q: 'รูปขั้นกว่าและขั้นสุดของ good คือข้อใด', o: ['gooder / goodest', 'more good / most good', 'better / the best', 'best / bester'], a: 2,
+            clue: 'good เป็นคำพิเศษ ไม่เติม -er/-est ปกติ', rule: 'good → better → the best (คำผิดปกติ ต้องจำ)',
+            why: 'good เป็นคำที่เปลี่ยนรูปพิเศษ ไม่ใช่กฎ -er/-est ทั่วไป',
+            n: ['ไม่มีรูปนี้ในภาษาอังกฤษ', 'good ไม่ใช้ more/most', '', 'สลับลำดับและสะกดผิด'],
+            ex: 'This cake is better than that one. It is the best cake here.' },
+          { q: 'เรียงคำให้ถูก: is / than / happier / She / her brother', o: ['She is happier than her brother.', 'She happier is than her brother.', 'She is happy than her brother.', 'She is more happier than her brother.'], a: 0,
+            clue: 'happy → happier (พยัญชนะ+y เปลี่ยนเป็น i)', rule: 'S + be + adj-er + than + ...',
+            why: 'She (S) → is (V) → happier than her brother (C เปรียบเทียบ)',
+            n: ['', 'ต้องใช้รูป happier ไม่ใช่ happy เฉย ๆ', 'ขาด -er ที่ท้าย happy', 'ห้ามใช้ more กับ -er พร้อมกัน'],
+            ex: 'He is busier than me these days.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคเปรียบเทียบตัวคุณกับเพื่อนคนหนึ่ง โดยใช้ขั้นกว่า (comparative) + than', sample: 'My friend is more talkative than me.',
+            checklist: ['ใช้รูปขั้นกว่าให้ถูกต้องตามความยาวของคำ (adj-er หรือ more adj)', 'มีคำว่า than', 'เปรียบเทียบแค่ 2 สิ่ง/คนเท่านั้น'] },
+          { prompt: 'แต่งประโยคขั้นสุด (superlative) บอกว่าอะไรเป็นที่สุดในกลุ่ม/ในครอบครัวของคุณ', sample: 'My grandmother is the kindest person in my family.',
+            checklist: ['มี the นำหน้าคำคุณศัพท์เสมอ', 'ใช้รูปขั้นสุดให้ถูกต้อง (adj-est หรือ the most adj)', 'ระบุกลุ่มที่เปรียบเทียบ (in my family / in the class ฯลฯ)'] }
+        ]
+      },
+      {
         id: 'det-some', level: 'B1', title: 'some / any / each / every', th: 'บางส่วน · ใด ๆ · แต่ละ · ทุก',
         explain: '<b>some</b> ใช้ในประโยค <b>บอกเล่า</b> และการเสนอ/ขอ (Would you like some tea?)<br><b>any</b> ใช้ในประโยค <b>ปฏิเสธ</b> และ <b>คำถาม</b> ทั่วไป<br><b>each / every</b> + <b>คำนามเอกพจน์</b> + <b>กริยาเอกพจน์</b>: Every student <b>has</b> a book.<br>each เน้นทีละคน/ทีละชิ้น · every เน้นทั้งกลุ่ม',
         formula: 'บอกเล่า → <b>some</b> · ปฏิเสธ/คำถาม → <b>any</b><br><b>each/every</b> + noun (เอกพจน์) + V-s',
@@ -1810,16 +2193,16 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         why: 'Every house เป็นเอกพจน์ → has',
         n: ['', 'have ใช้กับพหูพจน์', 'are ใช้กับพหูพจน์และไม่ได้แปลว่ามี', 'having ไม่ใช่กริยาแท้'],
         ex: 'Every phone has a camera.' },
+      { q: 'This road is ___ than that one. (narrow)', o: ['narrower', 'more narrow', 'narrowest', 'the narrowest'], a: 0,
+        clue: 'narrow = คำสั้น + than = เทียบ 2 สิ่ง', rule: 'คำสั้นเติม -er เมื่อเทียบ 2 สิ่งและมี than',
+        why: 'narrow เป็นคำสั้น เติม -er และมี than บอกว่าเทียบ 2 ถนน',
+        n: ['', 'narrow เป็นคำสั้น ไม่ใช้ more', 'ขาด than และเป็นรูปขั้นสุดซึ่งใช้เทียบ 3 สิ่งขึ้นไป', 'the narrowest ใช้เมื่อเทียบ 3 สิ่งขึ้นไป ไม่มี than'],
+        ex: 'This bag is heavier than that one.' },
       { q: 'The book is not mine. It\'s ___.', o: ['Sara\'s', 'Sara', 'Saras', 'Sara is'], a: 0,
         clue: 'ของซาร่า (ไม่มีคำนามตาม)', rule: 'ชื่อ + \'s บอกความเป็นเจ้าของ',
         why: 'หนังสือเป็นของซาร่า → Sara\'s',
         n: ['', 'ไม่ได้บอกความเป็นเจ้าของ', 'ขาด apostrophe', 'ทำให้มีกริยาซ้ำ'],
         ex: 'This bike is Ken\'s.' },
-      { q: '___ moon goes around the Earth.', o: ['The', 'A', 'An', '(ไม่ใส่)'], a: 0,
-        clue: 'moon (มีหนึ่งเดียวสำหรับโลก)', rule: 'สิ่งที่มีหนึ่งเดียว → the',
-        why: 'ดวงจันทร์ของโลกมีดวงเดียว',
-        n: ['', 'a ใช้กับสิ่งไม่เจาะจง', 'an ใช้หน้าเสียงสระ', 'ต้องมี the'],
-        ex: 'The sky is clear.' },
       { q: '"Many farmers now use drones. These machines save time and water." — These machines หมายถึงอะไร', o: ['drones', 'farmers', 'time', 'water'], a: 0,
         clue: 'These machines (เครื่องจักร พหูพจน์)', rule: 'แทนค่ากลับแล้วต้องเป็นเครื่องจักร',
         why: 'drones เป็นเครื่องจักรที่ช่วยประหยัดเวลาและน้ำ',
@@ -3109,9 +3492,10 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   'use strict';
   var EP = window.EP;
   var L = EP.logic;
-  var LEVELS = ['A1', 'A2', 'B1', 'B2'];
+  var LEVELS = ['A1', 'A2', 'B1', 'B2']; // ระดับคำศัพท์ (4 ระดับ)
+  var GLEVELS = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1']; // ระดับ Grammar (ข้ามหมวด ใช้จัดเส้นทางเรียน)
   var KEYS = ['A', 'B', 'C', 'D'];
-  var THAI_MARK = ['ก', 'ข', 'ค', 'ง', 'จ'];
+  var THAI_MARK = ['ก', 'ข', 'ค', 'ง', 'จ', 'ฉ'];
 
   /* ---------- เครื่องมือเล็ก ๆ ---------- */
   function $(sel, root) { return (root || document).querySelector(sel); }
@@ -3149,7 +3533,16 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
      root = { v:2, current:<key>, profiles:{ <key>: {nick, updated, grammar, gpost, vocab, reading} } }
      key '__guest' = ยังไม่ใส่ชื่อเล่น (ไม่ขึ้นตารางอันดับ) */
   var GUEST = '__guest';
-  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {} }; }
+  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {} }; }
+  // "จำกฎได้" = โจทย์ที่ถามกฎตรง ๆ (ไม่มีช่องว่างให้เติม) · "ใช้ในประโยคได้" = โจทย์เติมคำ/ใช้ในบริบทจริง (มี ___)
+  function quizType(q) { return /___/.test(q.q) ? 'usage' : 'rule'; }
+  function recordReview(key, title, wrongPqs) {
+    if (!Store.data.review) Store.data.review = {};
+    var ruleWrong = 0, usageWrong = 0;
+    wrongPqs.forEach(function (pq) { if (quizType(pq.src) === 'rule') ruleWrong++; else usageWrong++; });
+    Store.data.review[key] = { title: title, ruleWrong: ruleWrong, usageWrong: usageWrong, at: Date.now() };
+    Store.save();
+  }
   function nickKey(nick) { return 'n:' + nick.trim().toLowerCase(); }
   var Store = {
     key: 'english-path:v2',
@@ -3526,16 +3919,83 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   function lessonDone(id) { var r = Store.data.grammar[id]; return r && r.answered >= 5; }
   function catProgress(cat) { return cat.lessons.filter(function (l) { return lessonDone(l.id); }).length; }
 
+  function reviewCount() {
+    var review = Store.data.review || {};
+    return Object.keys(review).filter(function (k) { return (review[k].ruleWrong + review[k].usageWrong) > 0; }).length;
+  }
+  function catIndexById(id) { for (var i = 0; i < EP.grammar.length; i++) if (EP.grammar[i].id === id) return i; return 0; }
+  function lessonLocatorById(id) {
+    for (var ci = 0; ci < EP.grammar.length; ci++) {
+      var li = EP.grammar[ci].lessons.map(function (l) { return l.id; }).indexOf(id);
+      if (li >= 0) return ci + '-' + li;
+    }
+    return '0-0';
+  }
+  function renderGReview(view) {
+    var review = Store.data.review || {};
+    var entries = Object.keys(review).map(function (k) { return { key: k, r: review[k] }; })
+      .filter(function (e) { return (e.r.ruleWrong + e.r.usageWrong) > 0; })
+      .sort(function (a, b) { return b.r.at - a.r.at; });
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหน้าหมวด Grammar</button>' +
+      '<h2>ทบทวนของฉัน</h2>' +
+      '<p class="small muted">หัวข้อที่ยังตอบผิดจากครั้งล่าสุด แยกให้เห็นว่า <b>จำกฎได้</b> (ตอบคำถามเกี่ยวกับกฎตรง ๆ) กับ <b>ใช้ในประโยคได้</b> (เติมคำ/เลือกใช้ในบริบทจริง) ต่างกันอย่างไร — ทำเรื่องเดิมใหม่ให้ถูกครบ เรื่องนั้นจะหายจากลิสต์นี้เอง</p>' +
+      (entries.length ? '<div class="lesson-list">' + entries.map(function (e) {
+        var parts = [];
+        if (e.r.ruleWrong) parts.push('จำกฎได้: ผิด ' + e.r.ruleWrong + ' ข้อ');
+        if (e.r.usageWrong) parts.push('ใช้ในประโยคได้: ผิด ' + e.r.usageWrong + ' ข้อ');
+        var isLesson = e.key.indexOf('lesson:') === 0;
+        var attr = isLesson ? 'data-go-lesson="' + lessonLocatorById(e.key.slice(7)) + '"' : 'data-review-cat="' + catIndexById(e.key.slice(5)) + '"';
+        return '<button type="button" class="lesson-item" ' + attr + '><span class="num" aria-hidden="true">!</span><span class="t"><span class="en">' + esc(e.r.title) + '</span><small>' + parts.join(' · ') + '</small></span></button>';
+      }).join('') + '</div>' : '<p class="muted small">ยังไม่มีข้อที่ตอบผิดค้างไว้ตอนนี้ เยี่ยมมาก!</p>') +
+      '</div>';
+  }
+  var GLEVEL_TH = { Basic: 'พื้นฐาน', A1: 'A1', A2: 'A2', B1: 'B1', B2: 'B2', C1: 'C1 · วิชาการ' };
+  function allGrammarLessons() {
+    var out = [];
+    EP.grammar.forEach(function (c, ci) { c.lessons.forEach(function (l, li) { out.push({ ci: ci, li: li, l: l, cat: c }); }); });
+    return out;
+  }
+  function renderGPath(view) {
+    var all = allGrammarLessons();
+    var totalDone = all.filter(function (x) { return lessonDone(x.l.id); }).length;
+    var next = nextGrammarLesson();
+    var groups = GLEVELS.map(function (lv) { return { lv: lv, items: all.filter(function (x) { return x.l.level === lv; }) }; })
+      .filter(function (g) { return g.items.length > 0; });
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหน้าหมวด Grammar</button>' +
+      '<div class="row" style="justify-content:space-between"><h2>เส้นทาง Grammar ทุกระดับ</h2><span class="small muted">รวมทุกหมวด เรียงจากพื้นฐานไปสูงสุด</span></div>' +
+      '<p class="small muted">เรียนแล้ว ' + totalDone + '/' + all.length + ' บท ทุกหมวด — เลือกเรียนบทไหนก่อนก็ได้ ไม่บังคับต้องเรียงตามหมวด</p>' +
+      (next ? '<div class="panel stack" style="border:2px solid var(--accent)"><p class="eyebrow">แนะนำบทต่อไป (ระดับต่ำสุดที่ยังไม่ได้เรียน)</p><button type="button" class="btn primary" data-go-lesson="' + next.ci + '-' + next.li + '">' + lvBadge(next.l.level) + ' <span class="en">' + next.l.title + '</span> · ' + next.cat.th + '</button></div>' : '') +
+      groups.map(function (g) {
+        var done = g.items.filter(function (x) { return lessonDone(x.l.id); }).length;
+        return '<section class="panel stack"><div class="row" style="justify-content:space-between">' +
+          '<h3>' + lvBadge(g.lv) + ' ' + GLEVEL_TH[g.lv] + '</h3><span class="small muted">' + done + '/' + g.items.length + '</span></div>' +
+          '<div class="lesson-list">' + g.items.map(function (x) {
+            var d = lessonDone(x.l.id);
+            return '<button type="button" class="lesson-item' + (d ? ' done' : '') + '" data-go-lesson="' + x.ci + '-' + x.li + '">' +
+              '<span class="num" aria-hidden="true">' + (d ? '✓' : '·') + '</span>' +
+              '<span class="t"><span class="en">' + x.l.title + '</span><small>' + x.cat.th + ' · ' + x.l.th + '</small></span></button>';
+          }).join('') + '</div></section>';
+      }).join('') +
+      '</div>';
+  }
   function renderGrammar(view) {
     var cat = EP.grammar[S.g.cat];
     if (S.g.view === 'lesson') return renderLesson(view, cat, S.g.lesson);
     if (S.g.view === 'post') return renderGPost(view, cat);
+    if (S.g.view === 'path') return renderGPath(view);
+    if (S.g.view === 'review') return renderGReview(view);
     var done = catProgress(cat);
     var postBest = Store.data.gpost[cat.id];
     var unlocked = done === cat.lessons.length;
     view.innerHTML =
       '<div class="stack">' +
       '<div class="row" style="justify-content:space-between"><h2>เรียน Grammar</h2><span class="small muted">5 หมวด · mini-test บทละ 5 ข้อ · Post-test หมวดละ 10 ข้อ</span></div>' +
+      '<div class="row" style="gap:16px">' +
+      '<button type="button" class="link-btn small" data-gpath="1">ดูเส้นทางเรียนทุกระดับ (ข้ามหมวด) →</button>' +
+      '<button type="button" class="link-btn small" data-greview="1">ทบทวนของฉัน' + (reviewCount() ? ' (' + reviewCount() + ')' : '') + ' →</button>' +
+      '</div>' +
       playerBar('grammar') +
       '<div class="chips" role="tablist" aria-label="หมวด Grammar" id="gcats">' +
       EP.grammar.map(function (c, i) {
@@ -3588,8 +4048,9 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
         }).join('') +
         '<p class="small muted">ป้ายใต้แต่ละคำบอกหน้าที่ของคำนั้น สีเป็นตัวช่วยเสริม</p>') +
       part(3, 'จุดที่มักสับสน', '<ul class="confuse">' + l.confuse.map(function (c) { return '<li>' + c + '</li>'; }).join('') + '</ul>') +
+      (l.writing ? part(4, 'ลองแต่งประโยคเอง', writingHTML(l)) : '') +
       '</section>' +
-      '<section class="panel stack" aria-labelledby="mt-h"><div class="part-head"><span class="part-mark">' + THAI_MARK[4] + '</span><h3 id="mt-h">Mini-test 5 ข้อ</h3></div>' +
+      '<section class="panel stack" aria-labelledby="mt-h"><div class="part-head"><span class="part-mark">' + THAI_MARK[5] + '</span><h3 id="mt-h">Mini-test 5 ข้อ</h3></div>' +
       '<p class="small muted">ถามเฉพาะเรื่องในบทนี้ ตอบครบ 5 ข้อเพื่อไปบทถัดไป</p>' +
       '<div id="mt">' + gQuiz.qs.map(function (pq, i) { return gQuestionHTML(pq, i, gQuiz.ans[i]); }).join('') + '</div>' +
       '<div class="stack" id="mt-foot">' + lessonFoot(answered, score, idx, isLast, cat) + '</div>' +
@@ -3597,6 +4058,16 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   }
   function part(i, title, body) {
     return '<div class="part"><div class="part-head"><span class="part-mark">' + THAI_MARK[i] + '</span><h3>' + title + '</h3></div>' + body + '</div>';
+  }
+  function writingHTML(l) {
+    return '<p class="small muted">ลองแต่งประโยคเองในกระดาษ/สมุด ไม่มีคะแนน ไม่มีการตรวจอัตโนมัติ เพราะคำตอบที่ถูกมีได้หลายแบบ — ใช้ checklist ตรวจตัวเองแทน</p>' +
+      l.writing.map(function (w, i) {
+        return '<div class="write-task"><p><b>' + (i + 1) + '.</b> ' + esc(w.prompt) + '</p>' +
+          '<details><summary>ดูตัวอย่างคำตอบ + checklist ตรวจตัวเอง</summary>' +
+          '<p class="en" style="margin-top:8px">' + esc(w.sample) + '</p>' + sayBtn(w.sample, true) +
+          '<ul class="confuse">' + w.checklist.map(function (c) { return '<li>' + esc(c) + '</li>'; }).join('') + '</ul>' +
+          '</details></div>';
+      }).join('');
   }
   function gQuestionHTML(pq, i, chosen) {
     return '<div class="q" id="gq-' + i + '"><p class="q-num">ข้อ ' + (i + 1) + '</p><p class="q-stem">' + pq.src.q.replace(/___/g, '<span class="blank en">?</span>') + '</p>' +
@@ -3636,6 +4107,8 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
       rec.best = Math.max(rec.best || 0, score);
       Store.data.grammar[gQuiz.id] = rec;
       Store.save();
+      var wrongPqs = gQuiz.qs.filter(function (pq, i) { return !pq.items[gQuiz.ans[i]].correct; });
+      recordReview('lesson:' + gQuiz.id, cat.lessons[idx].title + ' · ' + cat.lessons[idx].th, wrongPqs);
     }
     $('#mt-foot').innerHTML = lessonFoot(answered, score, idx, idx === cat.lessons.length - 1, cat);
     var fb = $('#gq-' + qi + ' .fb');
@@ -3649,6 +4122,7 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     if (gPost.i >= total) {
       var score = gPost.ans.reduce(function (s, a, i) { return s + (gPost.qs[i].items[a].correct ? 1 : 0); }, 0);
       var wrong = gPost.qs.map(function (pq, i) { return { pq: pq, i: i, a: gPost.ans[i] }; }).filter(function (x) { return !x.pq.items[x.a].correct; });
+      if (!gPost.recorded) { gPost.recorded = true; recordReview('post:' + cat.id, 'Post-test ' + cat.name + ' · ' + cat.th, wrong.map(function (x) { return x.pq; })); }
       view.innerHTML = '<div class="stack">' +
         '<button type="button" class="back" data-gback="1">' + ICON.back + 'กลับไปหมวด ' + cat.name + '</button>' +
         '<h2>Post-test: <span class="en">' + cat.name + '</span></h2>' +
@@ -4186,11 +4660,18 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
   }
 
   /* ---------- ต่อจากที่ค้างไว้ ---------- */
-  function renderContinue() {
-    var gNext = null;
-    EP.grammar.some(function (c, ci) {
-      return c.lessons.some(function (l, li) { if (!lessonDone(l.id)) { gNext = { ci: ci, li: li, l: l }; return true; } return false; });
+  function nextGrammarLesson() {
+    // แนะนำบทที่ยังไม่ทำโดยไล่ตามระดับก่อน (Basic→A1→...→C1) แล้วค่อยไล่ตามหมวด
+    // ไม่ใช่ไล่ตามหมวดก่อน — กันไม่ให้ต้องเก็บหมวดเดิมจนถึง B2 ก่อนจึงจะเห็นหมวดอื่นที่เป็น A1
+    var candidates = [];
+    EP.grammar.forEach(function (c, ci) {
+      c.lessons.forEach(function (l, li) { if (!lessonDone(l.id)) candidates.push({ ci: ci, li: li, l: l, cat: c, lv: GLEVELS.indexOf(l.level) }); });
     });
+    candidates.sort(function (a, b) { return a.lv - b.lv || a.ci - b.ci || a.li - b.li; });
+    return candidates[0] || null;
+  }
+  function renderContinue() {
+    var gNext = nextGrammarLesson();
     var rNext = EP.reading.filter(function (p) { return !Store.data.reading[p.id]; })[0];
     var html = '<span class="small muted" style="width:100%"><b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท → คำศัพท์ ~10 คำ → อ่านสั้น 1 บท แล้วทบทวนเหตุผล</span>';
     html += gNext ? '<button type="button" class="chip" data-go-lesson="' + gNext.ci + '-' + gNext.li + '"><small>1 · Grammar ต่อไป</small><span class="en">' + gNext.l.title + '</span></button>' : '<span class="chip"><small>1 · Grammar</small>เรียนครบทุกบทแล้ว</span>';
@@ -4253,6 +4734,9 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
     if (d.gcat != null) { S.g.cat = +d.gcat; S.g.view = 'list'; confirming = null; render(); var c = $('[data-gcat="' + d.gcat + '"]'); if (c) { c.focus(); c.scrollIntoView({ inline: 'nearest', block: 'nearest' }); } return; }
     if (d.lesson != null) { S.g.lesson = +d.lesson; S.g.view = 'lesson'; gQuiz = null; render(); focusHeading(); return; }
     if (d.gback) { S.g.view = 'list'; render(); focusHeading(); return; }
+    if (d.gpath) { S.g.view = 'path'; render(); focusHeading(); return; }
+    if (d.greview) { S.g.view = 'review'; render(); focusHeading(); return; }
+    if (d.reviewCat != null) { S.g.cat = +d.reviewCat; S.g.view = 'post'; gPost = null; render(); focusHeading(); return; }
     if (d.gnext) { S.g.lesson++; gQuiz = null; render(); focusHeading(); return; }
     if (d.gretry) { gQuiz = null; render(); var q0 = $('#gq-0'); if (q0) q0.scrollIntoView({ block: 'start' }); return; }
     if (d.gpost) {

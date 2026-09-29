@@ -26,7 +26,8 @@ const section = (t) => console.log('\n■ ' + t);
 
 /* ---------- Grammar ---------- */
 section('Grammar');
-const LEVELS = ['A1', 'A2', 'B1', 'B2'];
+const GLEVELS = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1'];
+const LEVELS = ['A1', 'A2', 'B1', 'B2']; // ใช้กับ Vocabulary ด้านล่าง (คำศัพท์ยังมีแค่ 4 ระดับ)
 ok(EP.grammar.length === 5, 'ต้องมี 5 หมวด (พบ ' + EP.grammar.length + ')');
 let lessonCount = 0, miniCount = 0, postCount = 0;
 const lessonIds = new Set();
@@ -46,7 +47,7 @@ for (const cat of EP.grammar) {
   for (const L of cat.lessons) {
     lessonCount++;
     ok(!lessonIds.has(L.id), 'id บทซ้ำ ' + L.id); lessonIds.add(L.id);
-    const lv = LEVELS.indexOf(L.level);
+    const lv = GLEVELS.indexOf(L.level);
     ok(lv >= 0, L.id + ': ระดับไม่ถูกต้อง');
     ok(lv >= lastLevel, L.id + ': ระดับต้องเรียง A1→B2 ภายในหมวด');
     lastLevel = Math.max(lastLevel, lv);

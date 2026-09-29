@@ -9,6 +9,54 @@
     blurb: 'ใคร → ทำอะไร → กับอะไร → เพราะอะไร แยกชิ้นประโยคให้เห็นแกนก่อน',
     lessons: [
       {
+        id: 'sent-core', level: 'Basic', title: 'What a Sentence Needs', th: 'ประโยคหนึ่งประโยคต้องมีอะไรบ้าง',
+        explain: 'ประโยคภาษาอังกฤษที่บอกเล่าเรื่องราวต้องมีอย่างน้อย <b>Subject (ประธาน = ใคร)</b> และ <b>Verb (กริยา = ทำอะไร)</b> สองส่วนนี้พอจะเป็นประโยคได้แล้ว เช่น "Birds fly."<br>กริยาบางตัวต้องมีคำต่อท้ายอีกส่วนหนึ่งจึงจะได้ความสมบูรณ์ แบ่งเป็น 2 แบบที่มักสับสน:<br>• <b>Object (กรรม)</b> = สิ่งที่<b>ถูกกระทำ</b>โดยกริยานั้น เช่น hit <b>the ball</b> (ลูกบอลถูกตี)<br>• <b>Complement (ส่วนเติมเต็ม)</b> = คำที่บอกว่า<b>ประธานเป็นใคร/เป็นอะไร/เป็นอย่างไร</b> ไม่ได้ถูกกระทำ เช่น is <b>happy</b> (เธอไม่ได้ "ทำ" ให้ happy เกิดขึ้น happy แค่อธิบายเธอ)',
+        formula: 'S + V &nbsp;(จบได้แล้ว)<br>S + V + <b>O</b> ถ้ากริยาต้องมีสิ่งถูกกระทำ<br>S + V + <b>C</b> ถ้ากริยาบอกว่าประธานเป็นอะไร/เป็นอย่างไร (มักตามหลัง be, become, look, seem)',
+        examples: [
+          { en: 'S:Birds|V:fly', th: 'นกบิน (มี S + V ก็เป็นประโยคสมบูรณ์แล้ว)' },
+          { en: 'S:She|V:is|C:happy', th: 'เธอมีความสุข (happy เติมเต็มบอกว่าเธอเป็นอย่างไร ไม่ใช่สิ่งที่ถูกกระทำ)' },
+          { en: 'S:He|V:hit|O:the ball', th: 'เขาตีลูกบอล (the ball ถูกตี = กรรม)' }
+        ],
+        confuse: [
+          'Object กับ Complement แยกกันด้วยคำถาม "สิ่งนี้ถูกกระทำไหม" — ถ้าใช่คือ Object (hit <u>the ball</u>) ถ้าเป็นแค่คำอธิบายประธานคือ Complement (is <u>happy</u>, is <u>a nurse</u>)',
+          'ประโยคที่ไม่มีประธานให้เห็น เช่น "Close the door." ไม่ได้แปลว่าอังกฤษไม่ต้องมีประธาน — เป็นประโยคขอ/สั่ง (imperative) ที่ทุกคนเข้าใจตรงกันว่าประธานคือ <b>you</b> จึงไม่พูดออกมา',
+          'ภาษาไทยละประธานได้บ่อยกว่า เช่น "หิวไหม" แต่อังกฤษที่ไม่ใช่ imperative ต้องพูดประธานเสมอ: <u>Are you</u> hungry?'
+        ],
+        quiz: [
+          { q: '"Birds fly." ประโยคนี้ขาดส่วนใดหรือไม่', o: ['ขาด Object', 'ขาด Complement', 'ไม่ขาด สมบูรณ์แล้วด้วย S+V', 'ขาดประธาน'], a: 2,
+            clue: 'fly ไม่ต้องมีกรรมหรือส่วนเติมเต็มก็ได้ความ', rule: 'บางกริยามี S+V ก็จบประโยคได้ ไม่ต้องมี O หรือ C',
+            why: 'fly เป็นกริยาที่ไม่ต้องมีอะไรตามหลัง ประโยคนี้จบสมบูรณ์แล้ว',
+            n: ['fly ไม่จำเป็นต้องมีกรรม', 'fly ไม่ใช่กริยาประเภทที่ต้องมี complement', '', 'Birds คือประธานอยู่แล้ว'],
+            ex: 'The baby cried. (S+V ก็จบได้)' },
+          { q: '"He is a teacher." คำว่า "a teacher" ทำหน้าที่ใด', o: ['Object เพราะถูกกระทำ', 'Complement เพราะบอกว่าประธานเป็นอะไร', 'Subject', 'Verb'], a: 1,
+            clue: 'a teacher ไม่ได้ถูกใครทำอะไร', rule: 'หลัง be มักเป็น Complement ที่บอกว่าประธานเป็นใคร/อะไร',
+            why: 'a teacher ไม่ถูกกระทำ แค่บอกว่า he เป็นอะไร จึงเป็น complement',
+            n: ['a teacher ไม่ถูกกระทำ จึงไม่ใช่ object', '', 'a teacher ไม่ใช่ประธาน', 'a teacher ไม่ใช่กริยา'],
+            ex: 'This is my bag. (my bag = complement)' },
+          { q: '"She kicked the ball." คำว่า "the ball" ทำหน้าที่ใด', o: ['Complement เพราะอธิบายประธาน', 'Object เพราะถูกเตะ (ถูกกระทำ)', 'Subject', 'Verb'], a: 1,
+            clue: 'the ball ถูกเตะ', rule: 'สิ่งที่ถูกกระทำโดยกริยาคือ Object',
+            why: 'the ball ถูกเตะ (ถูกกระทำ) จึงเป็น Object ไม่ใช่ Complement',
+            n: ['the ball ไม่ได้อธิบายว่า she เป็นอะไร', '', 'the ball ไม่ใช่ผู้ทำ', 'the ball ไม่ใช่การกระทำ'],
+            ex: 'I ate the cake. (the cake = object)' },
+          { q: 'ข้อใดเป็นประโยคขอ/สั่ง (imperative) ที่ประธาน "you" ถูกละไว้', o: ['You close the door.', 'Close the door.', 'She closes the door.', 'Is the door closed?'], a: 1,
+            clue: 'ไม่เห็นประธาน แต่ยังสั่งได้', rule: 'Imperative sentence ไม่พูดประธาน you ออกมา แต่ทุกคนเข้าใจว่าหมายถึงผู้ฟัง',
+            why: '"Close the door." ไม่มีประธานให้เห็น แต่เข้าใจว่าคือ you',
+            n: ['ข้อนี้พูด You ออกมาแล้ว ไม่ใช่ imperative', '', 'ข้อนี้มีประธาน She ชัดเจน', 'ข้อนี้เป็นประโยคคำถาม'],
+            ex: 'Sit down, please. (you ถูกละไว้)' },
+          { q: 'เรียงคำให้เป็นประโยคที่ถูกต้อง: is / My sister / a doctor', o: ['My sister is a doctor.', 'Is my sister a doctor.', 'A doctor my sister is.', 'My sister a doctor is.'], a: 0,
+            clue: 'S + V + C', rule: 'ประโยคบอกเล่าเรียง Subject + Verb (+Object/Complement)',
+            why: 'My sister (S) → is (V) → a doctor (C บอกว่าน้องสาวเป็นอะไร)',
+            n: ['', 'รูปนี้เป็นคำถาม ไม่ใช่ประโยคบอกเล่า', 'สลับตำแหน่ง complement มาไว้หน้าประธาน', 'complement ต้องอยู่หลัง verb ไม่ใช่หน้า is'],
+            ex: 'That book is interesting.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค 1 ประโยคที่มีแค่ S + V (ไม่ต้องมี Object หรือ Complement)', sample: 'The sun rises.',
+            checklist: ['มีประธาน (Subject) ชัดเจน', 'มีกริยา (Verb) ที่ไม่ต้องมีคำต่อท้ายก็ได้ความ', 'ไม่มีจุด (.) มากกว่า 1 ประโยค'] },
+          { prompt: 'แต่งประโยค 1 ประโยคที่มี Complement (บอกว่าประธานเป็นอะไร/เป็นอย่างไร) โดยใช้ is/am/are', sample: 'My father is kind.',
+            checklist: ['ใช้ be (is/am/are) เป็นกริยา', 'คำหลัง be บอกว่าประธานเป็นอะไร/เป็นอย่างไร ไม่ใช่สิ่งที่ถูกกระทำ', 'สะกดคำถูกต้องและมีจุดจบประโยค'] }
+        ]
+      },
+      {
         id: 'sent-svo', level: 'A1', title: 'Subject + Verb + Object', th: 'ประธาน + กริยา + กรรม',
         explain: 'ประโยคพื้นฐานของภาษาอังกฤษเรียงแบบ <b>ใคร (Subject) → ทำอะไร (Verb) → กับอะไร (Object)</b><br>• <b>Subject</b> = ผู้ทำ มักอยู่หน้าสุด<br>• <b>Verb</b> = การกระทำ<br>• <b>Object</b> = สิ่งที่ถูกกระทำ อยู่หลังกริยา<br>ข้อมูลอื่น เช่น ที่ไหน/เมื่อไร มักตามหลังกรรม',
         formula: '<b>S</b> ใคร → <b>V</b> ทำอะไร → <b>O</b> กับอะไร → ที่ไหน → เมื่อไร',
@@ -18,7 +66,7 @@
           { en: 'S:Somchai|V:reads|O:the newspaper|Pl:in the kitchen', th: 'สมชายอ่านหนังสือพิมพ์ในครัว' }
         ],
         confuse: [
-          'ภาษาอังกฤษต้องมีประธานเสมอ ภาษาไทยพูด "กินข้าวแล้ว" ได้ แต่อังกฤษต้องเป็น <b>I</b> ate.',
+          'ประโยคบอกเล่า/คำถามทั่วไปต้องมีประธานเสมอ ภาษาไทยพูด "กินข้าวแล้ว" ได้โดยไม่พูดผู้พูด แต่อังกฤษต้องเป็น <b>I</b> ate. — <b>ข้อยกเว้น</b> คือประโยคขอ/สั่ง (imperative) เช่น "Close the door." ไม่มีประธานให้เห็น เพราะ<b>ผู้ฟัง (you) เป็นประธานที่เข้าใจตรงกันโดยไม่ต้องพูด</b> ไม่ใช่ว่าประโยคนี้ไม่มีประธานจริง ๆ',
           'สลับตำแหน่งแล้วความหมายเปลี่ยน: The dog bit the man. ≠ The man bit the dog.'
         ],
         quiz: [
@@ -88,6 +136,54 @@
             why: 'พูดถึงอากาศใช้ It is',
             n: ['', 'are ใช้กับพหูพจน์', 'am ใช้กับ I', 'has ไม่ใช้บอกสภาพอากาศแบบนี้'],
             ex: 'It is sunny. It is late.' }
+        ]
+      },
+      {
+        id: 'sent-there', level: 'A1', title: 'There is / There are', th: 'มี... (บอกว่ามีอะไรอยู่ตรงนั้น)',
+        explain: 'เมื่อจะบอกว่า <b>"มีอะไรอยู่ที่หนึ่ง"</b> เป็นครั้งแรก (ผู้ฟังยังไม่รู้ว่ามี) ภาษาอังกฤษใช้ <b>There + is/are</b> นำหน้า ไม่ใช่เอาสิ่งของขึ้นต้นประโยคเหมือน "a cat is..." <br>• สิ่งเดียว/นับไม่ได้ → <b>There is (There\'s)</b><br>• หลายสิ่ง → <b>There are</b><br>คำว่า "there" ในโครงสร้างนี้ไม่ได้แปลว่า "ที่นั่น" มันเป็นแค่ตัวเปิดประโยค ส่วนสถานที่จริงจะพูดต่อท้าย: There is a cat <b>on the sofa</b>.',
+        formula: '<b>There is</b> + คำนามเอกพจน์/นับไม่ได้<br><b>There are</b> + คำนามพหูพจน์<br>ปฏิเสธ: There isn\'t / There aren\'t · คำถาม: Is there...? / Are there...?',
+        examples: [
+          { en: 'x:There|V:is|O:a cat|Pl:on the sofa', th: 'มีแมวตัวหนึ่งอยู่บนโซฟา' },
+          { en: 'x:There|V:are|O:three students|Pl:in the room', th: 'มีนักเรียนสามคนอยู่ในห้อง' },
+          { en: 'x:Is|x:there|O:any milk|Pl:in the fridge?', th: 'มีนมอยู่ในตู้เย็นไหม' }
+        ],
+        confuse: [
+          'ห้ามพูดว่า "A cat is on the sofa." เมื่อกำลัง<b>บอกครั้งแรกว่ามีอะไร</b> — โครงสร้างนี้ต้องขึ้นต้นด้วย There is/are: "There is a cat on the sofa." (ถ้าพูดถึงแมวตัวที่รู้จักอยู่แล้ว จึงพูด "The cat is on the sofa." ได้)',
+          'นับตามคำนามที่ตามหลัง ไม่ใช่ตาม "there": There <u>is</u> a book. / There <u>are</u> books. (books พหูพจน์ ใช้ are)',
+          'คำนามนับไม่ได้ (water, milk, money) ใช้ There is เสมอ แม้จะดูเหมือน "มีหลายอย่าง": There is some water in the bottle.'
+        ],
+        quiz: [
+          { q: '___ a book on the table.', o: ['There is', 'There are', 'It is', 'This is'], a: 0,
+            clue: 'a book (นับได้ เอกพจน์)', rule: 'สิ่งเดียวใช้ There is',
+            why: 'a book เป็นคำนามเอกพจน์ จึงใช้ There is',
+            n: ['', 'are ใช้กับพหูพจน์', 'It is ใช้พูดถึงของที่รู้จักแล้ว ไม่ใช่บอกว่ามีครั้งแรก', 'This is ชี้เฉพาะสิ่งที่อยู่ใกล้ ไม่ใช่โครงสร้างบอกว่ามีอะไร'],
+            ex: 'There is a pen in my bag.' },
+          { q: '___ many students in the class.', o: ['There is', 'There are', 'There has', 'It has'], a: 1,
+            clue: 'many students (พหูพจน์)', rule: 'หลายสิ่งใช้ There are',
+            why: 'students เป็นพหูพจน์ จึงใช้ There are',
+            n: ['is ใช้กับเอกพจน์', '', 'ไม่มีโครงสร้าง there has แบบนี้', 'it has ไม่ใช้บอกว่ามีอะไรอยู่ที่หนึ่ง'],
+            ex: 'There are five apples in the bowl.' },
+          { q: '___ any milk in the fridge?', o: ['Is there', 'Are there', 'Does there', 'There is'], a: 0,
+            clue: 'milk นับไม่ได้ + เป็นคำถาม', rule: 'คำถามสลับเป็น Is there / Are there และ milk นับไม่ได้ใช้ is',
+            why: 'milk นับไม่ได้ใช้ is และคำถามต้องสลับ is มาไว้หน้า there',
+            n: ['', 'milk นับไม่ได้ ไม่ใช้ are', 'ไม่มีโครงสร้าง does there', 'this is a statement form ไม่ใช่คำถาม'],
+            ex: 'Is there a doctor here?' },
+          { q: 'ข้อใดถูกต้องเมื่อบอกว่า "มีแมวตัวหนึ่งอยู่ใต้โต๊ะ" เป็นครั้งแรก', o: ['A cat is under the table.', 'There is a cat under the table.', 'The cat under the table.', 'Cat is under the table.'], a: 1,
+            clue: 'บอกครั้งแรกว่ามีอะไร', rule: 'บอกว่ามีอะไรครั้งแรกต้องขึ้นต้นด้วย There is/are ไม่ใช่เอาคำนามขึ้นต้น',
+            why: 'ประโยคนี้แนะนำแมวตัวนี้ครั้งแรก จึงต้องใช้ There is',
+            n: ['เอาคำนามขึ้นต้นแบบนี้ใช้ตอนที่ผู้ฟังรู้จักแมวตัวนี้อยู่แล้ว', '', 'ประโยคนี้ไม่มีกริยา', 'ขาดคำนำหน้านาม the/a และกริยา'],
+            ex: 'There is a surprise for you.' },
+          { q: 'เรียงคำให้ถูก: are / three / There / windows / in the room', o: ['There are three windows in the room.', 'Three there are windows in the room.', 'There three are windows in the room.', 'Windows are there three in the room.'], a: 0,
+            clue: 'There + are + จำนวน + คำนามพหูพจน์', rule: 'There are + คำนามพหูพจน์ + (สถานที่)',
+            why: 'There are (มี) → three windows (คำนามพหูพจน์) → in the room (สถานที่)',
+            n: ['', 'three ต้องอยู่หลัง are ไม่ใช่หน้า There', 'are ต้องอยู่หลัง There ไม่ใช่กลางประโยค', 'ลำดับผิดทั้งหมด'],
+            ex: 'There are two chairs by the window.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคบอกว่า "มีอะไรอยู่ที่ไหน" โดยใช้ There is + คำนามเอกพจน์', sample: 'There is a dog in the garden.',
+            checklist: ['ขึ้นต้นด้วย There is', 'คำนามที่ตามมาเป็นเอกพจน์หรือนับไม่ได้', 'มีการบอกสถานที่ต่อท้าย (in/on/at...)'] },
+          { prompt: 'แต่งคำถามโดยใช้ Is there หรือ Are there ถามว่ามีสิ่งของอะไรอยู่ในกระเป๋าของคุณ', sample: 'Are there any books in your bag?',
+            checklist: ['สลับ is/are มาไว้หน้า there (เพราะเป็นคำถาม)', 'เลือก is/are ให้ตรงกับคำนามที่ตามมา (เอกพจน์/พหูพจน์)', 'ลงท้ายด้วยเครื่องหมายคำถาม (?)'] }
         ]
       },
       {
@@ -261,6 +357,16 @@
         why: 'We (S) play (V) games (O)',
         n: ['', 'กรรมอยู่หน้ากริยา', 'กริยาอยู่หน้าประธาน', 'มีกริยาซ้ำ'],
         ex: 'They watch movies.' },
+      { q: '___ a letter for you on the table.', o: ["There's", 'It is', 'This is', 'There are'], a: 0,
+        clue: 'a letter (เอกพจน์) + บอกว่ามีอะไรครั้งแรก', rule: 'บอกว่ามีอะไรอยู่ที่หนึ่งเป็นครั้งแรก + เอกพจน์ → There is',
+        why: 'a letter เป็นเอกพจน์ และเป็นการบอกว่ามีจดหมายอยู่ตรงนั้นเป็นครั้งแรก จึงใช้ There is (There\'s)',
+        n: ['', 'It is ใช้พูดถึงสิ่งที่รู้จักอยู่แล้ว ไม่ใช่บอกว่ามีครั้งแรก', 'This is ชี้เฉพาะเจาะจง ไม่ใช่โครงสร้างบอกว่ามีอะไร', 'are ใช้กับพหูพจน์ แต่ a letter เป็นเอกพจน์'],
+        ex: "There's a message for you." },
+      { q: '"My father is a pilot." คำว่า "a pilot" ทำหน้าที่ใด', o: ['Object เพราะถูกกระทำ', 'Complement เพราะบอกว่าประธานเป็นอะไร', 'Subject', 'Verb'], a: 1,
+        clue: 'a pilot ไม่ได้ถูกใครทำอะไร', rule: 'หลัง be มักเป็น Complement ที่บอกว่าประธานเป็นใคร/เป็นอะไร ไม่ใช่ Object',
+        why: 'a pilot ไม่ถูกกระทำ เป็นแค่คำอธิบายว่า my father เป็นอาชีพอะไร จึงเป็น Complement',
+        n: ['a pilot ไม่ถูกกระทำโดยใคร', '', 'a pilot ไม่ใช่ผู้ทำ', 'a pilot ไม่ใช่การกระทำ'],
+        ex: 'This is my sister. (my sister = complement)' },
       { q: 'The weather ___ nice today.', o: ['is', 'are', 'am', 'be'], a: 0,
         clue: 'The weather (เอกพจน์) + nice (คุณศัพท์)', rule: 'S + be + คุณศัพท์',
         why: 'weather เป็นเอกพจน์ → is',
@@ -276,21 +382,11 @@
         why: 'they กับกริยาแท้ใช้ Do',
         n: ['', 'Does ใช้กับ he/she/it', 'Are ใช้กับ be', 'Is ใช้กับ be'],
         ex: 'Do you like coffee?' },
-      { q: 'Why ___ you late yesterday?', o: ['were', 'did', 'was', 'are'], a: 0,
-        clue: 'you + late (คุณศัพท์) + yesterday', rule: 'คำถามประโยค be อดีต: Wh- + was/were + S',
-        why: 'late เป็นคุณศัพท์ ต้องใช้ be และ you ในอดีต → were',
-        n: ['', 'did ต้องตามด้วยกริยาแท้', 'was ใช้กับ I/he/she/it', 'are เป็นปัจจุบัน ขัดกับ yesterday'],
-        ex: 'Where were you last night?' },
       { q: 'It was expensive, ___ I bought it.', o: ['but', 'so', 'because', 'or'], a: 0,
         clue: 'แพง ↔ ซื้อ (ขัดกัน)', rule: 'but เชื่อมความที่ขัดกัน',
         why: 'แพงแต่ก็ยังซื้อ จึงใช้ but',
         n: ['', 'so ทำให้ความหมายเป็น "แพงจึงซื้อ" ไม่สมเหตุผล', 'because ต้องตามด้วยเหตุ', 'or ใช้กับทางเลือก'],
         ex: 'He was tired, but he kept working.' },
-      { q: 'She didn\'t come ___ she was busy.', o: ['because', 'so', 'but', 'or'], a: 0,
-        clue: 'ไม่มา (ผล) ← ยุ่ง (เหตุ)', rule: 'because + เหตุ',
-        why: 'การยุ่งเป็นเหตุที่ไม่มา',
-        n: ['', 'so ต้องตามด้วยผล', 'but ใช้กับความที่ขัดกัน', 'or ใช้กับทางเลือก'],
-        ex: 'We left early because it was dark.' },
       { q: '"The man who lives next door works at a bank." — กริยาหลักคือข้อใด', o: ['lives', 'works', 'next', 'who'], a: 1,
         clue: 'ตัด "who lives next door" ออก', rule: 'กริยาใน who-clause ไม่ใช่กริยาหลัก',
         why: 'แกนคือ The man works at a bank',
