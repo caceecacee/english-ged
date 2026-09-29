@@ -256,6 +256,53 @@
         ]
       },
       {
+        id: 'pos-gerund', level: 'B1', title: 'Gerunds & Infinitives', th: 'กริยาเติม -ing กับ to + กริยา',
+        explain: 'เมื่อมีกริยาสองตัวติดกัน กริยาตัวที่สองต้องเลือกรูประหว่าง <b>V-ing (gerund)</b> กับ <b>to + V1 (infinitive)</b> — กริยาแต่ละคำ "จำ" ว่าต้องตามด้วยรูปไหน (ไม่มีกฎตายตัว ต้องจำเป็นคำ ๆ ไป)<br>• ตามด้วย <b>-ing</b> เท่านั้น: enjoy, finish, avoid, suggest, mind, practice<br>• ตามด้วย <b>to + V1</b> เท่านั้น: want, need, decide, plan, promise, hope, agree<br>• ใช้ได้ทั้งคู่ (ความหมายเหมือนเดิม): like, love, start, begin, continue',
+        formula: 'enjoy/finish/avoid + <b>V-ing</b><br>want/need/decide/plan + <b>to V1</b>',
+        examples: [
+          { en: 'pro:She|v:enjoys|v:reading novels', th: 'เธอชอบอ่านนิยาย (enjoy + V-ing เสมอ)' },
+          { en: 'pro:I|v:want|v:to travel|adv:around the world', th: 'ฉันอยากเดินทางรอบโลก (want + to V1 เสมอ)' },
+          { en: 'pro:He|v:finished|v:doing his homework|prep:before dinner', th: 'เขาทำการบ้านเสร็จก่อนมื้อเย็น (finish + V-ing เสมอ)' }
+        ],
+        confuse: [
+          'ผู้เรียนไทยมักใส่ to หน้ากริยาที่ต้องการ -ing: "enjoy <u>to swim</u>" ✗ ต้องเป็น "enjoy <u>swimming</u>" ✓ — ไม่มีทางลัด ต้องจำเป็นคำ ๆ ไป',
+          'stop + V-ing (หยุดทำสิ่งนั้น) ≠ stop + to V1 (หยุดเพื่อจะไปทำอีกอย่าง): "He stopped <u>smoking</u>." (เลิกสูบบุหรี่) ≠ "He stopped <u>to smoke</u>." (หยุดเดินเพื่อสูบบุหรี่)'
+        ],
+        quiz: [
+          { q: 'She enjoys ___ novels.', o: ['read', 'to read', 'reading', 'reads'], a: 2,
+            clue: 'enjoy + ?', rule: 'enjoy ตามด้วย V-ing เสมอ',
+            why: 'enjoy เป็นกริยาที่ต้องตามด้วย -ing เท่านั้น',
+            n: ['ต้องเติม -ing', 'enjoy ไม่ใช้กับ to V1', '', 'reads ผิดหลักไวยากรณ์ตรงนี้'],
+            ex: 'I enjoy cooking on weekends.' },
+          { q: 'I want ___ a new phone.', o: ['buying', 'buy', 'to buy', 'bought'], a: 2,
+            clue: 'want + ?', rule: 'want ตามด้วย to + V1 เสมอ',
+            why: 'want เป็นกริยาที่ต้องตามด้วย to + V1 เท่านั้น',
+            n: ['want ไม่ใช้กับ -ing', 'ขาด to', '', 'bought เป็นอดีต ผิดรูป'],
+            ex: 'They decided to leave early.' },
+          { q: 'He avoided ___ his boss after the meeting.', o: ['to see', 'seeing', 'see', 'sees'], a: 1,
+            clue: 'avoid + ?', rule: 'avoid ตามด้วย V-ing เสมอ',
+            why: 'avoid เป็นกริยาที่ต้องตามด้วย -ing เท่านั้น',
+            n: ['avoid ไม่ใช้กับ to V1', '', 'ขาด -ing', 'sees ผิดหลักไวยากรณ์ตรงนี้'],
+            ex: 'She avoided talking about the accident.' },
+          { q: '"He stopped smoking." กับ "He stopped to smoke." ความหมายต่างกันอย่างไร', o: ['ความหมายเหมือนกันทุกประการ', 'ประโยคแรก = เลิกสูบบุหรี่ถาวร ประโยคสอง = หยุดเดินเพื่อไปสูบบุหรี่', 'ประโยคแรกผิดไวยากรณ์', 'ประโยคสองผิดไวยากรณ์'], a: 1,
+            clue: 'stop + V-ing ≠ stop + to V1', rule: 'stop + V-ing (เลิกทำสิ่งนั้น) ≠ stop + to V1 (หยุดเพื่อไปทำอีกอย่าง)',
+            why: 'stop smoking = เลิกสูบบุหรี่ตลอดกาล ส่วน stop to smoke = หยุดสิ่งที่ทำอยู่เพื่อไปสูบบุหรี่',
+            n: ['ทั้งสองประโยคถูกไวยากรณ์ แต่ความหมายต่างกัน', '', 'ทั้งสองประโยคถูกไวยากรณ์ ไม่ใช่ประโยคที่ผิด', 'ทั้งสองประโยคถูกไวยากรณ์ ไม่ใช่ประโยคที่ผิด'],
+            ex: 'She stopped eating meat. (เลิกกินเนื้อสัตว์)' },
+          { q: 'เรียงคำให้ถูก: to / plans / She / next year / study / abroad', o: ['She plans to study abroad next year.', 'She plans studying abroad next year.', 'She to plans study abroad next year.', 'She plans to studying abroad next year.'], a: 0,
+            clue: 'plan + to + V1', rule: 'plan ตามด้วย to + V1 เสมอ',
+            why: 'She (S) → plans (V) → to study abroad (to+V1) → next year (เวลา)',
+            n: ['', 'plan ไม่ใช้กับ -ing โดยตรงแบบนี้', 'to ต้องอยู่หลัง plans ไม่ใช่หน้า', 'หลัง to ต้องเป็น V1 ไม่ใช่ -ing'],
+            ex: 'He promised to help me tomorrow.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคโดยใช้กริยาที่ต้องตามด้วย V-ing (เช่น enjoy, finish, avoid, mind)', sample: 'I finished cleaning my room an hour ago.',
+            checklist: ['เลือกกริยาที่ตามด้วย -ing เท่านั้น', 'กริยาตัวที่สองอยู่ในรูป -ing', 'ประโยคสมเหตุสมผล'] },
+          { prompt: 'แต่งประโยคโดยใช้กริยาที่ต้องตามด้วย to + V1 (เช่น want, decide, promise, hope)', sample: 'She decided to change her job.',
+            checklist: ['เลือกกริยาที่ตามด้วย to + V1 เท่านั้น', 'กริยาตัวที่สองอยู่ในรูป to + V1 (ไม่เติม -ing/-s)', 'ประโยคสมเหตุสมผล'] }
+        ]
+      },
+      {
         id: 'pos-roles', level: 'B1', title: 'One word, many jobs', th: 'คำเดียวทำได้หลายหน้าที่',
         explain: 'คำอังกฤษหลายคำ <b>ใช้ได้หลายชนิด</b> โดยรูปคำไม่เปลี่ยน ต้องดู <b>ตำแหน่งในประโยค</b> ว่าทำหน้าที่อะไร<br>• หลัง the/a/my → มักเป็น <b>noun</b> (my <b>work</b>)<br>• หลังประธาน → มักเป็น <b>verb</b> (They <b>work</b>)<br>• หน้าคำนาม → มักเป็น <b>adjective</b> (a <b>fast</b> train)<br>• หลังกริยา บอกอย่างไร → มักเป็น <b>adverb</b> (She runs <b>fast</b>)',
         formula: 'the/my + <b>คำ</b> → Noun<br>ประธาน + <b>คำ</b> → Verb<br><b>คำ</b> + noun → Adjective<br>กริยา + <b>คำ</b> → Adverb',
@@ -369,11 +416,11 @@
         why: 'สองประโยคขัดกัน จึงใช้ but',
         n: ['', 'so บอกผลลัพธ์ แต่ฝนตกไม่ใช่ผลของการอยากออกไป', 'on เป็นบุพบท', 'oh เป็นคำอุทาน'],
         ex: 'The phone is old, but it works.' },
-      { q: '"Wow! That is a big fish." — Wow เป็นคำชนิดใด', o: ['Interjection', 'Conjunction', 'Adverb', 'Noun'], a: 0,
-        clue: 'Wow + !', rule: 'คำแสดงอารมณ์ที่มี ! เป็นคำอุทาน',
-        why: 'Wow แสดงความประหลาดใจ',
-        n: ['', 'ไม่ได้เชื่อมคำหรือประโยค', 'ไม่ได้ขยายกริยาหรือคุณศัพท์', 'ไม่ได้เป็นชื่อสิ่งใด'],
-        ex: 'Oops! I dropped my pen.' },
+      { q: 'She avoided ___ her ex-boyfriend at the party.', o: ['to see', 'seeing', 'see', 'sees'], a: 1,
+        clue: 'avoid + ?', rule: 'avoid ตามด้วย V-ing เสมอ',
+        why: 'avoid เป็นกริยาที่ต้องตามด้วย -ing เท่านั้น',
+        n: ['avoid ไม่ใช้กับ to V1', '', 'ขาด -ing', 'ผิดหลักไวยากรณ์ตรงนี้'],
+        ex: 'He avoided answering the question.' },
       { q: '"Please turn on the light." — light เป็นคำชนิดใด', o: ['Noun', 'Verb', 'Adjective', 'Adverb'], a: 0,
         clue: 'the + light', rule: 'หลัง the มักเป็นคำนาม',
         why: 'light อยู่หลัง the และเป็นสิ่งที่ถูกเปิด (ไฟ) จึงเป็นคำนาม',

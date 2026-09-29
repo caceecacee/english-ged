@@ -408,6 +408,100 @@
         ]
       },
       {
+        id: 'tense-perfect2', level: 'B1', title: 'Present Perfect vs Past Simple', th: 'ปัจจุบันสมบูรณ์ vs อดีตกาล',
+        explain: 'ทั้งสองกาลพูดถึงเรื่องที่เกิดในอดีต แต่<b>โฟกัสต่างกัน</b>:<br>• <b>Past Simple</b> = เกิดขึ้น<b>และจบไปแล้ว</b> ณ เวลาที่<b>ระบุชัดเจน</b> โฟกัสที่ "เมื่อไร"<br>• <b>Present Perfect</b> = โฟกัสที่ <b>ผลตอนนี้</b> หรือ <b>ประสบการณ์สะสม</b> ไม่สนว่าเมื่อไร<br>กฎสำคัญ: ถ้าประโยคมีคำบอกเวลาที่แน่นอน (yesterday, in 2020, last week) <b>ต้องใช้ Past Simple เท่านั้น</b> ห้ามใช้ Present Perfect เด็ดขาด',
+        formula: 'มีเวลาที่แน่นอน (yesterday, in 2020) → <b>Past Simple</b><br>ไม่บอกเวลา/เน้นผลตอนนี้/ประสบการณ์ (ever, never, already, yet, since, for) → <b>Present Perfect</b>',
+        examples: [
+          { en: 'S:I|V:lost|O:my keys|T:yesterday', th: 'ฉันทำกุญแจหาย เมื่อวานนี้ (บอกเวลาแน่นอน → Past Simple)' },
+          { en: 'S:I|aux:have|V:lost|O:my keys', th: 'ฉันทำกุญแจหาย (ไม่บอกว่าเมื่อไร เน้นผล: ตอนนี้ไม่มีกุญแจ → Present Perfect)' },
+          { en: 'S:She|aux:has|V:lived|Pl:in Bangkok|T:for five years', th: 'เธออาศัยอยู่ในกรุงเทพฯ มา 5 ปีแล้ว (ยังอยู่ต่อเนื่องถึงตอนนี้ → Present Perfect + for)' }
+        ],
+        confuse: [
+          '"for" กับ "since" ต่างกัน: <b>for</b> + ช่วงเวลา (for five years, for two hours) · <b>since</b> + จุดเริ่มต้น (since 2019, since Monday) — ทั้งคู่ใช้กับ Present Perfect เมื่อเรื่องยังดำเนินต่อถึงตอนนี้',
+          'ผู้เรียนไทยมักพูด "I have lost my keys yesterday." ผสมสองกาลผิด — มี yesterday (เวลาแน่นอน) ต้องใช้ Past Simple ล้วน: "I lost my keys yesterday."'
+        ],
+        quiz: [
+          { q: 'I ___ my homework yesterday.', o: ['have finished', 'finished', 'has finished', 'finish'], a: 1,
+            clue: 'yesterday = เวลาแน่นอน', rule: 'มีเวลาที่แน่นอน → Past Simple เท่านั้น',
+            why: 'yesterday บอกเวลาชัดเจน ห้ามใช้ Present Perfect',
+            n: ['มี yesterday ห้ามใช้ Present Perfect', '', 'มี yesterday ห้ามใช้ Present Perfect และประธาน I ไม่ใช้ has', 'finish ต้องผันตามกาล ไม่ใช่ปล่อยเป็น V1'],
+            ex: 'She called me last night.' },
+          { q: 'A: Where is your phone? B: I ___ it. I don\'t know where it is now.', o: ['lost', 'have lost', 'was losing', 'lose'], a: 1,
+            clue: 'ไม่บอกเวลา + เน้นผลตอนนี้ (ไม่มีโทรศัพท์)', rule: 'ไม่บอกเวลา + เน้นผลปัจจุบัน → Present Perfect',
+            why: 'ไม่มีคำบอกเวลา และประโยคเน้นผลตอนนี้ (ไม่รู้ว่าโทรศัพท์อยู่ไหน) จึงใช้ have lost',
+            n: ['ไม่ผิดหลักแต่ไม่เน้นผลตอนนี้เท่า Present Perfect ในบริบทนี้', '', 'was losing สื่อว่ากำลังทำอยู่ ไม่ตรงกับสถานการณ์', 'lose ต้องผันกาล'],
+            ex: "I can't find my wallet. I think I have lost it." },
+          { q: 'She has lived here ___ 2019.', o: ['for', 'since', 'in', 'at'], a: 1,
+            clue: '2019 = จุดเริ่มต้น (ปี)', rule: 'since + จุดเริ่มต้น',
+            why: '2019 เป็นจุดเริ่มต้นของการอาศัยอยู่ จึงใช้ since',
+            n: ['for ใช้กับช่วงเวลา เช่น for 5 years ไม่ใช่ปีที่ระบุแบบนี้', '', 'in ไม่ใช้ในโครงสร้างนี้', 'at ไม่ใช้กับปี'],
+            ex: 'I have known him since 2015.' },
+          { q: 'ข้อใดผิด (ผสมสองกาลผิด)', o: ['I visited Paris last year.', 'I have visited Paris.', 'I have visited Paris yesterday.', 'I have never visited Paris.'], a: 2,
+            clue: 'yesterday + have visited', rule: 'ห้ามใช้ yesterday กับ Present Perfect',
+            why: '"have visited" (Present Perfect) ใช้ร่วมกับ "yesterday" (เวลาแน่นอน) ไม่ได้',
+            n: ['ถูกต้อง: เวลาแน่นอน + Past Simple', 'ถูกต้อง: ไม่บอกเวลา + Present Perfect', '', 'ถูกต้อง: never ใช้กับ Present Perfect ได้'],
+            ex: 'I visited Paris yesterday. (ไม่ใช่ have visited)' },
+          { q: 'เรียงคำให้ถูก: for / has / She / ten years / taught / English', o: ['She has taught English for ten years.', 'She taught has English for ten years.', 'She has taught English since ten years.', 'She has English taught for ten years.'], a: 0,
+            clue: 'for + ช่วงเวลา + Present Perfect ต่อเนื่อง', rule: 'S + has/have + V3 + O + for + ช่วงเวลา',
+            why: 'She (S) → has taught (Present Perfect) → English (O) → for ten years (ช่วงเวลา)',
+            n: ['', 'has ต้องอยู่หน้า V3 ไม่ใช่หลัง', 'ten years เป็นช่วงเวลา ต้องใช้ for ไม่ใช่ since', 'กรรมต้องอยู่หลังกริยาทั้งหมด ไม่ใช่แทรกกลาง'],
+            ex: 'He has worked here for three years.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค 1 คู่ เทียบ Past Simple (บอกเวลาแน่นอน) กับ Present Perfect (ไม่บอกเวลา) ของเหตุการณ์เดียวกัน', sample: 'I watched that movie last week. I have watched that movie three times.',
+            checklist: ['ประโยคแรกมีคำบอกเวลาแน่นอนและใช้ Past Simple', 'ประโยคสองไม่มีคำบอกเวลาแน่นอนและใช้ Present Perfect', 'ทั้งสองประโยคพูดถึงกิจกรรมเดียวกัน'] },
+          { prompt: 'แต่งประโยคบอกว่าคุณทำอะไรมานานแค่ไหนแล้ว (ต่อเนื่องถึงตอนนี้) โดยใช้ for หรือ since', sample: 'I have studied English for six years.',
+            checklist: ['ใช้ have/has + กริยาช่อง 3', 'เลือก for (ช่วงเวลา) หรือ since (จุดเริ่มต้น) ให้ถูกต้อง', 'เหตุการณ์ยังดำเนินต่อเนื่องถึงตอนนี้'] }
+        ]
+      },
+      {
+        id: 'tense-reported', level: 'B1', title: 'Reported Speech (statements)', th: 'การรายงานคำพูด (ประโยคบอกเล่า)',
+        explain: 'เมื่อเล่าสิ่งที่คนอื่นพูดโดยไม่พูดคำต่อคำ (ไม่มีเครื่องหมายคำพูด) กริยาต้อง <b>ถอยหลังไปหนึ่งขั้น (backshift)</b> เพราะเวลาผ่านไปแล้วตั้งแต่ตอนที่พูด:<br>• Present Simple → Past Simple<br>• Present Continuous → Past Continuous<br>• Past Simple → Past Perfect<br>• will → would · can → could<br>สรรพนามและคำบอกเวลาก็ต้องปรับ: I → he/she, tomorrow → the next day, today → that day',
+        formula: 'S + said (that) + S + V<b>ถอยหลังหนึ่งขั้น</b> + ...<br>"I am tired," she said. → She said (that) she <b>was</b> tired.',
+        examples: [
+          { en: 'x:"I|x:am|x:tired,"|S:she|V:said', th: '"ฉันเหนื่อย" เธอพูด' },
+          { en: 'S:She|V:said|R:that|S:she|aux:was|C:tired', th: 'เธอบอกว่าเธอเหนื่อย (am → was ถอยหลังหนึ่งขั้น)' },
+          { en: 'S:He|V:said|R:that|S:he|aux:would|V:call|M:the next day', th: 'เขาบอกว่าเขาจะโทรมาวันถัดไป (will → would, tomorrow → the next day)' }
+        ],
+        confuse: [
+          'ถ้าสิ่งที่พูดเป็น<b>ความจริงที่ไม่เปลี่ยนแปลง</b> (ข้อเท็จจริงทางวิทยาศาสตร์ กฎทั่วไป) ไม่จำเป็นต้อง backshift ก็ได้: "The sun rises in the east," he said. → He said that the sun <b>rises</b> in the east. (คงปัจจุบันได้)',
+          'คำบอกเวลา/สถานที่ต้องปรับด้วย ไม่ใช่แค่กริยา: this → that, here → there, tomorrow → the next day, yesterday → the day before'
+        ],
+        quiz: [
+          { q: '"I am busy," she said. → She said that she ___ busy.', o: ['is', 'was', 'has been', 'be'], a: 1,
+            clue: 'am → backshift หนึ่งขั้น', rule: 'Present Simple (am/is/are) → Past Simple (was/were)',
+            why: 'am ถอยหลังหนึ่งขั้นเป็น was',
+            n: ['ไม่ถอยหลัง ยังเป็นปัจจุบันอยู่', '', 'ถอยหลังมากเกินไป (สองขั้น)', 'ไม่ใช่รูปกริยาที่ถูกต้อง'],
+            ex: '"I am ready," he said. → He said he was ready.' },
+          { q: '"I will call you," he said. → He said that he ___ call me.', o: ['will', 'would', 'can', 'shall'], a: 1,
+            clue: 'will → backshift', rule: 'will → would',
+            why: 'will ถอยหลังหนึ่งขั้นเป็น would',
+            n: ['ไม่ถอยหลัง', '', 'can เป็นกริยาช่วยคนละความหมาย', 'shall ไม่ใช่รูปถอยหลังของ will'],
+            ex: '"I will help you," she said. → She said she would help me.' },
+          { q: '"I work here," she said yesterday. → She said that she ___ there.', o: ['works', 'worked', 'has worked', 'work'], a: 1,
+            clue: 'work (ปัจจุบัน) → backshift', rule: 'Present Simple → Past Simple',
+            why: 'work ถอยหลังหนึ่งขั้นเป็น worked และ here → there (เปลี่ยนสถานที่ตามบริบทของผู้เล่า)',
+            n: ['ไม่ถอยหลัง', '', 'ถอยหลังมากเกินไป', 'ไม่ผันกาลเลย'],
+            ex: '"I live here," he said. → He said he lived there.' },
+          { q: '"The Earth goes around the sun," the teacher said. ข้อใดถูกต้องที่สุด', o: ['The teacher said that the Earth went around the sun.', 'The teacher said that the Earth goes around the sun.', 'The teacher said that the Earth is going around the sun.', 'The teacher said the Earth will go around the sun.'], a: 1,
+            clue: 'ข้อเท็จจริงทางวิทยาศาสตร์ที่ไม่เปลี่ยนแปลง', rule: 'ความจริงที่ไม่เปลี่ยนแปลง ไม่จำเป็นต้อง backshift',
+            why: 'นี่คือข้อเท็จจริงทางวิทยาศาสตร์ที่ยังเป็นจริงเสมอ จึงคงรูปปัจจุบัน goes ได้',
+            n: ['ถอยหลังโดยไม่จำเป็น (แต่ก็ไม่ผิดกฎเสมอไป — ข้อนี้ดีที่สุดเพราะสื่อว่ายังเป็นจริง)', '', 'ผิดรูป ไม่ใช่ backshift ปกติของ goes', 'will ไม่เหมาะกับข้อเท็จจริงถาวรแบบนี้'],
+            ex: 'She said that water boils at 100°C.' },
+          { q: 'เรียงคำให้ถูก: that / said / tired / was / he / he', o: ['He said that he was tired.', 'He said he that was tired.', 'He was said that he tired.', 'He said that tired he was.'], a: 0,
+            clue: 'S + said + (that) + S + V(ถอยหลัง)', rule: 'S + said + (that) + S + V',
+            why: 'He (S) → said (V) → that he was tired (สิ่งที่พูด ถอยหลังหนึ่งขั้น)',
+            n: ['', 'that ต้องอยู่หน้ากลุ่มประโยคที่รายงาน', 'was ต้องอยู่หลัง he ตัวที่สอง ไม่ใช่หน้า said', 'ลำดับคำในส่วนที่รายงานผิด'],
+            ex: 'She said that she was happy.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคบอกเล่าตรง ๆ (direct speech) 1 ประโยค แล้วเปลี่ยนเป็น reported speech', sample: '"I am hungry," Tom said. → Tom said that he was hungry.',
+            checklist: ['ประโยคตรงใช้เครื่องหมายคำพูด', 'ประโยครายงานถอยหลังกริยาหนึ่งขั้นถูกต้อง', 'สรรพนามเปลี่ยนให้สมเหตุสมผล (I → he/she)'] },
+          { prompt: 'แต่งประโยครายงานคำพูดที่มี will เปลี่ยนเป็น would', sample: '"I will finish it tomorrow," she said. → She said that she would finish it the next day.',
+            checklist: ['will เปลี่ยนเป็น would', 'tomorrow เปลี่ยนเป็น the next day (ปรับคำบอกเวลา)', 'สรรพนามสอดคล้องกับบริบท'] }
+        ]
+      },
+      {
         id: 'tense-signals', level: 'B1', title: 'Time words & choosing a tense', th: 'คำบอกเวลาและการเลือกกาล',
         explain: 'ก่อนเลือกรูปกริยา ให้ <b>หาคำบอกเวลาในประโยคก่อน</b><br>• ปัจจุบัน (นิสัย/ข้อเท็จจริง): every day, usually, often, always, now (บางกรณี)<br>• อดีต: yesterday, last ..., ... ago, in 1990, when I was young<br>• อนาคต: tomorrow, next ..., soon, in 2030<br>คำบอกเวลาอาจอยู่ <b>ต้นประโยค</b> หรือ <b>ท้ายประโยค</b> ก็ได้',
         formula: 'every / usually → <b>V1(s)</b><br>yesterday / last / ago → <b>V2</b><br>tomorrow / next / soon → <b>will + V1</b>',
@@ -446,6 +540,53 @@
             why: 'ค.ศ. 1969 ผ่านมาแล้ว จึงใช้ landed',
             n: ['land เป็นปัจจุบัน', '', 'will land เป็นอนาคต', 'lands เป็นปัจจุบัน'],
             ex: 'In 1932, Thailand changed its system of government.' }
+        ]
+      },
+      {
+        id: 'tense-modals2', level: 'B2', title: 'Modals of Deduction', th: 'กริยาช่วยแสดงการคาดเดา',
+        explain: 'ใช้ modal verb เพื่อ<b>คาดเดา</b>ว่าอะไรน่าจะจริงจากหลักฐานที่มี ไม่ใช่บอกข้อเท็จจริง 100%<br>• <b>must</b> = มั่นใจมากว่าจริง (หลักฐานชัดเจน)<br>• <b>might / may / could</b> = อาจจะจริง (ไม่แน่ใจ)<br>• <b>can\'t</b> = มั่นใจมากว่าไม่จริง (ตรงข้ามกับ must)<br>สำหรับ<b>เหตุการณ์ในอดีต</b> ใช้ <b>modal + have + V3</b>: must have been, might have left, can\'t have known',
+        formula: 'คาดเดาปัจจุบัน: S + <b>must/might/can\'t</b> + be/V1<br>คาดเดาอดีต: S + <b>must/might/can\'t have</b> + V3',
+        examples: [
+          { en: 'S:The lights|V:are|C:off. She|aux:must|V:be|C:asleep', th: 'ไฟดับหมด เธอต้องหลับแน่ ๆ (หลักฐานชัดเจน)' },
+          { en: 'S:He|aux:might|V:be|Pl:at work', th: 'เขาอาจจะอยู่ที่ทำงาน (ไม่แน่ใจ)' },
+          { en: 'S:She|aux:can\'t|aux:have|V:left|R:already', th: 'เธอคงยังไม่ออกไปหรอก (มั่นใจว่าไม่จริง — เร็วเกินไป)' }
+        ],
+        confuse: [
+          '<b>can\'t</b> ในความหมายคาดเดา ≠ "ไม่สามารถ" ปกติ — "She can\'t be at home." แปลว่า "เธอต้องไม่ได้อยู่บ้านแน่ ๆ" (คาดเดา) ไม่ใช่ "เธอไม่สามารถอยู่บ้านได้" (ความสามารถ)',
+          'คาดเดาเหตุการณ์ในอดีตต้องมี <b>have</b>: "He must have forgotten." ✓ ไม่ใช่ "He must forgot." ✗'
+        ],
+        quiz: [
+          { q: 'The ground is wet. It ___ rained last night.', o: ['can', 'must have', 'should', 'will'], a: 1,
+            clue: 'พื้นเปียก = หลักฐานชัดเจนว่าฝนตก (อดีต)', rule: 'หลักฐานชัดเจน + อดีต → must have + V3',
+            why: 'พื้นเปียกเป็นหลักฐานที่ชัดเจนมากว่าฝนตกเมื่อคืน จึงใช้ must have rained',
+            n: ['can ไม่ใช้คาดเดาแบบนี้', '', 'should สื่อคำแนะนำ ไม่ใช่คาดเดา', 'will เป็นอนาคต ไม่ใช่คาดเดาอดีต'],
+            ex: 'The floor is broken. Someone must have dropped something heavy.' },
+          { q: 'I\'m not sure where he is. He ___ be at the gym.', o: ['must', 'might', 'can\'t', 'shouldn\'t'], a: 1,
+            clue: 'ไม่แน่ใจ (I\'m not sure)', rule: 'ไม่แน่ใจ/เป็นไปได้ → might/may/could',
+            why: 'ผู้พูดไม่แน่ใจ จึงใช้ might ซึ่งสื่อความเป็นไปได้ ไม่ใช่ความมั่นใจ',
+            n: ['must สื่อว่ามั่นใจมาก ขัดกับ "not sure"', '', 'can\'t สื่อว่ามั่นใจว่าไม่จริง ขัดกับบริบท', 'shouldn\'t เป็นคำแนะนำ ไม่ใช่คาดเดา'],
+            ex: 'She might be stuck in traffic.' },
+          { q: 'He just ate a huge lunch. He ___ be hungry now.', o: ['must', 'might', 'can\'t', 'could'], a: 2,
+            clue: 'เพิ่งกินอิ่มมา = หลักฐานว่าไม่น่าจะหิว', rule: 'มั่นใจว่าไม่จริง → can\'t',
+            why: 'เพิ่งกินอาหารมื้อใหญ่มา จึงมั่นใจว่าไม่น่าจะหิวตอนนี้ ใช้ can\'t',
+            n: ['must สื่อว่ามั่นใจว่าจริง ตรงข้ามกับที่ควรเป็น', 'might ไม่มั่นใจพอ ขัดกับหลักฐานชัดเจนนี้', '', 'could ไม่มั่นใจพอเช่นกัน'],
+            ex: 'He just woke up. He can\'t be tired already.' },
+          { q: 'ข้อใดถูกต้อง (คาดเดาเหตุการณ์ในอดีต)', o: ['She must forgot her keys.', 'She must have forgotten her keys.', 'She must forgetting her keys.', 'She must to forget her keys.'], a: 1,
+            clue: 'คาดเดาอดีต ต้องมี have', rule: 'modal + have + V3 สำหรับคาดเดาอดีต',
+            why: 'ต้องมี have ตามด้วยกริยาช่อง 3 (forgotten) เมื่อคาดเดาเหตุการณ์ในอดีต',
+            n: ['ขาด have และ forgot ไม่ใช่ V3', '', 'ขาด have และรูปผิด', 'ไม่มีโครงสร้าง must to'],
+            ex: 'They must have left early.' },
+          { q: 'เรียงคำให้ถูก: have / She / left / must / already', o: ['She must have already left.', 'She have must left already.', 'She must already have left.', 'She left must have already.'], a: 0,
+            clue: 'S + must + have + V3 + already', rule: 'S + must + have + V3 (+M)',
+            why: 'She (S) → must have (คาดเดาอดีต) → left (V3) → already (ส่วนขยาย)',
+            n: ['', 'must ต้องอยู่หน้า have', 'already วางตรงนี้ทำให้แปลกในบริบทนี้ (ตัวเลือก 0 เป็นธรรมชาติกว่า)', 'ลำดับผิดทั้งหมด'],
+            ex: 'He must have already gone home.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคคาดเดาสถานการณ์ปัจจุบันจากหลักฐานที่เห็น โดยใช้ must/might/can\'t', sample: "The car isn't in the driveway. She must be out.",
+            checklist: ['เลือก must/might/can\'t ให้สอดคล้องกับความมั่นใจ', 'มีหลักฐานหรือบริบทที่ทำให้การคาดเดานั้นสมเหตุสมผล', 'ใช้ V1/be หลัง modal (คาดเดาปัจจุบัน)'] },
+          { prompt: 'แต่งประโยคคาดเดาเหตุการณ์ในอดีตโดยใช้ must have / might have / can\'t have + กริยาช่อง 3', sample: "The lights are off. They can't have come home yet.",
+            checklist: ['มี have ตามด้วยกริยาช่อง 3', 'เลือก must/might/can\'t ให้สอดคล้องกับความมั่นใจ', 'ประโยคสมเหตุสมผลกับสถานการณ์ที่ตั้งไว้'] }
         ]
       },
       {
@@ -496,16 +637,6 @@
         why: 'เป็นกิจวัตรประจำ และประธาน She ต้องเติม -s',
         n: ['ขาด -s สำหรับ She', '', 'drank เป็นอดีต ขัดกับ every morning', 'drinking ต้องมี be นำหน้า'],
         ex: 'He drinks tea every day.' },
-      { q: 'Listen! The baby ___ .', o: ['cries', 'is crying', 'cried', 'cry'], a: 1,
-        clue: 'Listen! = ได้ยินตอนนี้เลย', rule: 'เหตุการณ์ที่เกิดขึ้นตอนนี้ + สัญญาณ Listen!/Look! → Present Continuous',
-        why: 'Listen! บอกว่าเหตุการณ์กำลังเกิดขึ้นตรงหน้าตอนนี้ จึงใช้ is crying',
-        n: ['เป็น Present Simple ไม่ตรงกับ Listen!', '', 'cried เป็นอดีต', 'ขาด is'],
-        ex: 'Look! They are dancing.' },
-      { q: 'I ___ to school by bike yesterday.', o: ['go', 'goes', 'went', 'going'], a: 2,
-        clue: 'yesterday', rule: 'yesterday → Past Simple · go เป็นกริยาไม่ปกติ → went',
-        why: 'yesterday บอกว่าเป็นอดีต และ go ช่อง 2 คือ went',
-        n: ['go เป็นปัจจุบัน', 'goes เป็นปัจจุบันสำหรับ he/she/it', '', 'going ต้องมี was นำหน้า'],
-        ex: 'She went home early yesterday.' },
       { q: 'I ___ TV when you called.', o: ['watch', 'watched', 'was watching', 'am watching'], a: 2,
         clue: 'when you called = เหตุการณ์สั้นแทรกเข้ามา', rule: 'เหตุการณ์ที่กำลังทำอยู่ (ยาวกว่า) ก่อนถูกแทรก → Past Continuous',
         why: 'ฉันกำลังดูทีวีอยู่ (ยาวกว่า) แล้วคุณโทรมาแทรก (สั้นกว่า) จึงใช้ was watching',
@@ -531,11 +662,21 @@
         why: 'สูบบุหรี่ในโรงพยาบาลผิดกฎ (ห้ามเด็ดขาด) ส่วนการพกอาหารเองไม่บังคับ (จะทำหรือไม่ก็ได้)',
         n: ['', 'สลับความหมายกัน', 'เบากว่าและหนักกว่าความหมายจริงตามลำดับ', 'can\'t/can ไม่ตรงกับบริบทกฎของโรงพยาบาล'],
         ex: "You mustn't run in the corridor, but you don't have to whisper." },
-      { q: 'In 2015, the town ___ a new school. Today, the school ___ 800 students.', o: ['built / has', 'builds / had', 'will build / has', 'built / had'], a: 0,
-        clue: 'In 2015 (อดีต) · Today (ปัจจุบัน)', rule: 'แต่ละประโยคใช้กาลตามคำบอกเวลาของตัวเอง',
-        why: '2015 → built (อดีต) · Today → has (ปัจจุบัน)',
-        n: ['', 'สลับกาลกัน', '2015 ผ่านมาแล้ว ใช้ will ไม่ได้', 'Today ต้องใช้ปัจจุบัน ไม่ใช่ had'],
-        ex: 'In 2000, he moved here. Now he owns a shop.' },
+      { q: 'A: Where is your phone? B: I ___ it. I don\'t know where it is.', o: ['lost', 'have lost', 'was losing', 'lose'], a: 1,
+        clue: 'ไม่บอกเวลา + เน้นผลตอนนี้', rule: 'ไม่บอกเวลา + เน้นผลปัจจุบัน → Present Perfect',
+        why: 'ไม่มีคำบอกเวลาแน่นอน และเน้นผลตอนนี้ (ไม่รู้ว่าโทรศัพท์อยู่ไหน) จึงใช้ have lost',
+        n: ['ไม่ผิดหลักแต่ไม่เน้นผลตอนนี้เท่า Present Perfect ในบริบทนี้', '', 'was losing สื่อว่ากำลังทำอยู่ ไม่ตรงกับสถานการณ์', 'lose ต้องผันกาล'],
+        ex: "I can't find my wallet. I think I have lost it." },
+      { q: '"I am busy," she said. → She said that she ___ busy.', o: ['is', 'was', 'has been', 'be'], a: 1,
+        clue: 'am → backshift หนึ่งขั้น', rule: 'Present Simple (am/is/are) → Past Simple ใน reported speech',
+        why: 'am ถอยหลังหนึ่งขั้นเป็น was',
+        n: ['ไม่ถอยหลัง ยังเป็นปัจจุบันอยู่', '', 'ถอยหลังมากเกินไป (สองขั้น)', 'ไม่ใช่รูปกริยาที่ถูกต้อง'],
+        ex: '"I am ready," he said. → He said he was ready.' },
+      { q: 'The ground is wet. It ___ rained last night.', o: ['can', 'must have', 'should', 'will'], a: 1,
+        clue: 'พื้นเปียก = หลักฐานชัดเจนว่าฝนตก (อดีต)', rule: 'หลักฐานชัดเจน + อดีต → must have + V3',
+        why: 'พื้นเปียกเป็นหลักฐานชัดเจนมากว่าฝนตกเมื่อคืน จึงใช้ must have rained',
+        n: ['can ไม่ใช้คาดเดาแบบนี้', '', 'should สื่อคำแนะนำ ไม่ใช่คาดเดา', 'will เป็นอนาคต ไม่ใช่คาดเดาอดีต'],
+        ex: 'The floor is broken. Someone must have dropped something heavy.' },
       { q: '"The factory closed in 2010. Now, the building is a museum. Next year, it will add a café." ตอนนี้อาคารเป็นอะไร', o: ['โรงงาน', 'พิพิธภัณฑ์', 'คาเฟ่', 'อาคารว่าง'], a: 1,
         clue: 'Now, the building is a museum', rule: 'Now + is (ปัจจุบัน) บอกสภาพตอนนี้',
         why: 'ประโยคที่ใช้ Now และ is ระบุว่าเป็นพิพิธภัณฑ์',

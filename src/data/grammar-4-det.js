@@ -221,6 +221,53 @@
         ]
       },
       {
+        id: 'det-relative', level: 'B1', title: 'Relative Clauses', th: 'อนุประโยคขยายคำนาม',
+        explain: 'ใช้ขยายคำนามให้ชัดเจนขึ้น โดยไม่ต้องแยกเป็นสองประโยค — แทนที่จะพูด "I have a friend. He lives in Japan." รวมเป็น "I have a friend <b>who lives in Japan</b>."<br>• <b>who</b> = แทนคน (ทำหน้าที่ประธาน/กรรม)<br>• <b>which</b> = แทนสิ่งของ/สัตว์<br>• <b>that</b> = แทนได้ทั้งคนและสิ่งของ (ไม่เป็นทางการ ใช้แทน who/which ได้)<br>• <b>whose</b> = แสดงความเป็นเจ้าของ (ของใคร/ของอะไร)',
+        formula: '[คำนาม] + <b>who/which/that</b> + V ... (ขยายคำนามที่อยู่ข้างหน้าทันที)',
+        examples: [
+          { en: 'S:I|V:have|O:a friend|M:who|V:lives|Pl:in Japan', th: 'ฉันมีเพื่อนที่อาศัยอยู่ญี่ปุ่น (who แทนคน)' },
+          { en: 'S:This is|O:the book|M:that|S:I|V:borrowed|Pl:from the library', th: 'นี่คือหนังสือที่ฉันยืมมาจากห้องสมุด (that แทนสิ่งของ)' },
+          { en: 'S:That\'s|O:the man|M:whose|O:car|aux:was|V:stolen', th: 'นั่นคือผู้ชายที่รถของเขาถูกขโมย (whose แสดงความเป็นเจ้าของ)' }
+        ],
+        confuse: [
+          'ห้ามใส่สรรพนามซ้ำหลัง relative clause: "I have a friend who <s>he</s> lives in Japan." ✗ — who ทำหน้าที่แทนประธานไปแล้ว ไม่ต้องมี he ซ้ำ',
+          '<b>who</b> ใช้กับคนเท่านั้น ห้ามใช้กับสิ่งของ: "the book <u>who</u> I read" ✗ ต้องเป็น "the book <u>that/which</u> I read" ✓'
+        ],
+        quiz: [
+          { q: 'I know a girl ___ speaks four languages.', o: ['which', 'who', 'whose', 'what'], a: 1,
+            clue: 'a girl = คน', rule: 'who ใช้แทนคน',
+            why: 'girl เป็นคน จึงใช้ who',
+            n: ['which ใช้กับสิ่งของ ไม่ใช่คน', '', 'whose ใช้แสดงความเป็นเจ้าของ ไม่ใช่แทนประธาน', 'what ไม่ใช้เป็น relative pronoun แบบนี้'],
+            ex: 'He has a sister who works as a nurse.' },
+          { q: 'This is the car ___ I bought last year.', o: ['who', 'which', 'whose', 'where'], a: 1,
+            clue: 'the car = สิ่งของ', rule: 'which (หรือ that) ใช้แทนสิ่งของ',
+            why: 'car เป็นสิ่งของ จึงใช้ which',
+            n: ['who ใช้กับคนเท่านั้น', '', 'whose ใช้แสดงความเป็นเจ้าของ ไม่เข้ากับบริบทนี้', 'where ใช้กับสถานที่'],
+            ex: 'I lost the pen which my father gave me.' },
+          { q: 'ข้อใดผิด (มีสรรพนามซ้ำ)', o: ['I have a friend who lives in Paris.', 'I have a friend who he lives in Paris.', 'This is the book that I bought.', 'She is the woman whose son is a doctor.'], a: 1,
+            clue: 'who...he ซ้ำซ้อน', rule: 'ห้ามใส่สรรพนามซ้ำหลัง relative pronoun',
+            why: '"who he lives" มี he ซ้ำซ้อนกับ who ซึ่งทำหน้าที่ประธานอยู่แล้ว',
+            n: ['ถูกต้อง ไม่มีสรรพนามซ้ำ', '', 'ถูกต้อง ไม่มีสรรพนามซ้ำ', 'ถูกต้อง ไม่มีสรรพนามซ้ำ'],
+            ex: 'She has a car which she drives to work. (ไม่ใช่ which she drives it)' },
+          { q: 'That\'s the man ___ car was stolen last night.', o: ['who', 'which', 'whose', 'that'], a: 2,
+            clue: 'car ของผู้ชายคนนั้น (เจ้าของ)', rule: 'whose แสดงความเป็นเจ้าของ',
+            why: 'รถเป็นของผู้ชายคนนั้น จึงใช้ whose',
+            n: ['who ไม่แสดงความเป็นเจ้าของ', 'which ไม่แสดงความเป็นเจ้าของ', '', 'that ไม่แสดงความเป็นเจ้าของ'],
+            ex: 'I know a student whose parents are both doctors.' },
+          { q: 'เรียงคำให้ถูก: who / a doctor / friend / is / My', o: ['My friend who is a doctor.', 'My who friend is a doctor.', 'Who is my friend a doctor.', 'My friend is who a doctor.'], a: 0,
+            clue: '[คำนาม] + who + V + C', rule: '[คำนาม] + relative pronoun + V ...',
+            why: 'My friend (คำนาม) → who is a doctor (อนุประโยคขยาย)',
+            n: ['', 'who ต้องอยู่หลังคำนามที่ขยายทันที', 'ลำดับคำผิด', 'who ต้องอยู่หน้า is ไม่ใช่หลัง'],
+            ex: 'The teacher who taught me English moved away.' }
+        ],
+        writing: [
+          { prompt: 'รวมสองประโยคนี้เป็นประโยคเดียวด้วย relative clause: "I have a neighbor. She is a doctor."', sample: 'I have a neighbor who is a doctor.',
+            checklist: ['ใช้ who เพราะ neighbor เป็นคน', 'ไม่มีสรรพนามซ้ำ (she) หลัง who', 'ประโยครวมเป็นประโยคเดียวสมบูรณ์'] },
+          { prompt: 'แต่งประโยคที่ใช้ whose แสดงความเป็นเจ้าของ', sample: 'I met a woman whose daughter is my classmate.',
+            checklist: ['ใช้ whose ตามด้วยคำนามที่เป็นเจ้าของ', 'ประโยคสมเหตุสมผล', 'ไม่มีสรรพนามซ้ำ'] }
+        ]
+      },
+      {
         id: 'det-some', level: 'B1', title: 'some / any / each / every', th: 'บางส่วน · ใด ๆ · แต่ละ · ทุก',
         explain: '<b>some</b> ใช้ในประโยค <b>บอกเล่า</b> และการเสนอ/ขอ (Would you like some tea?)<br><b>any</b> ใช้ในประโยค <b>ปฏิเสธ</b> และ <b>คำถาม</b> ทั่วไป<br><b>each / every</b> + <b>คำนามเอกพจน์</b> + <b>กริยาเอกพจน์</b>: Every student <b>has</b> a book.<br>each เน้นทีละคน/ทีละชิ้น · every เน้นทั้งกลุ่ม',
         formula: 'บอกเล่า → <b>some</b> · ปฏิเสธ/คำถาม → <b>any</b><br><b>each/every</b> + noun (เอกพจน์) + V-s',
@@ -259,6 +306,53 @@
             why: 'Each child เป็นเอกพจน์ → receives',
             n: ['', 'receive ใช้กับพหูพจน์', 'receiving ไม่ใช่กริยาแท้', 'are กับ receive ใช้ด้วยกันแบบนี้ไม่ได้'],
             ex: 'Each room has a window.' }
+        ]
+      },
+      {
+        id: 'det-participle', level: 'B2', title: 'Participle Clauses', th: 'อนุประโยคแบบย่อด้วย -ing/-ed',
+        explain: 'ใช้<b>ย่อ</b> relative clause ให้สั้นลง โดยตัด relative pronoun (who/which/that) และกริยาช่วยออก แล้วเปลี่ยนกริยาเป็น <b>-ing (active)</b> หรือ <b>-ed/V3 (passive)</b><br>• Active (ประธานเป็นผู้ทำ): "the man <u>who is standing</u> there" → "the man <b>standing</b> there"<br>• Passive (ประธานถูกกระทำ): "the book <u>which was written</u> by her" → "the book <b>written</b> by her"<br>นิยมใช้ในบทอ่านวิชาการเพื่อให้ประโยคกระชับ',
+        formula: 'who/which + is/are + V-ing → <b>V-ing</b> (active)<br>who/which + is/are + V3 → <b>V3</b> (passive)',
+        examples: [
+          { en: 'S:The girl|M:standing|Pl:near the door|V:is|C:my sister', th: 'เด็กผู้หญิงที่ยืนอยู่ใกล้ประตูคือน้องสาวฉัน (ย่อจาก who is standing)' },
+          { en: 'S:The report|M:written|Pl:by the committee|aux:was|V:approved', th: 'รายงานที่เขียนโดยคณะกรรมการได้รับการอนุมัติ (ย่อจาก which was written)' },
+          { en: 'S:People|M:living|Pl:in big cities|V:face|O:more stress', th: 'คนที่อาศัยอยู่ในเมืองใหญ่เผชิญความเครียดมากกว่า (ย่อจาก who live/are living)' }
+        ],
+        confuse: [
+          'เลือก -ing หรือ -ed/V3 ตามว่า<b>ประธานเป็นผู้ทำ (active)</b> หรือ<b>ถูกกระทำ (passive)</b>: คนที่ "กำลังยืน" (ทำเอง) ใช้ standing แต่รายงานที่ "ถูกเขียน" (ถูกกระทำ) ใช้ written ไม่ใช่ writing',
+          'Participle clause แบบนี้ใช้ย่อได้เฉพาะเมื่อ relative clause มี be (is/are/was/were) อยู่แล้ว หรือเป็นกริยาที่แปลงเป็น -ing ได้ตามความหมาย ไม่ใช่ใช้ย่อได้ทุกประโยค'
+        ],
+        quiz: [
+          { q: 'The man ___ over there is my uncle. (who is standing)', o: ['stand', 'standing', 'stood', 'to stand'], a: 1,
+            clue: 'ผู้ชายกำลังยืน = ประธานเป็นผู้ทำ (active)', rule: 'ย่อจาก who is + V-ing → V-ing',
+            why: 'ผู้ชายเป็นผู้ยืนเอง (active) จึงย่อเหลือ standing',
+            n: ['ขาด -ing', '', 'stood เป็นอดีต ไม่ใช่รูปย่อที่ถูกต้อง', 'to stand ไม่ใช่รูป participle clause'],
+            ex: 'The woman talking on the phone is my boss.' },
+          { q: 'The email ___ yesterday contained important news. (which was sent)', o: ['sending', 'sent', 'send', 'to send'], a: 1,
+            clue: 'อีเมลถูกส่ง = ถูกกระทำ (passive)', rule: 'ย่อจาก which was + V3 → V3',
+            why: 'อีเมลถูกส่ง (passive) จึงย่อเหลือ sent (V3)',
+            n: ['sending สื่อว่าอีเมลเป็นผู้ส่งเอง ไม่ถูกต้อง', '', 'send ไม่ใช่รูป participle', 'to send ไม่ใช่รูป participle clause'],
+            ex: 'The car parked outside belongs to my neighbor.' },
+          { q: 'People ___ in this area should register first. (who live)', o: ['live', 'living', 'lived', 'to live'], a: 1,
+            clue: 'คนอาศัยอยู่เอง = active', rule: 'who live/are living → living',
+            why: 'people เป็นผู้อาศัยเอง (active) จึงใช้ living',
+            n: ['ต้องเติม -ing', '', 'lived สื่อความ passive ผิดความหมายในที่นี้', 'to live ไม่ใช่รูป participle clause'],
+            ex: 'Students studying abroad often feel homesick.' },
+          { q: 'ข้อใดถูกต้อง (เลือก active/passive ให้ตรง)', o: ['The window breaking by the storm was fixed.', 'The window broken by the storm was fixed.', 'The window break by the storm was fixed.', 'The window to break by the storm was fixed.'], a: 1,
+            clue: 'หน้าต่างถูกทำให้แตก = passive', rule: 'ถูกกระทำ → V3',
+            why: 'หน้าต่างถูกพายุทำให้แตก (passive) จึงใช้ broken (V3) ไม่ใช่ breaking',
+            n: ['breaking สื่อว่าหน้าต่างเป็นผู้ทำเอง ผิดความหมาย', '', 'break ไม่ใช่รูป participle', 'to break ไม่ใช่รูป participle clause'],
+            ex: 'The house damaged by the fire has been rebuilt.' },
+          { q: 'เรียงคำให้ถูก: sitting / The / next to me / man / is / my teacher', o: ['The man sitting next to me is my teacher.', 'The man sit next to me is my teacher.', 'Sitting the man next to me is my teacher.', 'The man is sitting next to me my teacher.'], a: 0,
+            clue: '[คำนาม] + V-ing + [ส่วนขยาย] + V + C', rule: '[คำนาม] + participle clause (V-ing/V3) + ...',
+            why: 'The man (คำนาม) → sitting next to me (participle clause ขยาย) → is my teacher (กริยาหลัก)',
+            n: ['', 'ต้องเติม -ing ไม่ใช่ sit เฉย ๆ', 'sitting ต้องอยู่หลังคำนามที่ขยาย ไม่ใช่หน้าประโยค', 'ลำดับคำผิด ทำให้มีกริยาซ้ำไม่ชัดเจน'],
+            ex: 'The kids playing in the yard are my cousins.' }
+        ],
+        writing: [
+          { prompt: 'ย่อประโยคนี้ด้วย participle clause: "The girl who is reading a book is my classmate."', sample: 'The girl reading a book is my classmate.',
+            checklist: ['ตัด who is ออก', 'ใช้ V-ing (reading) เพราะประธานเป็นผู้ทำเอง', 'ประโยคยังสื่อความหมายเดิมครบถ้วน'] },
+          { prompt: 'แต่งประโยคที่มี participle clause แบบ passive (V3) ขยายคำนาม', sample: 'The letter written in French was hard to understand.',
+            checklist: ['ใช้ V3 เพราะคำนามถูกกระทำ (passive)', 'participle clause อยู่ติดหลังคำนามที่ขยาย', 'ประโยคสมบูรณ์และสมเหตุสมผล'] }
         ]
       },
       {
@@ -309,21 +403,16 @@
         why: 'ตำแหน่งกรรมของ we คือ us',
         n: ['', 'we เป็นรูปประธาน', 'our ต้องมีคำนามตาม', 'ours = ของเรา'],
         ex: 'They thanked us.' },
-      { q: '___ are my parents. (ยืนอยู่ข้างฉัน)', o: ['These', 'This', 'That', 'It'], a: 0,
-        clue: 'parents (2 คน) + ใกล้', rule: 'ใกล้ + พหูพจน์ → these',
-        why: 'พ่อแม่สองคนอยู่ใกล้ และกริยาคือ are',
-        n: ['', 'This ใช้กับเอกพจน์', 'That ใช้กับเอกพจน์', 'It ใช้กับเอกพจน์'],
-        ex: 'These are my cousins.' },
       { q: 'Is that ___ phone?', o: ['your', 'yours', 'you', 'you\'re'], a: 0,
         clue: '___ + phone', rule: 'มีคำนามตามใช้ your',
         why: 'phone ตามหลัง จึงใช้ your',
         n: ['', 'yours ใช้เมื่อไม่มีคำนามตาม', 'you ไม่ได้บอกความเป็นเจ้าของ', 'you\'re = you are'],
         ex: 'Is this your seat?' },
-      { q: 'It\'s ___ umbrella.', o: ['an', 'a', '(ไม่ใส่)', 'two'], a: 0,
-        clue: 'umbrella ขึ้นต้นเสียงสระ อั-', rule: 'หน้าเสียงสระใช้ an',
-        why: 'umbrella ออกเสียงขึ้นต้นด้วยสระ',
-        n: ['', 'a ใช้หน้าเสียงพยัญชนะ', 'นามนับได้เอกพจน์ต้องมีคำนำหน้า', 'two ต้องใช้พหูพจน์'],
-        ex: 'an idea, an island' },
+      { q: 'I know a girl ___ speaks four languages.', o: ['which', 'who', 'whose', 'what'], a: 1,
+        clue: 'a girl = คน', rule: 'who ใช้แทนคน',
+        why: 'girl เป็นคน จึงใช้ who',
+        n: ['which ใช้กับสิ่งของ ไม่ใช่คน', '', 'whose ใช้แสดงความเป็นเจ้าของ ไม่ใช่แทนประธาน', 'what ไม่ใช้เป็น relative pronoun แบบนี้'],
+        ex: 'He has a sister who works as a nurse.' },
       { q: 'I don\'t have ___ money.', o: ['any', 'some', 'every', 'a'], a: 0,
         clue: 'don\'t (ปฏิเสธ)', rule: 'ปฏิเสธใช้ any',
         why: 'ประโยคปฏิเสธ → any',
@@ -349,6 +438,11 @@
         why: 'หนังสือเป็นของซาร่า → Sara\'s',
         n: ['', 'ไม่ได้บอกความเป็นเจ้าของ', 'ขาด apostrophe', 'ทำให้มีกริยาซ้ำ'],
         ex: 'This bike is Ken\'s.' },
+      { q: 'The man ___ over there is my uncle. (who is standing)', o: ['stand', 'standing', 'stood', 'to stand'], a: 1,
+        clue: 'ผู้ชายกำลังยืน = ประธานเป็นผู้ทำ (active)', rule: 'ย่อจาก who is + V-ing → V-ing',
+        why: 'ผู้ชายเป็นผู้ยืนเอง (active) จึงย่อเหลือ standing',
+        n: ['ขาด -ing', '', 'stood เป็นอดีต ไม่ใช่รูปย่อที่ถูกต้อง', 'to stand ไม่ใช่รูป participle clause'],
+        ex: 'The woman talking on the phone is my boss.' },
       { q: '"Many farmers now use drones. These machines save time and water." — These machines หมายถึงอะไร', o: ['drones', 'farmers', 'time', 'water'], a: 0,
         clue: 'These machines (เครื่องจักร พหูพจน์)', rule: 'แทนค่ากลับแล้วต้องเป็นเครื่องจักร',
         why: 'drones เป็นเครื่องจักรที่ช่วยประหยัดเวลาและน้ำ',

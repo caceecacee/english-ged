@@ -269,6 +269,147 @@
         ]
       },
       {
+        id: 'sent-passive', level: 'B1', title: 'Passive Voice', th: 'ประโยคที่ประธานถูกกระทำ',
+        explain: 'ปกติประธาน<b>เป็นผู้ทำ</b> (active) แต่บางครั้งเราอยากเน้น<b>สิ่งที่ถูกกระทำ</b>แทน โดยไม่สนใจ/ไม่รู้ว่าใครทำ (passive)<br>วิธีเปลี่ยน: เอา<b>กรรมเดิม</b>มาเป็น<b>ประธานใหม่</b> + <b>be + V3</b><br>Active: The chef <b>cooks</b> the meal. → Passive: The meal <b>is cooked</b> (by the chef).<br>ใช้ be ให้ตรงกาลเดิม: is/are (ปัจจุบัน), was/were (อดีต), will be (อนาคต)',
+        formula: 'Active: S + V + O → Passive: <b>O</b> (ประธานใหม่) + <b>be + V3</b> + (by + S เดิม)',
+        examples: [
+          { en: 'S:The letter|aux:was|V:written|Pl:by Tom', th: 'จดหมายถูกเขียนโดยทอม (เน้นจดหมาย ไม่เน้นว่าใครเขียน)' },
+          { en: 'S:This bridge|aux:was|V:built|T:in 1990', th: 'สะพานนี้ถูกสร้างในปี 1990 (ไม่รู้/ไม่สำคัญว่าใครสร้าง)' },
+          { en: 'S:English|aux:is|V:spoken|Pl:in many countries', th: 'ภาษาอังกฤษถูกพูดในหลายประเทศ' }
+        ],
+        confuse: [
+          'กริยาต้องเป็น <b>V3 (กริยาช่อง 3)</b> เสมอ ไม่ใช่ V1 หรือ V-ing: "is written" ✓ ไม่ใช่ "is write" หรือ "is writing" (ซึ่งเป็นคนละความหมาย)',
+          'ไม่ต้องใส่ "by + ผู้ทำ" เสมอไป — ใส่เฉพาะเมื่อรู้และสำคัญ: "My phone was stolen." (ไม่รู้ว่าใครขโมย ไม่ต้องมี by)',
+          'ประโยคที่ไม่มีกรรม (เช่น "He sleeps.") <b>เปลี่ยนเป็น passive ไม่ได้</b> เพราะไม่มีอะไรจะมาเป็นประธานใหม่'
+        ],
+        quiz: [
+          { q: 'This song ___ by a famous singer.', o: ['sings', 'sang', 'was sung', 'sing'], a: 2,
+            clue: 'This song (ประธานถูกกระทำ) + by', rule: 'Passive: be + V3',
+            why: 'song ถูกร้อง (ไม่ได้ร้องเอง) จึงใช้ was sung',
+            n: ['เป็น active form ไม่ใช่ passive', 'ขาด be และเป็นอดีตธรรมดา ไม่ใช่ passive', '', 'ขาด be'],
+            ex: 'This house was designed by a famous architect.' },
+          { q: 'Rice ___ in Thailand.', o: ['grows', 'is grown', 'grew', 'growing'], a: 1,
+            clue: 'ข้าวถูกปลูก (ไม่ได้ปลูกเอง) + ข้อเท็จจริงทั่วไป', rule: 'ข้อเท็จจริงทั่วไปแบบ passive: is/are + V3',
+            why: 'ข้าวถูกปลูกโดยคน จึงใช้ passive is grown',
+            n: ['เป็น active แปลว่าข้าวปลูกเอง ไม่สมเหตุผล', '', 'growing ต้องมี is นำหน้าและควรเป็น V3 ไม่ใช่ V-ing สำหรับ passive', 'เป็นอดีต ไม่ใช่ข้อเท็จจริงทั่วไป'],
+            ex: 'Coffee is grown in many countries.' },
+          { q: 'ข้อใดคือ passive ของ "Someone stole my bike."', o: ['My bike stole someone.', 'My bike was stolen.', 'My bike is stealing.', 'Someone was stolen my bike.'], a: 1,
+            clue: 'my bike = กรรมเดิม → ประธานใหม่', rule: 'กรรมเดิมกลายเป็นประธานใหม่ + be + V3',
+            why: 'my bike (กรรมเดิม) กลายเป็นประธาน + was stolen (be + V3)',
+            n: ['สลับบทบาทผิด', '', 'stealing ไม่ใช่ V3 และไม่ตรงกาลอดีต', 'ประธานเดิม (someone) ไม่ควรเป็นประธานใน passive แบบนี้'],
+            ex: 'Someone broke the window. → The window was broken.' },
+          { q: 'ประโยคใดเปลี่ยนเป็น passive ไม่ได้ (ไม่มีกรรม)', o: ['She wrote a letter.', 'He sleeps early.', 'They built a house.', 'The chef cooked dinner.'], a: 1,
+            clue: 'sleep ไม่มีกรรม', rule: 'ต้องมีกรรม (object) ถึงจะเปลี่ยนเป็น passive ได้',
+            why: '"sleeps early" ไม่มีกรรม จึงไม่มีอะไรมาเป็นประธานใหม่',
+            n: ['a letter เป็นกรรม เปลี่ยนได้: A letter was written.', '', 'a house เป็นกรรม เปลี่ยนได้', 'dinner เป็นกรรม เปลี่ยนได้'],
+            ex: 'He arrived late. (arrive ไม่มีกรรม เปลี่ยน passive ไม่ได้เช่นกัน)' },
+          { q: 'เรียงคำให้ถูก: built / The / was / bridge / 1990 / in', o: ['The bridge was built in 1990.', 'The bridge built was in 1990.', 'Was the bridge built in 1990.', 'The bridge was in built 1990.'], a: 0,
+            clue: 'S + was + V3 + in + ปี', rule: 'S (ประธานใหม่) + be + V3 + (by...) + เวลา',
+            why: 'The bridge (S) → was built (be+V3) → in 1990 (เวลา)',
+            n: ['', 'was ต้องอยู่หน้า built ไม่ใช่หลัง', 'รูปนี้เป็นคำถาม ไม่ใช่บอกเล่า', 'in ต้องอยู่หน้าปี ไม่ใช่แทรกกลาง'],
+            ex: 'The museum was opened in 2005.' }
+        ],
+        writing: [
+          { prompt: 'เปลี่ยนประโยค active นี้เป็น passive: "Workers built this factory in 1985."', sample: 'This factory was built in 1985.',
+            checklist: ['กรรมเดิม (this factory) กลายเป็นประธานใหม่', 'กริยาอยู่ในรูป be + V3 (was built)', 'ตัด "by workers" ได้เพราะไม่สำคัญว่าใครสร้าง หรือใส่ไว้ก็ได้'] },
+          { prompt: 'แต่งประโยค passive 1 ประโยคที่ไม่ต้องบอกว่าใครเป็นคนทำ (ไม่มี by)', sample: 'My wallet was stolen last night.',
+            checklist: ['เป็นรูป passive (be + V3)', 'ไม่มี by + ผู้ทำ เพราะไม่รู้หรือไม่สำคัญ', 'ประโยคสมเหตุสมผล'] }
+        ]
+      },
+      {
+        id: 'sent-cond1', level: 'B1', title: 'Conditionals: Zero & First', th: 'ประโยคเงื่อนไข: จริงเสมอ & น่าจะเป็นจริง',
+        explain: 'ประโยคเงื่อนไข (if) มีสองแบบพื้นฐาน:<br>• <b>Zero Conditional</b> (จริงเสมอ/ข้อเท็จจริง): <b>If + Present Simple, Present Simple</b> — ใช้กับสิ่งที่เป็นจริงทุกครั้ง เช่น กฎวิทยาศาสตร์<br>• <b>First Conditional</b> (น่าจะเกิดขึ้นได้ในอนาคต): <b>If + Present Simple, will + V1</b> — ใช้กับสิ่งที่มีโอกาสเกิดจริง',
+        formula: 'Zero: If + <b>V1(s)</b>, <b>V1(s)</b> (ข้อเท็จจริง)<br>First: If + <b>V1(s)</b>, <b>will + V1</b> (คาดว่าจะเกิด)',
+        examples: [
+          { en: 'R:If|S:you|V:heat|O:water|T:to 100°C,|S:it|V:boils', th: 'ถ้าคุณต้มน้ำถึง 100 องศา น้ำจะเดือด (จริงเสมอ)' },
+          { en: 'R:If|S:it|V:rains|T:tomorrow,|S:we|aux:will|V:stay|Pl:home', th: 'ถ้าพรุ่งนี้ฝนตก เราจะอยู่บ้าน (น่าจะเกิดได้จริง)' },
+          { en: 'S:I|aux:will|V:call|O:you|R:if|S:I|aux:have|C:time', th: 'ฉันจะโทรหาคุณถ้าฉันมีเวลา (สลับที่ if-clause ไปท้ายประโยคได้)' }
+        ],
+        confuse: [
+          'if-clause (เงื่อนไข) ใช้ <b>Present Simple เสมอ</b> แม้จะพูดถึงอนาคต — ห้ามใช้ "will" ในประโยคที่มี if: "If it <u>will rain</u>" ✗ ต้องเป็น "If it <u>rains</u>" ✓',
+          'ถ้า if-clause อยู่<b>หน้าประโยค</b> ต้องมี<b>comma (,)</b> คั่นก่อนส่วนผล แต่ถ้า if-clause อยู่<b>ท้ายประโยค</b> ไม่ต้องมี comma'
+        ],
+        quiz: [
+          { q: 'If you heat ice, it ___ .', o: ['melt', 'melts', 'will melt', 'melted'], a: 1,
+            clue: 'ข้อเท็จจริงทางวิทยาศาสตร์', rule: 'Zero Conditional: If + V1(s), V1(s)',
+            why: 'น้ำแข็งละลายเมื่อโดนความร้อนเป็นจริงเสมอ ทั้งสองประโยคใช้ Present Simple',
+            n: ['ขาด -s', '', 'will melt ใช้กับ First Conditional ไม่ใช่ข้อเท็จจริงถาวรแบบนี้ (แม้จะไม่ผิดมาก แต่ melts ถูกต้องกว่าสำหรับข้อเท็จจริง)', 'melted เป็นอดีต ไม่ใช่ข้อเท็จจริงทั่วไป'],
+            ex: 'If you mix red and blue, you get purple.' },
+          { q: 'If it ___ tomorrow, we will cancel the picnic.', o: ['will rain', 'rains', 'rained', 'raining'], a: 1,
+            clue: 'if-clause ใช้ Present Simple แม้พูดถึงอนาคต', rule: 'First Conditional: If + Present Simple, will + V1',
+            why: 'if-clause ห้ามใช้ will แม้จะพูดถึงเรื่องในอนาคต (tomorrow) ต้องใช้ rains',
+            n: ['if-clause ห้ามใช้ will', '', 'rained เป็นอดีต ไม่ตรงกับ tomorrow', 'raining ต้องมี is นำหน้าและไม่ใช่รูปที่ถูกต้องสำหรับ if-clause นี้'],
+            ex: 'If she studies hard, she will pass the exam.' },
+          { q: 'If you don\'t water plants, they ___ .', o: ['die', 'dies', 'will died', 'died'], a: 0,
+            clue: 'ข้อเท็จจริงทั่วไป + they (พหูพจน์)', rule: 'Zero Conditional + ประธานพหูพจน์ไม่เติม s',
+            why: 'เป็นข้อเท็จจริงทั่วไปและ they เป็นพหูพจน์ จึงใช้ die เฉย ๆ',
+            n: ['', 'dies ใช้กับประธานเอกพจน์', 'will died ผิดโครงสร้าง (will ตามด้วย V1 เสมอ)', 'died เป็นอดีต'],
+            ex: 'If people don\'t sleep enough, they feel tired.' },
+          { q: 'ข้อใดถูกต้อง (First Conditional)', o: ['If I will see him, I will tell him.', 'If I see him, I will tell him.', 'If I see him, I tell him.', 'If I saw him, I will tell him.'], a: 1,
+            clue: 'if-clause ต้องเป็น Present Simple', rule: 'If + Present Simple, will + V1',
+            why: 'if-clause ใช้ see (Present Simple) ไม่มี will และส่วนผลใช้ will tell',
+            n: ['if-clause ห้ามมี will', '', 'ส่วนผลต้องใช้ will tell ไม่ใช่ tell เฉย ๆ (นั่นจะกลายเป็น Zero Conditional ซึ่งไม่ตรงกับสถานการณ์ที่ไม่แน่นอนนี้)', 'if-clause ใช้ saw (อดีต) ผิด ต้องเป็น Present Simple'],
+            ex: 'If it gets dark, we will turn on the lights.' },
+          { q: 'เรียงคำให้ถูก: rains, / If / stay / it / home / we\'ll', o: ["If it rains, we'll stay home.", "It rains if, we'll stay home.", "If it rain, we'll stay home.", "We'll stay home, rains if it."], a: 0,
+            clue: 'If + Present Simple, + will + V1', rule: 'If-clause หน้าประโยค ต้องมี comma คั่น',
+            why: 'If it rains (เงื่อนไข) + comma + we\'ll stay home (ผล)',
+            n: ['', 'If ต้องอยู่ต้นประโยค', 'ขาด -s ที่ rain (it เป็นเอกพจน์)', 'ลำดับส่วนเงื่อนไขและผลสลับกันโดยไม่มี comma ที่ถูกตำแหน่ง'],
+            ex: "If you're free, call me." }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค Zero Conditional 1 ประโยค (ข้อเท็จจริงที่จริงเสมอ)', sample: 'If you freeze water, it turns into ice.',
+            checklist: ['ทั้งสองส่วนใช้ Present Simple', 'เนื้อหาเป็นความจริงที่เกิดขึ้นเสมอ ไม่ใช่แค่ครั้งเดียว', 'มี comma คั่นถ้า if-clause อยู่หน้าประโยค'] },
+          { prompt: 'แต่งประโยค First Conditional 1 ประโยค (สิ่งที่น่าจะเกิดขึ้นได้ในอนาคต)', sample: "If I have free time this weekend, I will visit my grandmother.", checklist: ['if-clause ใช้ Present Simple (ไม่มี will)', 'ส่วนผลใช้ will + V1', 'เนื้อหาเป็นเรื่องที่มีโอกาสเกิดขึ้นจริงได้'] }
+        ]
+      },
+      {
+        id: 'sent-cond2', level: 'B1', title: 'Conditionals: Second (Unreal Present)', th: 'ประโยคเงื่อนไข: สมมติที่ไม่จริงตอนนี้',
+        explain: 'ใช้พูดถึงสถานการณ์ <b>สมมติที่ไม่เป็นจริงในปัจจุบัน</b> หรือ<b>ไม่น่าจะเกิดขึ้นได้</b> (ฝันกลางวัน คำแนะนำแบบสมมติ)<br>โครงสร้าง: <b>If + Past Simple, would + V1</b><br>สังเกต: ใช้รูป<b>อดีต</b>แต่<b>ไม่ได้พูดถึงอดีตจริง</b> — เป็นแค่รูปแบบไวยากรณ์ที่บอกว่า "สมมติ ไม่จริง"<br>กับ be มักใช้ <b>were</b> กับทุกประธาน (แม้ I/he/she/it) ในบริบทที่เป็นทางการ/สำนวน "If I were you"',
+        formula: 'If + <b>Past Simple</b>, <b>would + V1</b><br>"If I <b>were</b> you, I <b>would</b> study harder."',
+        examples: [
+          { en: 'R:If|S:I|V:had|O:a million dollars,|S:I|aux:would|V:travel|Pl:around the world', th: 'ถ้าฉันมีเงินล้าน ฉันจะเดินทางรอบโลก (สมมติ ไม่ได้มีจริง)' },
+          { en: 'R:If|S:I|aux:were|C:you,|S:I|aux:would|V:apologize', th: 'ถ้าฉันเป็นคุณ ฉันจะขอโทษ (คำแนะนำแบบสมมติ)' },
+          { en: 'R:If|S:she|V:knew|O:the answer,|S:she|aux:would|V:tell|O:us', th: 'ถ้าเธอรู้คำตอบ เธอคงบอกเราแล้ว (บอกเป็นนัยว่าจริง ๆ เธอไม่รู้)' }
+        ],
+        confuse: [
+          'First Conditional (น่าจะเกิดได้จริง) vs Second Conditional (สมมติ ไม่จริง/ไม่น่าเกิด): "If I <u>win</u> the lottery, I <u>will</u> buy a car." (ซื้อลอตเตอรี่จริง มีโอกาส) vs "If I <u>won</u> the lottery, I <u>would</u> buy a car." (พูดเล่น ๆ ไม่ได้ซื้อจริง)',
+          '"If I were you" เป็นสำนวนให้คำแนะนำที่ใช้บ่อยมาก ใช้ were ไม่ใช่ was แม้ประธานจะเป็น I'
+        ],
+        quiz: [
+          { q: 'If I ___ rich, I would buy a big house.', o: ['am', 'was', 'were', 'will be'], a: 2,
+            clue: 'สมมติ ไม่จริงตอนนี้', rule: 'Second Conditional: If + Past Simple (were กับทุกประธาน)',
+            why: 'เป็นสถานการณ์สมมติ ไม่จริงตอนนี้ จึงใช้ were',
+            n: ['เป็นปัจจุบันจริง ไม่ใช่สมมติ', 'ใช้ได้ในบางบริบทไม่เป็นทางการ แต่ were เป็นคำตอบที่ถูกต้องมาตรฐานกว่าสำหรับ Conditional นี้', '', 'จะกลายเป็นอนาคตจริง ไม่ใช่สมมติ'],
+            ex: 'If I were a bird, I would fly everywhere.' },
+          { q: 'If she ___ harder, she would pass the exam.', o: ['studies', 'studied', 'will study', 'study'], a: 1,
+            clue: 'สมมติ (นัยว่าจริง ๆ เธอไม่ได้ขยันพอ)', rule: 'If + Past Simple, would + V1',
+            why: 'if-clause ของ Second Conditional ใช้ Past Simple (studied)',
+            n: ['เป็น First Conditional ไม่ใช่ Second', '', 'ห้ามใช้ will ใน if-clause', 'ขาด -ed'],
+            ex: 'If he ate more vegetables, he would be healthier.' },
+          { q: 'A: What would you do if you saw a ghost? B: I ___ scream!', o: ['will', 'would', 'am going to', 'do'], a: 1,
+            clue: 'ตอบคำถามสมมติ', rule: 'ส่วนผลของ Second Conditional ใช้ would + V1',
+            why: 'คำถามเป็นแบบสมมติ (if you saw) ส่วนคำตอบจึงต้องใช้ would ให้สอดคล้องกัน',
+            n: ['จะกลายเป็นคำตอบสำหรับสถานการณ์จริง ไม่สอดคล้องกับคำถามสมมติ', '', 'ไม่สอดคล้องกับรูปแบบคำถาม', 'ไม่สอดคล้องกับรูปแบบคำถาม'],
+            ex: "If I won the lottery, I would quit my job." },
+          { q: 'ข้อใดคือ Second Conditional ที่ถูกต้อง', o: ['If I have wings, I will fly.', 'If I had wings, I would fly.', 'If I had wings, I will fly.', 'If I have wings, I would fly.'], a: 1,
+            clue: 'มีปีก = สมมติ เป็นไปไม่ได้จริง', rule: 'If + Past Simple, would + V1 (ทั้งสองส่วนต้องสอดคล้องกัน)',
+            why: 'สถานการณ์ "มีปีก" เป็นไปไม่ได้จริง ต้องใช้ had (if-clause) และ would (ส่วนผล) คู่กัน',
+            n: ['เป็น First Conditional โครงสร้าง ไม่เหมาะกับสถานการณ์ที่เป็นไปไม่ได้นี้', '', 'ผสมสองโครงสร้าง: had (Second) กับ will (First)', 'ผสมสองโครงสร้างผิด: have (First) กับ would (Second)'],
+            ex: 'If I had more time, I would learn to paint.' },
+          { q: 'เรียงคำให้ถูก: were / I / would / apologize / you / If / I,', o: ['If I were you, I would apologize.', 'If I was you, I would apologize.', 'I would apologize, if I were you', 'If I were you, I apologize would.'], a: 0,
+            clue: 'If I were you (สำนวนคำแนะนำ)', rule: 'If + S + were + ..., S + would + V1',
+            why: 'If I were you (เงื่อนไขสมมติ) + I would apologize (คำแนะนำ)',
+            n: ['', 'ใช้ were ไม่ใช่ was ในสำนวนนี้', 'ลำดับกลับหน้าหลังไม่เป็นธรรมชาติเท่าตัวเลือกที่ถูก (แม้จะสลับได้แต่ comma ต้องหายไป ทำให้ข้อนี้ไม่สมบูรณ์)', 'would ต้องอยู่หน้า apologize ไม่ใช่หลัง'],
+            ex: 'If I were rich, I would help many people.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค Second Conditional สมมติว่าคุณมีของ/ความสามารถที่ไม่มีจริงตอนนี้', sample: 'If I could speak five languages, I would work as a translator.',
+            checklist: ['if-clause ใช้ Past Simple', 'ส่วนผลใช้ would + V1', 'เนื้อหาเป็นสิ่งที่ไม่จริง/ไม่น่าเกิดขึ้นในตอนนี้'] },
+          { prompt: 'แต่งประโยคให้คำแนะนำแบบสมมติโดยใช้สำนวน "If I were you, ..."', sample: 'If I were you, I would talk to the teacher about it.',
+            checklist: ['ใช้ "If I were you" (ไม่ใช่ was)', 'ส่วนผลใช้ would + V1', 'เป็นคำแนะนำที่สมเหตุสมผล'] }
+        ]
+      },
+      {
         id: 'sent-link', level: 'B1', title: 'Linking ideas', th: 'คำเชื่อมความคิด',
         explain: 'คำเชื่อมบอก <b>ความสัมพันธ์</b> ระหว่างความคิดสองส่วน<br>• เพิ่มเติม: <b>and</b> · ทางเลือก: <b>or</b><br>• ขัดแย้ง: <b>but</b>, <b>although</b> (แม้ว่า), <b>However,</b> (อย่างไรก็ตาม)<br>• เหตุ: <b>because</b> (เพราะ) · ผล: <b>so</b> (ดังนั้น)<br><b>However</b> ขึ้นต้นประโยคใหม่และตามด้วยจุลภาค · <b>Although</b> ตามด้วยประโยคแล้วต่อด้วยประโยคหลัก',
         formula: 'เหตุ → <b>so</b> → ผล &nbsp;|&nbsp; ผล ← <b>because</b> ← เหตุ<br><b>Although</b> A, B. (A กับ B ขัดกัน)<br>A. <b>However,</b> B.',
@@ -307,6 +448,100 @@
             why: 'ให้เลือกอย่างใดอย่างหนึ่ง จึงใช้ or',
             n: ['', 'and หมายถึงเอาทั้งสองอย่าง ขัดกับ choose one', 'but ใช้กับความขัดแย้ง', 'so บอกผล'],
             ex: 'Do you want to walk or take a taxi?' }
+        ]
+      },
+      {
+        id: 'sent-cond3', level: 'B2', title: 'Conditionals: Third & Mixed', th: 'ประโยคเงื่อนไข: ย้อนอดีตไม่จริง & ผสม',
+        explain: '<b>Third Conditional</b> พูดถึง<b>อดีตที่ไม่ได้เกิดขึ้นจริง</b> (เสียใจ/สมมติย้อนอดีต): <b>If + Past Perfect (had + V3), would have + V3</b><br>"If I had studied, I would have passed." (จริง ๆ ไม่ได้เรียน เลยไม่ผ่าน)<br><b>Mixed Conditional</b> ผสมเวลาสองช่วง: เงื่อนไขเป็น<b>อดีต</b> แต่ผลกระทบต่อเนื่องถึง<b>ปัจจุบัน</b>: <b>If + Past Perfect, would + V1</b>',
+        formula: 'Third: If + <b>had + V3</b>, <b>would have + V3</b> (ทั้งคู่เป็นอดีตที่ไม่เกิดขึ้นจริง)<br>Mixed: If + <b>had + V3</b> (อดีต), <b>would + V1</b> (ผลกระทบตอนนี้)',
+        examples: [
+          { en: 'R:If|S:I|aux:had|V:studied,|S:I|aux:would have|V:passed|O:the exam', th: 'ถ้าฉันได้อ่านหนังสือ ฉันคงสอบผ่านแล้ว (จริง ๆ ไม่ได้อ่าน เลยไม่ผ่าน)' },
+          { en: 'R:If|S:she|aux:hadn\'t|V:missed|O:the bus,|S:she|aux:wouldn\'t have|V:been|C:late', th: 'ถ้าเธอไม่พลาดรถเมล์ เธอคงไม่สายแล้ว' },
+          { en: 'R:If|S:I|aux:had|V:taken|O:that job,|S:I|aux:would|V:live|Pl:in another city|T:now', th: 'ถ้าตอนนั้นฉันรับงานนั้น ตอนนี้ฉันคงอาศัยอยู่เมืองอื่น (เงื่อนไขอดีต ผลกระทบถึงตอนนี้ = Mixed)' }
+        ],
+        confuse: [
+          'Third Conditional พูดถึง<b>อดีตล้วน ๆ</b> (ทั้งเงื่อนไขและผลเป็นอดีตที่ไม่เกิดขึ้นจริง) ต่างจาก Mixed Conditional ที่<b>ผลกระทบอยู่ในปัจจุบัน</b> (now) — สังเกตคำบอกเวลาในส่วนผลเพื่อแยกสองแบบนี้',
+          'ต้องมี <b>have</b> ในส่วนผลของ Third Conditional เสมอ: "I would have passed." ✓ ไม่ใช่ "I would passed." ✗'
+        ],
+        quiz: [
+          { q: 'If I ___ harder, I would have passed the exam.', o: ['study', 'studied', 'had studied', 'have studied'], a: 2,
+            clue: 'อดีตที่ไม่เกิดขึ้นจริง (สอบไม่ผ่านไปแล้ว)', rule: 'Third Conditional: If + had + V3',
+            why: 'เหตุการณ์นี้เป็นอดีตที่ไม่ได้เกิดขึ้นจริง (ไม่ได้อ่านหนังสือ) จึงใช้ had studied',
+            n: ['เป็น Zero/First Conditional ไม่ใช่ Third', 'เป็น Past Simple ธรรมดา ไม่ใช่ Past Perfect', '', 'ไม่ใช่รูปที่ถูกต้องสำหรับ if-clause นี้'],
+            ex: 'If she had left earlier, she would have caught the train.' },
+          { q: 'If he had saved money, he ___ a car now.', o: ['would have', 'will have', 'would', 'had'], a: 2,
+            clue: 'now = ผลกระทบถึงปัจจุบัน', rule: 'Mixed Conditional: If + had + V3 (อดีต), would + V1 (ผลตอนนี้)',
+            why: '"now" บอกว่าผลกระทบอยู่ในปัจจุบัน จึงใช้ would + V1 (would have แบบ Third Conditional ใช้กับผลที่เป็นอดีตเท่านั้น)',
+            n: ['would have ใช้เมื่อผลเป็นอดีต ไม่ตรงกับ now', 'will ไม่ใช้ในโครงสร้าง conditional แบบนี้', '', 'ไม่ใช่รูปที่ถูกต้อง'],
+            ex: 'If I had taken that job, I would be rich now.' },
+          { q: 'She missed the flight. Which sentence expresses regret correctly?', o: ['If she wakes up earlier, she catches the flight.', 'If she had woken up earlier, she would have caught the flight.', 'If she woke up earlier, she would catch the flight.', 'If she wake up earlier, she will catch the flight.'], a: 1,
+            clue: 'เสียใจกับอดีตที่ผ่านไปแล้ว', rule: 'Third Conditional ใช้แสดงความเสียใจ/สมมติย้อนอดีต',
+            why: 'เหตุการณ์นี้จบไปแล้ว (พลาดเที่ยวบิน) การแสดงความเสียใจใช้ Third Conditional: had woken up / would have caught',
+            n: ['เป็น Zero Conditional ไม่เหมาะกับการเสียใจอดีต', '', 'เป็น Second Conditional (สมมติปัจจุบัน) ไม่ใช่อดีต', 'โครงสร้างผิดหลักไวยากรณ์'],
+            ex: 'If I had known you were coming, I would have cleaned the house.' },
+          { q: 'ข้อใดผิด (ขาด have ในส่วนผล)', o: ['If I had known, I would have told you.', 'If I had known, I would told you.', 'If I had known, I would have helped.', 'If she had asked, I would have said yes.'], a: 1,
+            clue: 'would + told (ขาด have)', rule: 'ส่วนผลของ Third Conditional ต้องมี have',
+            why: '"would told" ขาด have ต้องเป็น "would have told"',
+            n: ['ถูกต้อง มี have แล้ว', '', 'ถูกต้อง มี have แล้ว', 'ถูกต้อง มี have แล้ว'],
+            ex: 'If I had had more time, I would have finished it.' },
+          { q: 'เรียงคำให้ถูก: rained, / it / stayed / would / have / we / If / home / had', o: ['If it had rained, we would have stayed home.', 'If it rained, we would have stayed home.', 'If it had rained, we would stayed home.', 'We would have stayed home, had it rained if.'], a: 0,
+            clue: 'If + had + V3, would have + V3', rule: 'Third Conditional เต็มรูปแบบ',
+            why: 'If it had rained (เงื่อนไขอดีต) + we would have stayed home (ผลอดีต)',
+            n: ['', 'ขาด had ใน if-clause (ต้องเป็น Third Conditional เต็มรูป)', 'ขาด have ในส่วนผล', 'ลำดับคำผิดทั้งหมด'],
+            ex: 'If they had left earlier, they would have avoided the traffic.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยค Third Conditional แสดงความเสียใจต่อเรื่องในอดีตที่ไม่ได้เกิดขึ้นจริง', sample: 'If I had listened to my teacher, I would have gotten a better score.',
+            checklist: ['if-clause ใช้ had + V3 (Past Perfect)', 'ส่วนผลใช้ would have + V3', 'เนื้อหาเป็นอดีตที่ไม่ได้เกิดขึ้นจริง'] },
+          { prompt: 'แต่งประโยค Mixed Conditional ที่เงื่อนไขเป็นอดีตแต่ผลกระทบอยู่ในปัจจุบัน', sample: 'If I had studied medicine, I would be a doctor now.',
+            checklist: ['if-clause ใช้ had + V3', 'ส่วนผลใช้ would + V1 (ไม่ใช่ would have)', 'มีคำบอกเวลาปัจจุบัน เช่น now ในส่วนผล'] }
+        ]
+      },
+      {
+        id: 'sent-noun-clause', level: 'B2', title: 'Noun Clauses', th: 'อนุประโยคทำหน้าที่คำนาม',
+        explain: 'บางครั้งทั้งประโยคย่อย (clause) ทำหน้าที่เป็น<b>คำนาม</b>ได้ทั้งก้อน — เป็นประธาน กรรม หรือส่วนเติมเต็มของประโยคใหญ่<br>ขึ้นต้นด้วย <b>that, what, whether/if, who, where, when, why, how</b><br>• เป็นกรรม: I know <b>what you mean</b>.<br>• เป็นประธาน: <b>What she said</b> surprised me.<br>• หลัง be: The problem is <b>that we have no time</b>.',
+        formula: '[Noun clause: that/what/whether/who/where/when/why/how + S + V] ทำหน้าที่เป็นคำนามก้อนหนึ่งในประโยคใหญ่',
+        examples: [
+          { en: 'S:I|V:don\'t know|O:what he wants', th: 'ฉันไม่รู้ว่าเขาต้องการอะไร (what he wants = กรรมของ know)' },
+          { en: 'S:What she said|V:surprised|O:everyone', th: 'สิ่งที่เธอพูดทำให้ทุกคนแปลกใจ (What she said = ประธานของประโยค)' },
+          { en: 'S:I|aux:am not sure|C:whether he will come', th: 'ฉันไม่แน่ใจว่าเขาจะมาไหม (whether...come = ส่วนเติมเต็ม)' }
+        ],
+        confuse: [
+          'noun clause <b>ไม่ใช่คำถามจริง</b> จึงเรียงคำแบบประโยคบอกเล่าปกติ ไม่ใช่แบบคำถาม: "I don\'t know <u>what he wants</u>." ✓ ไม่ใช่ "I don\'t know <u>what does he want</u>." ✗',
+          'ใช้ <b>whether/if</b> สำหรับคำถามแบบ yes/no ที่กลายเป็น noun clause: "I don\'t know if she is coming." (ไม่ใช่ that)'
+        ],
+        quiz: [
+          { q: 'I don\'t know ___ he lives.', o: ['where does', 'where', 'does he where', 'where he does'], a: 1,
+            clue: 'noun clause เรียงแบบบอกเล่า', rule: 'Noun clause: Wh-word + S + V (ไม่ใช่รูปคำถาม)',
+            why: 'noun clause เรียงคำแบบประโยคบอกเล่าปกติ ไม่ใส่ does',
+            n: ['เป็นรูปคำถาม ผิดสำหรับ noun clause', '', 'ลำดับคำผิด', 'ลำดับคำผิด'],
+            ex: "I don't know where she works." },
+          { q: '___ he said made everyone laugh.', o: ['What', 'That', 'Whether', 'Where'], a: 0,
+            clue: 'สิ่งที่เขาพูด = ประธานของประโยค', rule: 'What + S + V สามารถทำหน้าที่เป็นประธานของประโยคใหญ่ได้',
+            why: '"What he said" ทำหน้าที่เป็นประธานของ made everyone laugh',
+            n: ['', 'that ไม่ใช้ขึ้นต้นแบบนี้เพื่อทำหน้าที่ประธานในบริบทนี้', 'whether ใช้กับคำถาม yes/no ไม่ใช่สิ่งที่พูด', 'where ไม่เข้ากับบริบทนี้'],
+            ex: 'What surprised me was his honesty.' },
+          { q: 'I\'m not sure ___ she will agree.', o: ['that', 'whether', 'what', 'who'], a: 1,
+            clue: 'ไม่แน่ใจว่า...ไหม (yes/no)', rule: 'whether/if ใช้กับคำถามแบบ yes/no',
+            why: 'ประโยคนี้ถามว่า "เห็นด้วยหรือไม่" (yes/no) จึงใช้ whether',
+            n: ['that ใช้กับข้อความที่ยืนยัน ไม่ใช่ความไม่แน่ใจแบบ yes/no', '', 'what ใช้ถามสิ่งของ ไม่ใช่ yes/no', 'who ใช้ถามคน ไม่ใช่ yes/no'],
+            ex: "I don't know whether he is telling the truth." },
+          { q: 'The problem is ___ we don\'t have enough time.', o: ['what', 'whether', 'that', 'where'], a: 2,
+            clue: 'ระบุปัญหาชัดเจน (ไม่ใช่คำถาม)', rule: 'that + S + V ใช้เชื่อมข้อความที่ระบุชัดเจนหลัง be',
+            why: 'ประโยคนี้ระบุปัญหาอย่างชัดเจน ไม่ใช่คำถาม yes/no หรือสิ่งของ จึงใช้ that',
+            n: ['what ใช้เมื่อไม่ระบุสิ่งของชัดเจน ไม่เข้ากับบริบทนี้', 'whether ใช้กับ yes/no ไม่เข้ากับบริบทนี้', '', 'where ใช้ถามสถานที่ ไม่เข้ากับบริบทนี้'],
+            ex: 'The good news is that everyone is safe.' },
+          { q: 'เรียงคำให้ถูก: is / What / matters / you / try / that', o: ['What matters is that you try.', 'What is matters that you try.', 'That matters is what you try.', 'What matters that is you try.'], a: 0,
+            clue: '[What matters] (ประธาน) + is + [that you try] (ส่วนเติมเต็ม)', rule: 'Noun clause ทำหน้าที่ประธานและส่วนเติมเต็มได้ในประโยคเดียวกัน',
+            why: 'What matters (ประธาน) → is (V) → that you try (ส่วนเติมเต็ม)',
+            n: ['', 'is ต้องอยู่หลัง What matters ทั้งก้อน', 'สลับตำแหน่ง what กับ that ผิด', 'ลำดับคำผิด'],
+            ex: 'What counts is that you tried your best.' }
+        ],
+        writing: [
+          { prompt: 'แต่งประโยคที่มี noun clause ทำหน้าที่เป็นกรรม โดยใช้ "I don\'t know what/where/when..."', sample: "I don't know where he went.",
+            checklist: ['noun clause เรียงคำแบบบอกเล่า ไม่ใช่คำถาม', 'noun clause ทำหน้าที่เป็นกรรมของประโยคใหญ่', 'ใช้ wh-word ให้เหมาะกับความหมาย'] },
+          { prompt: 'แต่งประโยคที่ใช้ noun clause ขึ้นต้นด้วย "What..." ทำหน้าที่เป็นประธานของประโยค', sample: 'What she needs is more practice.',
+            checklist: ['ขึ้นต้นด้วย What + S + V', 'ก้อน What...ทั้งหมดทำหน้าที่เป็นประธาน ตามด้วยกริยาของประโยคใหญ่', 'ประโยคสมบูรณ์และสมเหตุสมผล'] }
         ]
       },
       {
@@ -357,11 +592,6 @@
         why: 'We (S) play (V) games (O)',
         n: ['', 'กรรมอยู่หน้ากริยา', 'กริยาอยู่หน้าประธาน', 'มีกริยาซ้ำ'],
         ex: 'They watch movies.' },
-      { q: '___ a letter for you on the table.', o: ["There's", 'It is', 'This is', 'There are'], a: 0,
-        clue: 'a letter (เอกพจน์) + บอกว่ามีอะไรครั้งแรก', rule: 'บอกว่ามีอะไรอยู่ที่หนึ่งเป็นครั้งแรก + เอกพจน์ → There is',
-        why: 'a letter เป็นเอกพจน์ และเป็นการบอกว่ามีจดหมายอยู่ตรงนั้นเป็นครั้งแรก จึงใช้ There is (There\'s)',
-        n: ['', 'It is ใช้พูดถึงสิ่งที่รู้จักอยู่แล้ว ไม่ใช่บอกว่ามีครั้งแรก', 'This is ชี้เฉพาะเจาะจง ไม่ใช่โครงสร้างบอกว่ามีอะไร', 'are ใช้กับพหูพจน์ แต่ a letter เป็นเอกพจน์'],
-        ex: "There's a message for you." },
       { q: '"My father is a pilot." คำว่า "a pilot" ทำหน้าที่ใด', o: ['Object เพราะถูกกระทำ', 'Complement เพราะบอกว่าประธานเป็นอะไร', 'Subject', 'Verb'], a: 1,
         clue: 'a pilot ไม่ได้ถูกใครทำอะไร', rule: 'หลัง be มักเป็น Complement ที่บอกว่าประธานเป็นใคร/เป็นอะไร ไม่ใช่ Object',
         why: 'a pilot ไม่ถูกกระทำ เป็นแค่คำอธิบายว่า my father เป็นอาชีพอะไร จึงเป็น Complement',
@@ -377,16 +607,16 @@
         why: 'บอกว่าไม่ได้อยู่ที่ไหนใช้ be และเป็นอดีต → wasn\'t',
         n: ['', 'didn\'t ต้องตามด้วยกริยาแท้', 'doesn\'t เป็นปัจจุบันและต้องมีกริยาแท้', 'isn\'t เป็นปัจจุบัน'],
         ex: 'They weren\'t at the meeting.' },
-      { q: '___ they speak Thai?', o: ['Do', 'Does', 'Are', 'Is'], a: 0,
-        clue: 'they + speak (กริยาแท้)', rule: 'Do + I/you/we/they + V1?',
-        why: 'they กับกริยาแท้ใช้ Do',
-        n: ['', 'Does ใช้กับ he/she/it', 'Are ใช้กับ be', 'Is ใช้กับ be'],
-        ex: 'Do you like coffee?' },
-      { q: 'It was expensive, ___ I bought it.', o: ['but', 'so', 'because', 'or'], a: 0,
-        clue: 'แพง ↔ ซื้อ (ขัดกัน)', rule: 'but เชื่อมความที่ขัดกัน',
-        why: 'แพงแต่ก็ยังซื้อ จึงใช้ but',
-        n: ['', 'so ทำให้ความหมายเป็น "แพงจึงซื้อ" ไม่สมเหตุผล', 'because ต้องตามด้วยเหตุ', 'or ใช้กับทางเลือก'],
-        ex: 'He was tired, but he kept working.' },
+      { q: 'This bridge ___ in 1990.', o: ['built', 'was built', 'builds', 'is building'], a: 1,
+        clue: 'สะพานถูกสร้าง (ไม่ได้สร้างเอง) + 1990', rule: 'Passive: be + V3',
+        why: 'สะพานถูกสร้างโดยคน (passive) และ 1990 เป็นอดีต จึงใช้ was built',
+        n: ['เป็น active form ไม่ใช่ passive', '', 'เป็นปัจจุบัน ไม่ตรงกับ 1990', 'ขาด V3 และไม่ตรงกาล'],
+        ex: 'This song was written by a famous composer.' },
+      { q: 'If it rains tomorrow, we ___ the picnic. (น่าจะเกิดขึ้นได้จริง)', o: ['will cancel', 'cancel', 'would cancel', 'cancelled'], a: 0,
+        clue: 'tomorrow + น่าจะเกิดได้จริง', rule: 'First Conditional: If + Present Simple, will + V1',
+        why: 'เป็นสถานการณ์ที่มีโอกาสเกิดขึ้นได้จริงในอนาคต จึงใช้ First Conditional (will cancel)',
+        n: ['', 'จะกลายเป็น Zero Conditional (ข้อเท็จจริงเสมอ) ไม่ตรงกับสถานการณ์ที่ไม่แน่นอนนี้', 'would ใช้กับ Second Conditional (สมมติ ไม่น่าเกิดขึ้นจริง)', 'เป็นอดีต ไม่ตรงกับ tomorrow'],
+        ex: 'If she calls, I will answer.' },
       { q: '"The man who lives next door works at a bank." — กริยาหลักคือข้อใด', o: ['lives', 'works', 'next', 'who'], a: 1,
         clue: 'ตัด "who lives next door" ออก', rule: 'กริยาใน who-clause ไม่ใช่กริยาหลัก',
         why: 'แกนคือ The man works at a bank',
@@ -397,6 +627,11 @@
         why: 'results เป็นพหูพจน์ จึงใช้ were (หรือ are ในปัจจุบัน)',
         n: ['', 'was ตรงกับ survey ซึ่งอยู่ในส่วนขยาย', 'is ตรงกับเอกพจน์', 'be ใช้หลังประธานตรง ๆ ไม่ได้'],
         ex: 'The members of the team are ready.' },
+      { q: 'I don\'t know ___ he lives.', o: ['where does', 'where', 'does he where', 'where he does'], a: 1,
+        clue: 'noun clause เรียงแบบบอกเล่า', rule: 'Noun clause: Wh-word + S + V (ไม่ใช่รูปคำถาม)',
+        why: 'noun clause เรียงคำแบบประโยคบอกเล่าปกติ ไม่ใส่ does',
+        n: ['เป็นรูปคำถาม ผิดสำหรับ noun clause', '', 'ลำดับคำผิด', 'ลำดับคำผิด'],
+        ex: "I don't know where she works." },
       { q: '"Although the plan was expensive, the city approved it because it would reduce traffic." เมืองอนุมัติแผนเพราะอะไร', o: ['แผนมีราคาแพง', 'แผนจะช่วยลดการจราจร', 'แผนมีราคาถูก', 'เมืองมีเงินมาก'], a: 1,
         clue: 'because it would reduce traffic', rule: 'เหตุผลอยู่หลัง because ส่วน although บอกสิ่งที่ขัดกัน',
         why: 'ส่วนที่ตามหลัง because คือเหตุผลของการอนุมัติ',
