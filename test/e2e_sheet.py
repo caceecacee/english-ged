@@ -7,8 +7,8 @@ from playwright.sync_api import sync_playwright
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SITE = ROOT / 'docs'
-MAX = {'grammar': 300, 'vocab': 640, 'reading': 53}
-DONE_MAX = {'grammar': 50, 'vocab': 16, 'reading': 12}
+MAX = {'grammar': 340, 'vocab': 640, 'reading': 53}
+DONE_MAX = {'grammar': 56, 'vocab': 16, 'reading': 12}
 SHEET = {}          # key -> row  (จำลองแท็บ Scores)
 LOG = {'post': 0, 'options': 0, 'bad_ct': 0}
 

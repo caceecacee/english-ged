@@ -45,7 +45,7 @@ with sync_playwright() as p:
     # ---------- Grammar: ทุกหมวด ทุกบท ----------
     print('■ Grammar')
     cats = page.locator('[data-gcat]').count()
-    check(cats == 5, f'หมวด Grammar {cats} ≠ 5')
+    check(cats == 6, f'หมวด Grammar {cats} ≠ 6')
     total_lessons = 0
     for ci in range(cats):
         page.click(f'[data-gcat="{ci}"]')
@@ -79,7 +79,7 @@ with sync_playwright() as p:
         txt = page.locator('.score-big').inner_text()
         check('/10' in txt, f'หมวด {ci}: ไม่แสดงคะแนน Post-test /10 ({txt})')
         page.click('.score-card [data-gback]')
-    print(f'  เล่นครบ {total_lessons} บท + Post-test 5 หมวด')
+    print(f'  เล่นครบ {total_lessons} บท + Post-test {cats} หมวด')
 
     # ---------- Vocab ----------
     print('■ Vocab')

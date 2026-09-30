@@ -15,6 +15,7 @@ const scripts = [
   'src/data/grammar-3-sentence.js',
   'src/data/grammar-4-det.js',
   'src/data/grammar-5-prep.js',
+  'src/data/grammar-6-academic.js',
   'src/data/vocab-a1.js',
   'src/data/vocab-a2.js',
   'src/data/vocab-b1.js',

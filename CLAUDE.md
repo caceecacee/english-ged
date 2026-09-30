@@ -18,7 +18,7 @@ Always `npm run build` after editing `src/`; `docs/` and `dist/` are generated �
 
 ```
 src/data/            ALL learning content (edit here, not in ui.js)
-  grammar-1..5-*.js  5 categories → lessons (explain, formula, examples, confuse, quiz[5]) + post[10]
+  grammar-1..6-*.js  6 categories (5 topic-based A1-B2 + 1 academic/C1) → lessons tagged `level` (Basic/A1/A2/B1/B2/C1), each has explain/formula/examples/confuse/quiz[5]/optional writing[] + post[10]
   vocab-a1..b2.js    100 words per level, rows 1–25 = set 1 … (16 sets × 25)
   reading.js         12 passages, questions cite evidence sentence indexes (ev)
 src/app/logic.js     pure game logic (shuffle, distractors, card round, post-test) — no DOM, tested in Node
@@ -37,7 +37,7 @@ Scripts load in order: logic → data → vocab-model → ui (see `scripts` in b
 
 ## Content rules (validate.mjs enforces most of these)
 
-- Grammar: every lesson has exactly 5 quiz items; every category exactly 10 `post` items, easy → hard; lessons ordered A1→B2 within a category. Each question needs `q, o[4], a, clue, rule, why, n[4] (why each wrong option is wrong), ex`. Options are shuffled at render time, so `a` can be any index.
+- Grammar: every lesson has exactly 5 quiz items; every category exactly 10 `post` items, easy → hard; lessons ordered Basic→C1 within a category (most categories only reach B2; the `academic` category is C1-only). Each question needs `q, o[4], a, clue, rule, why, n[4] (why each wrong option is wrong), ex`. Options are shuffled at render time, so `a` can be any index. A lesson may optionally include `writing: [{prompt, sample, checklist[]}]` (2 items) — self-checked, never auto-graded by string match, not scored or counted toward the leaderboard.
 - Test only what was taught earlier in that lesson/category.
 - Vocab row: `[word, pos, thai, sentence with exactly one ___, thai translation, [same-set words that could ALSO fill the blank]]`. Thai meanings must be unique within a set. Exactly 100 words per level. The last array prevents ambiguous distractors — when adding a sentence, check it against all 24 other words in the set.
 - Reading: `th.length === s.length`; `ev` indexes are 0-based sentence indexes or `'visual'`. Mark all invented content as practice; never copy real GED items. Invented statistics must be labeled "ข้อมูลสมมุติ".
@@ -54,7 +54,7 @@ Scripts load in order: logic → data → vocab-model → ui (see `scripts` in b
 ## Shared leaderboard (Google Sheet)
 
 - `docs/config.js` sets `window.EP_CONFIG.scoreEndpoint` to the Apps Script `/exec` URL. Empty → local-only leaderboard. `npm run build` does not overwrite an existing config.js (use `node build.mjs --reset-config` to regenerate).
-- Client POSTs `text/plain` JSON (avoids CORS preflight, which Apps Script can't answer) and GETs `?action=top`. Server keeps the max per nickname per part and clamps to part maxima (`MAX` in Code.gs must match `partMax()` in ui.js if content counts change: grammar 205, vocab 640, reading 53).
+- Client POSTs `text/plain` JSON (avoids CORS preflight, which Apps Script can't answer) and GETs `?action=top`. Server keeps the max per nickname per part and clamps to part maxima (`MAX` in Code.gs must match `partMax()` in ui.js if content counts change: grammar 340, vocab 640, reading 53).
 - The self-hosted Docker deployment (`docker/`) uses its own backend instead of Code.gs; `docker/scores-logic.mjs`'s `MAX` must also match these same values. `test/validate.mjs` cross-checks it against the actual data counts — if content counts change, update `docker/scores-logic.mjs` too, or `npm run validate` fails.
 - The claude.ai Artifact build (dist/) cannot call external hosts, so it always runs local-only.
 - No auth: anyone with the endpoint can submit. Fine for classroom motivation; don't present it as secure.

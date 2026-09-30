@@ -13,7 +13,7 @@ vm.createContext(ctx);
 const files = [
   'src/app/logic.js',
   'src/data/grammar-1-pos.js', 'src/data/grammar-2-tense.js', 'src/data/grammar-3-sentence.js',
-  'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js',
+  'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-academic.js',
   'src/data/vocab-a1.js', 'src/data/vocab-a2.js', 'src/data/vocab-b1.js', 'src/data/vocab-b2.js',
   'src/data/reading.js', 'src/app/vocab-model.js'
 ];
@@ -28,7 +28,7 @@ const section = (t) => console.log('\n■ ' + t);
 section('Grammar');
 const GLEVELS = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1'];
 const LEVELS = ['A1', 'A2', 'B1', 'B2']; // ใช้กับ Vocabulary ด้านล่าง (คำศัพท์ยังมีแค่ 4 ระดับ)
-ok(EP.grammar.length === 5, 'ต้องมี 5 หมวด (พบ ' + EP.grammar.length + ')');
+ok(EP.grammar.length === 6, 'ต้องมี 6 หมวด (พบ ' + EP.grammar.length + ')');
 let lessonCount = 0, miniCount = 0, postCount = 0;
 const lessonIds = new Set();
 function checkQ(q, where) {
@@ -67,7 +67,7 @@ for (const cat of EP.grammar) {
 console.log(`  บทเรียน ${lessonCount} บท · mini-test ${miniCount} ข้อ · Post-test ${postCount} ข้อ`);
 ok(lessonCount >= 29, 'บทเรียนต้องไม่น้อยกว่า 29');
 ok(miniCount >= 145, 'mini-test ต้องไม่น้อยกว่า 145');
-ok(postCount === 50, 'Post-test ต้องเป็น 50');
+ok(postCount === EP.grammar.length * 10, 'Post-test ต้องเป็นจำนวนหมวด × 10 (พบ ' + postCount + ' หมวด ' + EP.grammar.length + ')');
 ok(DOCKER_MAX.grammar === miniCount + postCount, 'docker/scores-logic.mjs MAX.grammar (' + DOCKER_MAX.grammar + ') ต้องเท่ากับ mini-test+Post-test จริง (' + (miniCount + postCount) + ')');
 ok(DOCKER_DONE_MAX.grammar === lessonCount, 'docker/scores-logic.mjs DONE_MAX.grammar (' + DOCKER_DONE_MAX.grammar + ') ต้องเท่ากับจำนวนบทเรียนจริง (' + lessonCount + ')');
 

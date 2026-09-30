@@ -9,7 +9,7 @@
  */
 const SHEET_NAME = 'Scores';
 const HEADERS = ['key', 'nickname', 'grammar', 'vocab', 'reading', 'total', 'updated'];
-const MAX = { grammar: 300, vocab: 640, reading: 53 }; // คะแนนเต็มของแต่ละ Part ในเว็บเวอร์ชันนี้
+const MAX = { grammar: 340, vocab: 640, reading: 53 }; // คะแนนเต็มของแต่ละ Part ในเว็บเวอร์ชันนี้
 const PARTS = ['grammar', 'vocab', 'reading'];
 
 function getSheet_() {

@@ -503,7 +503,7 @@
     var unlocked = done === cat.lessons.length;
     view.innerHTML =
       '<div class="stack">' +
-      '<div class="row" style="justify-content:space-between"><h2>เรียน Grammar</h2><span class="small muted">5 หมวด · mini-test บทละ 5 ข้อ · Post-test หมวดละ 10 ข้อ</span></div>' +
+      '<div class="row" style="justify-content:space-between"><h2>เรียน Grammar</h2><span class="small muted">' + EP.grammar.length + ' หมวด · mini-test บทละ 5 ข้อ · Post-test หมวดละ 10 ข้อ</span></div>' +
       '<div class="row" style="gap:16px">' +
       '<button type="button" class="link-btn small" data-gpath="1">ดูเส้นทางเรียนทุกระดับ (ข้ามหมวด) →</button>' +
       '<button type="button" class="link-btn small" data-greview="1">ทบทวนของฉัน' + (reviewCount() ? ' (' + reviewCount() + ')' : '') + ' →</button>' +
@@ -515,7 +515,7 @@
         return '<button type="button" class="chip" role="tab" aria-selected="' + sel + '" tabindex="' + (sel ? 0 : -1) + '" data-gcat="' + i + '"><span class="en">' + c.name + '</span><small>' + c.th + ' · ' + catProgress(c) + '/' + c.lessons.length + '</small></button>';
       }).join('') + '</div>' +
       '<section class="panel stack" aria-labelledby="cat-h">' +
-      '<div><p class="eyebrow">หมวด ' + (S.g.cat + 1) + ' จาก 5</p><h3 id="cat-h"><span class="en">' + cat.name + '</span> · ' + cat.th + '</h3><p class="muted small">' + cat.blurb + '</p></div>' +
+      '<div><p class="eyebrow">หมวด ' + (S.g.cat + 1) + ' จาก ' + EP.grammar.length + '</p><h3 id="cat-h"><span class="en">' + cat.name + '</span> · ' + cat.th + '</h3><p class="muted small">' + cat.blurb + '</p></div>' +
       '<div class="row small muted"><span>เรียนแล้ว ' + done + '/' + cat.lessons.length + ' บท</span></div>' +
       '<div class="progress" aria-hidden="true"><span style="width:' + Math.round(done / cat.lessons.length * 100) + '%"></span></div>' +
       '<div class="lesson-list">' +
@@ -1182,13 +1182,30 @@
     candidates.sort(function (a, b) { return a.lv - b.lv || a.ci - b.ci || a.li - b.li; });
     return candidates[0] || null;
   }
+  var GOALS = {
+    basic: { label: 'เรียนภาษาอังกฤษพื้นฐาน', line: '<b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท → คำศัพท์ ~10 คำ → อ่านสั้น 1 บท แล้วทบทวนเหตุผล' },
+    ged: { label: 'เตรียมอ่าน GED', line: '<b>เส้นทางแนะนำต่อวัน:</b> อ่าน GED 1 บท → Grammar 1 บทที่ยังไม่ทำ → คำศัพท์ ~10 คำ' },
+    university: { label: 'เตรียมภาษาอังกฤษเพื่อสมัครมหาวิทยาลัยต่างประเทศ', line: '<b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท (รวมหมวด Academic Language) → ลองงานเขียนเองท้ายบท → ทบทวนของฉัน' }
+  };
+  function renderGoalPicker() {
+    var g = Store.data.goal;
+    return '<div class="row" style="width:100%;gap:6px;margin-bottom:6px" role="group" aria-label="เลือกเป้าหมายการเรียน"><span class="small muted" style="width:100%">เป้าหมายของคุณ:</span>' +
+      Object.keys(GOALS).map(function (k) {
+        return '<button type="button" class="chip" aria-pressed="' + (g === k) + '" data-goal="' + k + '">' + GOALS[k].label + '</button>';
+      }).join('') + '</div>';
+  }
   function renderContinue() {
+    var goal = GOALS[Store.data.goal] || GOALS.basic;
     var gNext = nextGrammarLesson();
     var rNext = EP.reading.filter(function (p) { return !Store.data.reading[p.id]; })[0];
-    var html = '<span class="small muted" style="width:100%"><b>เส้นทางแนะนำต่อวัน:</b> Grammar 1 บท → คำศัพท์ ~10 คำ → อ่านสั้น 1 บท แล้วทบทวนเหตุผล</span>';
+    var html = renderGoalPicker();
+    html += '<span class="small muted" style="width:100%">' + goal.line + '</span>';
     html += gNext ? '<button type="button" class="chip" data-go-lesson="' + gNext.ci + '-' + gNext.li + '"><small>1 · Grammar ต่อไป</small><span class="en">' + gNext.l.title + '</span></button>' : '<span class="chip"><small>1 · Grammar</small>เรียนครบทุกบทแล้ว</span>';
     html += '<button type="button" class="chip" data-go-vocab="1"><small>2 · คำศัพท์</small>' + S.v.lv + ' ชุด ' + (S.v.set + 1) + '</button>';
     html += rNext ? '<button type="button" class="chip" data-rid="' + rNext.id + '"><small>3 · บทอ่านต่อไป</small><span class="en">' + esc(rNext.title) + '</span></button>' : '<span class="chip"><small>3 · อ่าน</small>อ่านครบ 12 บทแล้ว</span>';
+    if (Store.data.goal === 'university') {
+      html += '<span class="small muted" style="width:100%">บทเรียนหมวด Academic Language ช่วยฝึก<b>ภาษา</b>ที่ใช้ในงานเขียนวิชาการ ไม่ใช่แบบฝึกข้อสอบ IELTS/TOEFL และไม่ได้รับรองว่าเรียนแล้วจะได้คะแนนสอบหรือผ่านเกณฑ์รับสมัคร — ควรฝึกข้อสอบจริงแยกต่างหากกับแหล่งข้อสอบที่เป็นทางการ</span>';
+    }
     $('#continue').innerHTML = html;
   }
 
@@ -1247,6 +1264,7 @@
     if (d.lesson != null) { S.g.lesson = +d.lesson; S.g.view = 'lesson'; gQuiz = null; render(); focusHeading(); return; }
     if (d.gback) { S.g.view = 'list'; render(); focusHeading(); return; }
     if (d.gpath) { S.g.view = 'path'; render(); focusHeading(); return; }
+    if (d.goal) { Store.data.goal = d.goal; Store.save(); renderContinue(); return; }
     if (d.greview) { S.g.view = 'review'; render(); focusHeading(); return; }
     if (d.reviewCat != null) { S.g.cat = +d.reviewCat; S.g.view = 'post'; gPost = null; render(); focusHeading(); return; }
     if (d.gnext) { S.g.lesson++; gQuiz = null; render(); focusHeading(); return; }

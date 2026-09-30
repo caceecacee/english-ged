@@ -175,6 +175,7 @@ p { margin: 0; }
 .chip small { display: block; font-size: .72rem; color: var(--muted); }
 .chip[aria-selected="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
 .chip[aria-selected="true"] small { color: inherit; opacity: .8; }
+.chip[data-goal] { flex: 1 1 150px; white-space: normal; text-align: center; }
 
 .seg-ctl { display: inline-flex; border: 1px solid var(--line); border-radius: 12px; padding: 3px; background: var(--surface); gap: 3px; flex-wrap: wrap; }
 .seg-ctl button { border: 0; background: none; border-radius: 9px; min-height: 42px; min-width: 48px; padding: 0 12px; cursor: pointer; font-weight: 600; color: var(--ink-2); }
