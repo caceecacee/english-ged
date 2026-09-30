@@ -1071,6 +1071,21 @@
     Remote.load(false);
     return '<div id="lbw-' + part + '">' + leaderboardInner(part) + '</div>';
   }
+  function boardRowsTotal(rows, totalMax, local) {
+    var gMax = partMax('grammar'), vMax = partMax('vocab'), rMax = partMax('reading');
+    return '<ol class="board">' + rows.map(function (r, i) {
+      var pct = totalMax ? Math.round(r.score / totalMax * 100) : 0;
+      var del = local && S.p.del === r.key
+        ? '<span class="confirm" style="grid-column:1/-1"><span>ลบ ' + esc(r.nick) + ' และคะแนนทั้งหมดของชื่อนี้ในเครื่องนี้?</span><button type="button" class="btn" data-pdelyes="' + esc(r.key) + '">ลบ</button><button type="button" class="btn ghost" data-pdelno="1">ยกเลิก</button></span>'
+        : '';
+      return '<li class="' + (r.me ? 'me' : '') + (local ? '' : ' nox') + '"><span class="rank' + (i < 3 ? ' top' : '') + '">' + (i + 1) + '</span>' +
+        '<span class="who"><span class="nick">' + esc(r.nick) + '</span>' + (r.me ? ' <span class="tag">คุณ</span>' : '') +
+        '<span class="small muted">Grammar ' + r.g + '/' + gMax + ' · คำศัพท์ ' + r.v + '/' + vMax + ' · อ่าน ' + r.rd + '/' + rMax + '</span>' +
+        '<span class="bar" aria-hidden="true"><span style="width:' + pct + '%"></span></span></span>' +
+        '<span class="pts en"><b>' + r.score + '</b><small>/' + totalMax + '</small></span>' +
+        (local ? '<button type="button" class="x" data-pdel="' + esc(r.key) + '" aria-label="ลบ ' + esc(r.nick) + ' ออกจากตาราง">×</button>' + del : '') + '</li>';
+    }).join('') + '</ol>';
+  }
   function boardRows(rows, max, local) {
     return '<ol class="board">' + rows.map(function (r, i) {
       var pct = max ? Math.round(r.score / max * 100) : 0;
@@ -1139,7 +1154,7 @@
         if (mine) { mine.g = Math.max(mine.g, lg); mine.v = Math.max(mine.v, lv); mine.rd = Math.max(mine.rd, lr); }
         else if (lg || lv || lr) list.push({ nick: Store.data.nick, g: lg, v: lv, rd: lr, me: true });
       }
-      var rows = list.map(function (r) { return { nick: r.nick, score: r.g + r.v + r.rd, me: r.me }; })
+      var rows = list.map(function (r) { return { nick: r.nick, score: r.g + r.v + r.rd, g: r.g, v: r.v, rd: r.rd, me: r.me }; })
         .filter(function (r) { return r.nick && (r.score > 0 || r.me); })
         .sort(function (a, b) { return b.score - a.score || a.nick.localeCompare(b.nick); });
       var myRank = -1; rows.forEach(function (r, i) { if (r.me) myRank = i; });
@@ -1147,16 +1162,17 @@
       var t = new Date(Remote.fetchedAt);
       var when = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2);
       return '<section class="panel stack" aria-labelledby="lb-total">' + head('รวมทุกคนที่เล่นผ่านลิงก์นี้ · อัปเดต ' + when) +
-        (top.length ? boardRows(top, totalMax, false) : '<p class="muted small">ยังไม่มีใครมีคะแนนรวม เริ่มเป็นคนแรกได้เลย</p>') +
+        (top.length ? boardRowsTotal(top, totalMax, false) : '<p class="muted small">ยังไม่มีใครมีคะแนนรวม เริ่มเป็นคนแรกได้เลย</p>') +
         (myRank >= 20 ? '<p class="small">อันดับของคุณ: <b>' + (myRank + 1) + '</b> จาก ' + rows.length + ' คน</p>' : '') +
         (!myNick ? '<p class="small muted">ใส่ชื่อเล่นในแต่ละ Part คะแนนรวมของคุณจะขึ้นตารางนี้</p>' : '') +
         '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">รีเฟรชตาราง</button></section>';
     }
     var localRows = Store.named().map(function (x) {
-      return { key: x.key, nick: x.p.nick, score: partScore(x.p, 'grammar') + partScore(x.p, 'vocab') + partScore(x.p, 'reading'), updated: x.p.updated || 0, me: x.key === Store.root.current };
+      var g = partScore(x.p, 'grammar'), v = partScore(x.p, 'vocab'), rd = partScore(x.p, 'reading');
+      return { key: x.key, nick: x.p.nick, score: g + v + rd, g: g, v: v, rd: rd, updated: x.p.updated || 0, me: x.key === Store.root.current };
     }).sort(function (a, b) { return b.score - a.score || a.updated - b.updated || a.nick.localeCompare(b.nick); });
     var note = Remote.enabled() ? 'เชื่อมตารางรวมไม่ได้ตอนนี้ จึงแสดงเฉพาะในเครื่องนี้' : 'เก็บในเบราว์เซอร์ของเครื่องนี้ ไม่รวมกับเครื่องอื่น';
-    var body = localRows.length ? boardRows(localRows.slice(0, 10), totalMax, true) + (localRows.length > 10 ? '<p class="small muted">แสดง 10 อันดับแรกจาก ' + localRows.length + ' ชื่อ</p>' : '')
+    var body = localRows.length ? boardRowsTotal(localRows.slice(0, 10), totalMax, true) + (localRows.length > 10 ? '<p class="small muted">แสดง 10 อันดับแรกจาก ' + localRows.length + ' ชื่อ</p>' : '')
       : '<p class="muted small">ยังไม่มีชื่อในตาราง ใส่ชื่อเล่นแล้วเริ่มทำแบบฝึก คะแนนรวมจะขึ้นที่นี่</p>';
     return '<section class="panel stack" aria-labelledby="lb-total">' + head(note) + body +
       (Remote.enabled() ? '<button type="button" class="link-btn small" data-lbrefresh="1" style="justify-self:start">ลองเชื่อมตารางรวมอีกครั้ง</button>' : '') + '</section>';
