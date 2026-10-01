@@ -45,7 +45,7 @@
      root = { v:2, current:<key>, profiles:{ <key>: {nick, updated, grammar, gpost, vocab, reading} } }
      key '__guest' = ยังไม่ใส่ชื่อเล่น (ไม่ขึ้นตารางอันดับ) */
   var GUEST = '__guest';
-  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {} }; }
+  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {}, examvocab: {} }; }
   // "จำกฎได้" = โจทย์ที่ถามกฎตรง ๆ (ไม่มีช่องว่างให้เติม) · "ใช้ในประโยคได้" = โจทย์เติมคำ/ใช้ในบริบทจริง (มี ___)
   function quizType(q) { return /___/.test(q.q) ? 'usage' : 'rule'; }
   function recordReview(key, title, wrongPqs) {
@@ -100,7 +100,7 @@
         var prof = emptyProfile(nick.trim());
         var g = this.root.profiles[GUEST];
         if (this.named().length === 0 && hasProgress(g)) {
-          ['grammar', 'gpost', 'vocab', 'reading'].forEach(function (k) { prof[k] = g[k]; });
+          ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab'].forEach(function (k) { prof[k] = g[k]; });
           this.root.profiles[GUEST] = emptyProfile('');
           moved = true;
         }
@@ -120,7 +120,7 @@
     }
   };
   function hasProgress(p) {
-    return ['grammar', 'gpost', 'vocab', 'reading'].some(function (k) { return p[k] && Object.keys(p[k]).length > 0; });
+    return ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab'].some(function (k) { return p[k] && Object.keys(p[k]).length > 0; });
   }
 
   /* ---------- คะแนนรวมของแต่ละ Part (ใช้จัดอันดับ) ---------- */
@@ -294,6 +294,8 @@
     tab: 'grammar',
     g: { cat: 0, view: 'list', lesson: 0 },
     v: { lv: 'A1', set: 0, dir: 'en-th', choices: 4, phase: 'setup' },
+    vmode: 'exam', // 'exam' = เตรียมสอบ (Oxford 3000/5000) · 'basic' = ปูพื้นฐานเดิม (400 คำ)
+    ex: { tripIdx: 0, setIdx: 0, phase: 'setup', batch: 5, ri: 0, ans: [], typed: null, postI: 0, postAns: [] },
     r: { filter: 'all', view: 'list', id: null, showTh: false },
     p: { editing: false, del: null }
   };
@@ -690,13 +692,24 @@
     var r = Store.data.vocab[vKey(lv, set, S.v.dir, S.v.choices)];
     return r || null;
   }
+  function vocabModeToggle() {
+    return '<div class="row" style="gap:8px;margin-bottom:4px" role="group" aria-label="โหมดคำศัพท์">' +
+      '<button type="button" class="chip" aria-pressed="' + (S.vmode === 'exam') + '" data-vmode="exam">เตรียมสอบ (Oxford 3000/5000)</button>' +
+      '<button type="button" class="chip" aria-pressed="' + (S.vmode === 'basic') + '" data-vmode="basic">ปูพื้นฐาน (400 คำเดิม)</button>' +
+      '</div>';
+  }
   function renderVocab(view) {
+    if (S.vmode === 'exam') return renderVocabExam(view);
+    return renderVocabBasic(view);
+  }
+  function renderVocabBasic(view) {
     if (game && S.v.phase !== 'setup') return renderGame(view);
     var level = EP.vocab[S.v.lv];
     var set = level.sets[S.v.set];
     var lvColor = { A1: '--a1', A2: '--a2', B1: '--b1', B2: '--b2' };
     view.innerHTML = '<div class="stack">' +
-      '<div class="row" style="justify-content:space-between"><h2>เกมการ์ดคำศัพท์</h2><span class="small muted">4 ระดับ × 4 ชุด × 25 คำ = 400 คำ</span></div>' +
+      '<div class="row" style="justify-content:space-between"><h2>เกมการ์ดคำศัพท์ · ปูพื้นฐาน</h2><span class="small muted">4 ระดับ × 4 ชุด × 25 คำ = 400 คำ</span></div>' +
+      vocabModeToggle() +
       playerBar('vocab') +
       '<section class="panel stack">' +
       '<div class="field"><span class="label" id="lv-l">ระดับ</span><div class="seg-ctl" role="group" aria-labelledby="lv-l">' +
@@ -721,6 +734,268 @@
       '</ul></details>' + resetBlock('vocab', 'ล้างคะแนนคำศัพท์ของผู้เล่นนี้') + '</section>' + leaderboard('vocab') +
       '<p class="small muted">รายการคำศัพท์นี้คัดและจัดระดับเพื่อการฝึกเรียน ไม่ใช่บัญชีคำศัพท์ทางการของ GED หรือการรับรองระดับ CEFR</p>' +
       '</div>';
+  }
+
+  /* ===================================================================
+     คำศัพท์ "เตรียมสอบ" — อิง Oxford 3000 (A1–B2) / Oxford 5000 (C1)
+     แยกจากระบบ "ปูพื้นฐาน" เดิมทั้งหมด ไม่แตะ EP.vocab/game/startGame เดิมเลย
+     =================================================================== */
+  var EX_ACT = [
+    { key: 'recognize1', label: 'เลือกความหมาย', kind: 'recognize' },
+    { key: 'recall1', label: 'ไทย → อังกฤษ', kind: 'recall' },
+    { key: 'listen', label: 'ฟังแล้วเลือกคำ', kind: 'recognize' },
+    { key: 'fill', label: 'เติมคำในประโยค', kind: 'context' },
+    { key: 'type', label: 'พิมพ์คำศัพท์', kind: 'recall' }
+  ];
+  function examTrip() { return EP.examVocab.trips[S.ex.tripIdx]; }
+  function examSetObj() { return examTrip().sets[S.ex.setIdx]; }
+  function examWordState(w) {
+    var d = Store.data.examvocab || (Store.data.examvocab = {});
+    return d[w] || { recognize: false, recall: false, context: false, box: 0, dueAt: 0, wrongStreak: 0 };
+  }
+  function examMastered(w) { var st = examWordState(w); return st.recognize && st.recall && st.context; }
+  function examMarkResult(word, kind, correct) {
+    var d = Store.data.examvocab || (Store.data.examvocab = {});
+    var st = d[word] || { recognize: false, recall: false, context: false, box: 0, dueAt: 0, wrongStreak: 0 };
+    var DAY = 24 * 60 * 60 * 1000;
+    if (correct) {
+      st[kind] = true;
+      st.box = Math.min(4, (st.box || 0) + 1);
+      st.wrongStreak = 0;
+    } else {
+      st.box = 0;
+      st.wrongStreak = (st.wrongStreak || 0) + 1;
+    }
+    var intervalDays = [0, 1, 3, 7, 14]; // box คือ index เสมอ (0-4) ห้ามใช้ || เพราะ 0 วันเป็นค่าที่ถูกต้อง ไม่ใช่ค่าที่ต้อง fallback
+    st.dueAt = Date.now() + intervalDays[st.box] * DAY;
+    d[word] = st;
+    Store.save();
+  }
+  function examSetProgress(setObj) { return setObj.words.filter(function (w) { return examMastered(w.w); }).length; }
+  function examDueWords() {
+    var out = [];
+    (EP.examVocab.trips || []).forEach(function (trip) {
+      trip.sets.forEach(function (set) {
+        set.words.forEach(function (w) {
+          var st = (Store.data.examvocab || {})[w.w];
+          if (st && st.dueAt && st.dueAt <= Date.now() && st.box < 4) out.push(w);
+        });
+      });
+    });
+    return out;
+  }
+  function buildExamFillRound(words, rnd) {
+    var byWord = {};
+    var flat = [];
+    words.forEach(function (w) {
+      flat.push({ w: w.w, s: w.sentence, x: w.x || [] });
+      (w.quizBank || []).forEach(function (q) { flat.push({ w: w.w, s: q.s, x: w.x || [] }); });
+    });
+    EP.logic.shuffle(flat, rnd).forEach(function (item) { if (!byWord[item.w]) byWord[item.w] = item; });
+    var chosen = words.map(function (w) { return byWord[w.w]; });
+    return EP.logic.buildPostTest(chosen, words, chosen.length, rnd);
+  }
+  function startExamBatch(n) {
+    var setObj = examSetObj();
+    var words = EP.logic.shuffle(setObj.words, Math.random).slice(0, n);
+    S.ex.words = words;
+    S.ex.rounds = {
+      recognize1: EP.logic.buildCardRound(words, Math.min(4, words.length), 'en-th', Math.random),
+      recall1: EP.logic.buildCardRound(words, Math.min(4, words.length), 'th-en', Math.random),
+      listen: EP.logic.buildCardRound(words, Math.min(4, words.length), 'th-en', Math.random),
+      fill: buildExamFillRound(words, Math.random)
+    };
+    S.ex.ans = { recognize1: words.map(function () { return null; }), recall1: words.map(function () { return null; }), listen: words.map(function () { return null; }), fill: words.map(function () { return null; }) };
+    S.ex.typed = words.map(function () { return null; });
+    S.ex.actIdx = 0;
+    S.ex.qi = 0;
+    S.ex.phase = 'play';
+  }
+  function examCurrentRound() { return S.ex.rounds[EX_ACT[S.ex.actIdx].key]; }
+  function examAnswerChoice(oi) {
+    var act = EX_ACT[S.ex.actIdx];
+    var round = examCurrentRound();
+    var q = round[S.ex.qi];
+    if (S.ex.ans[act.key][S.ex.qi] != null) return;
+    S.ex.ans[act.key][S.ex.qi] = oi;
+    var word = q.word;
+    examMarkResult(word.w, act.kind, oi === q.answer);
+    render();
+    var fb = $('#ex-fb');
+    if (fb) { fb.setAttribute('tabindex', '-1'); fb.focus({ preventScroll: true }); }
+  }
+  function examSubmitTyped(value) {
+    var word = S.ex.words[S.ex.qi];
+    if (S.ex.typed[S.ex.qi] != null) return;
+    var correct = String(value || '').trim().toLowerCase() === word.w.toLowerCase();
+    S.ex.typed[S.ex.qi] = { value: value, correct: correct };
+    examMarkResult(word.w, 'recall', correct);
+    render();
+  }
+  function examAnswerPost(oi) {
+    if (examPost.ans[examPost.i] != null) return;
+    examPost.ans[examPost.i] = oi;
+    var q = examPost.qs[examPost.i];
+    examMarkResult(q.word.w, 'context', oi === q.answer);
+    render();
+    var fb = $('#ex-fb');
+    if (fb) { fb.setAttribute('tabindex', '-1'); fb.focus({ preventScroll: true }); }
+  }
+  function examNextQuestion() {
+    var act = EX_ACT[S.ex.actIdx];
+    var total = act.key === 'type' ? S.ex.words.length : examCurrentRound().length;
+    if (S.ex.qi < total - 1) { S.ex.qi++; render(); focusHeading(); return; }
+    if (S.ex.actIdx < EX_ACT.length - 1) { S.ex.actIdx++; S.ex.qi = 0; render(); focusHeading(); return; }
+    S.ex.phase = 'result';
+    render(); focusHeading();
+  }
+  function examHintFor(word) {
+    var st = examWordState(word.w);
+    if (st.recall) return ''; // เคยนึกคำเองได้แล้ว ไม่ต้องมีคำใบ้
+    if (st.wrongStreak >= 2) return word.w.slice(0, Math.min(3, word.w.length)); // ผิดซ้ำ ให้คำใบ้มากขึ้น
+    return word.w.slice(0, 1); // ครั้งแรก ใบ้แค่ตัวแรก
+  }
+  function renderExamSetup(view) {
+    var trip = examTrip();
+    var setObj = examSetObj();
+    var due = examDueWords();
+    view.innerHTML = '<div class="stack">' +
+      '<div class="row" style="justify-content:space-between"><h2>คำศัพท์เตรียมสอบ</h2><span class="small muted">อิง Oxford 3000 (A1–B2) และ Oxford 5000 (C1)</span></div>' +
+      vocabModeToggle() +
+      playerBar('vocab') +
+      (due.length ? '<section class="panel stack"><h3>ทบทวนวันนี้ (' + due.length + ' คำ)</h3><p class="small muted">คำที่เคยตอบผิดหรือถึงกำหนดทบทวนแบบเว้นระยะ</p><button type="button" class="btn primary block" data-exreview="1">เริ่มทบทวน</button></section>' : '') +
+      '<section class="panel stack" aria-labelledby="ex-trip-h"><h3 id="ex-trip-h"><span class="en">' + esc(trip.name) + '</span></h3>' +
+      '<p class="small muted">1 ทริป = 5 ชุด × 10 คำ ตามสัดส่วนที่เว็บกำหนด (ไม่ใช่สัดส่วนทางการของ Oxford) — A1 1 · A2 4 · B1 25 · B2 15 · C1 5 คำ ต่อทริป</p>' +
+      '<div class="set-grid" role="group" aria-label="เลือกชุดคำศัพท์">' +
+      trip.sets.map(function (st, i) {
+        var done = examSetProgress(st);
+        return '<button type="button" class="set-card" aria-pressed="' + (i === S.ex.setIdx) + '" data-exset="' + i + '" style="--c:var(--b1)">' +
+          '<span class="n">ชุด ' + (i + 1) + ' · ' + st.themeTh + '</span><span class="t">' + esc(st.theme) + '</span>' +
+          '<span class="best">เรียนแล้ว ' + done + '/' + st.words.length + ' คำ</span></button>';
+      }).join('') + '</div>' +
+      '<div class="field"><span class="label" id="ex-batch-l">เล่นครั้งละ</span><div class="seg-ctl" role="group" aria-labelledby="ex-batch-l">' +
+      [5, 10].map(function (n) { return '<button type="button" aria-pressed="' + (S.ex.batch === n) + '" data-exbatch="' + n + '">' + n + ' คำ</button>'; }).join('') + '</div></div>' +
+      '<button type="button" class="btn primary block" data-exstart="1">เริ่มเรียน ' + Math.min(S.ex.batch, setObj.words.length) + ' คำ (' + setObj.themeTh + ')</button>' +
+      (examSetProgress(setObj) === setObj.words.length ? '<button type="button" class="btn block" data-expost="1">ทำ Post-test ชุดนี้ (10 ข้อ)</button>' : '') +
+      '<p class="small muted"><b>วิธีเล่น:</b> สลับ 5 กิจกรรม (เลือกความหมาย, ไทย→อังกฤษ, ฟังแล้วเลือกคำ, เติมคำในประโยค, พิมพ์คำศัพท์) ทำครบทุกคำในชุดครบทั้ง 3 ด้าน (รู้จักเมื่อเห็น/นึกคำเองได้/ใช้ในบริบทได้) แล้วปลดล็อก Post-test ของชุดนั้น</p>' +
+      '</section>' +
+      '<section class="panel stack"><details class="words"><summary>ดูคำศัพท์ทั้ง 10 คำในชุดนี้ (พร้อมระดับและแหล่งอ้างอิง)</summary><ul class="word-list" style="padding:0;margin:8px 0 0">' +
+      setObj.words.map(function (w) {
+        var st = examWordState(w.w);
+        var mark = examMastered(w.w) ? ' ✓ ใช้ในบริบทได้แล้ว' : (st.recognize || st.recall) ? ' · กำลังฝึก' : '';
+        return '<li>' + sayBtn(w.w, true) + '<span>' + lvBadge(w.level) + ' <span class="en">' + esc(w.w) + '</span> <span class="small muted">' + esc(w.pos) + ' · ' + w.source + '</span><br><span class="th">' + esc(w.th) + '</span><span class="small muted">' + mark + '</span></span></li>';
+      }).join('') +
+      '</ul></details>' + resetBlock('examvocab', 'ล้างความคืบหน้าคำศัพท์เตรียมสอบของผู้เล่นนี้') + '</section>' +
+      leaderboard('vocab') +
+      '<p class="small muted">ชุดคำศัพท์นี้เป็น "ชุดคัดเลือกอิง Oxford 3000/5000" คัดมาสอน ' + (EP.examVocab.trips.reduce(function (s, t) { return s + t.sets.reduce(function (s2, st) { return s2 + st.words.length; }, 0); }, 0)) + ' คำจากทั้งหมดหลายพันคำในคลังทางการ ไม่ได้ครอบคลุมครบทุกคำ</p>' +
+      '</div>';
+  }
+  function examOptionsHTML(items, chosen, correctIdx, renderText) {
+    return '<div class="opts" role="group">' + items.map(function (opt, i) {
+      var cls = 'opt';
+      var mark = '';
+      if (chosen != null) {
+        if (i === correctIdx) { cls += ' correct'; mark = '✓ ถูก'; }
+        else if (i === chosen) { cls += ' wrong'; mark = '✗ ที่เลือก'; }
+        else cls += ' dim';
+      }
+      return '<button type="button" class="' + cls + '" data-exopt="' + i + '"' + (chosen != null ? ' disabled' : '') + '><span class="key" aria-hidden="true">' + KEYS[i] + '</span><span>' + renderText(opt) + '</span>' + (mark ? '<span class="mark">' + mark + '</span>' : '') + '</button>';
+    }).join('') + '</div>';
+  }
+  function renderExamPlay(view) {
+    var act = EX_ACT[S.ex.actIdx];
+    var setObj = examSetObj();
+    var head = '<button type="button" class="back" data-exquit="1">' + ICON.back + 'ออกจากบทเรียน</button>' +
+      '<div class="row"><span class="eyebrow">' + setObj.themeTh + ' · กิจกรรม ' + (S.ex.actIdx + 1) + '/' + EX_ACT.length + ': ' + act.label + '</span></div>';
+    var body = '';
+    if (act.key === 'type') {
+      var word = S.ex.words[S.ex.qi];
+      var typed = S.ex.typed[S.ex.qi];
+      var hint = examHintFor(word);
+      body = '<section class="panel stack">' +
+        '<p class="eyebrow">พิมพ์คำศัพท์จากความหมาย</p>' +
+        '<p class="prompt thai">' + esc(word.th) + '</p><p class="pos">' + esc(word.pos) + '</p>' +
+        (hint ? '<p class="small muted">คำใบ้: ' + esc(hint) + '…</p>' : '') +
+        '<form data-extypeform="1" class="row" style="flex-wrap:nowrap">' +
+        '<input type="text" id="ex-type-input" autocomplete="off" autocapitalize="off" spellcheck="false" ' + (typed ? 'disabled' : '') + ' value="' + (typed ? esc(typed.value) : '') + '" aria-label="พิมพ์คำศัพท์ภาษาอังกฤษ">' +
+        (typed ? '' : '<button type="submit" class="btn primary" style="flex:0 0 auto">ตรวจคำตอบ</button>') +
+        '</form>' +
+        (typed ? '<p class="gate" id="ex-fb" tabindex="-1">' + (typed.correct ? '✓ ถูกต้อง! ' : '✗ ที่ถูกคือ ') + '<b class="en">' + esc(word.w) + '</b> — ' + esc(word.th) + sayBtn(word.w, true) + '</p>' +
+          '<button type="button" class="btn primary block" data-exnext="1">' + (S.ex.qi < S.ex.words.length - 1 ? 'ข้อถัดไป →' : 'ดูสรุป') + '</button>' : '') +
+        '</section>';
+    } else {
+      var round = examCurrentRound();
+      var q = round[S.ex.qi];
+      var chosen = S.ex.ans[act.key][S.ex.qi];
+      var promptHTML = '';
+      if (act.key === 'recognize1') promptHTML = '<p class="prompt en">' + esc(q.word.w) + '</p><p class="pos">' + esc(q.word.pos) + '</p>' + sayBtn(q.word.w);
+      else if (act.key === 'recall1') promptHTML = '<p class="prompt thai">' + esc(q.word.th) + '</p><p class="pos">เลือกคำภาษาอังกฤษ</p>';
+      else if (act.key === 'listen') promptHTML = '<p class="small muted">ฟังเสียงแล้วเลือกคำที่ถูกต้อง</p><div class="row" style="justify-content:center">' + sayBtn(q.word.w).replace('class="say', 'class="say lg') + '</div>';
+      else if (act.key === 'fill') promptHTML = '<p class="q-stem en">' + esc(q.item.s).replace(/___/g, '<span class="blank en">?</span>') + '</p><p class="small muted">' + esc(q.item.sTh || '') + '</p>';
+      var optsHTML = act.key === 'recognize1'
+        ? examOptionsHTML(q.options, chosen, q.answer, function (o) { return esc(o.th); })
+        : examOptionsHTML(q.options, chosen, q.answer, function (o) { return '<span class="en">' + esc(o.w) + '</span>'; });
+      var fbHTML = chosen != null ? '<p class="gate" id="ex-fb" tabindex="-1">' + (chosen === q.answer ? '✓ ถูกต้อง' : '✗ ที่ถูกคือ ' + esc(q.word.th)) + ' — <b class="en">' + esc(q.word.w) + '</b> ' + sayBtn(q.word.w, true) + '</p>' +
+        '<button type="button" class="btn primary block" data-exnext="1">' + (S.ex.qi < round.length - 1 ? 'ข้อถัดไป →' : 'ดูสรุป') + '</button>' : '';
+      body = '<section class="panel stack">' + promptHTML + optsHTML + fbHTML + '</section>';
+    }
+    var totalQ = act.key === 'type' ? S.ex.words.length : examCurrentRound().length;
+    view.innerHTML = '<div class="stack lesson">' + head +
+      '<div class="progress" aria-hidden="true"><span style="width:' + Math.round((S.ex.qi) / totalQ * 100) + '%"></span></div>' +
+      '<p class="small muted">ข้อ ' + (S.ex.qi + 1) + '/' + totalQ + '</p>' + body + '</div>';
+  }
+  function renderExamResult(view) {
+    var setObj = examSetObj();
+    var done = examSetProgress(setObj);
+    var allDone = done === setObj.words.length;
+    view.innerHTML = '<div class="stack">' +
+      '<h2>สรุปผลการฝึก</h2>' +
+      '<section class="panel score-card"><p class="eyebrow">ความคืบหน้าชุด ' + esc(setObj.themeTh) + '</p>' +
+      '<p class="score-big">' + done + '<small>/' + setObj.words.length + '</small></p>' +
+      '<p class="muted">คำที่ "ใช้ในบริบทได้" ครบทั้ง 3 ด้านแล้ว</p>' +
+      '<div class="row" style="justify-content:center">' +
+      '<button type="button" class="btn" data-exback="1">กลับไปเลือกชุด</button>' +
+      (allDone ? '<button type="button" class="btn primary" data-expost="1">ทำ Post-test ชุดนี้</button>' : '<button type="button" class="btn primary" data-exstart="1">ฝึกต่ออีกรอบ</button>') +
+      '</div></section></div>';
+  }
+  var examPost = null;
+  function renderExamPost(view) {
+    var setObj = examSetObj();
+    if (!examPost || examPost.setId !== setObj.id) {
+      var rnd = Math.random;
+      var flat = [];
+      setObj.words.forEach(function (w) {
+        flat.push({ w: w.w, s: w.sentence, x: w.x || [] });
+        (w.quizBank || []).forEach(function (q) { flat.push({ w: w.w, s: q.s, x: w.x || [] }); });
+      });
+      examPost = { setId: setObj.id, qs: EP.logic.buildPostTest(flat, setObj.words, 10, rnd), i: 0, ans: [] };
+    }
+    if (examPost.i >= examPost.qs.length) {
+      var score = examPost.ans.reduce(function (s, a, i) { return s + (a === examPost.qs[i].answer ? 1 : 0); }, 0);
+      view.innerHTML = '<div class="stack">' +
+        '<button type="button" class="back" data-exback="1">' + ICON.back + 'กลับไปเลือกชุด</button>' +
+        '<h2>Post-test: ' + esc(setObj.themeTh) + '</h2>' +
+        '<section class="panel score-card"><p class="eyebrow">คะแนน Post-test</p><p class="score-big">' + score + '<small>/10</small></p>' + savedNote() +
+        '<div class="row" style="justify-content:center"><button type="button" class="btn" data-expostretry="1">ทำใหม่</button><button type="button" class="btn primary" data-exback="1">กลับไปเลือกชุด</button></div></section></div>';
+      return;
+    }
+    var i = examPost.i;
+    var q = examPost.qs[i];
+    var chosen = examPost.ans[i];
+    view.innerHTML = '<div class="stack">' +
+      '<button type="button" class="back" data-exquit="1">' + ICON.back + 'ออกจาก Post-test</button>' +
+      '<h2>Post-test: ' + esc(setObj.themeTh) + '</h2>' +
+      '<section class="panel stack"><p class="small muted">ข้อ ' + (i + 1) + '/10</p>' +
+      '<p class="q-stem en">' + esc(q.item.s).replace(/___/g, '<span class="blank en">?</span>') + '</p>' +
+      examOptionsHTML(q.options, chosen, q.answer, function (o) { return '<span class="en">' + esc(o.w) + '</span>'; }) +
+      (chosen != null ? '<p class="gate">' + (chosen === q.answer ? '✓ ถูกต้อง' : '✗ ที่ถูกคือ ' + esc(q.word.th)) + ' — <b class="en">' + esc(q.word.w) + '</b></p><button type="button" class="btn primary block" data-expostnext="1">' + (i < 9 ? 'ข้อถัดไป →' : 'ดูคะแนน') + '</button>' : '') +
+      '</section></div>';
+  }
+  function renderVocabExam(view) {
+    if (S.ex.phase === 'play') return renderExamPlay(view);
+    if (S.ex.phase === 'result') return renderExamResult(view);
+    if (S.ex.phase === 'post') return renderExamPost(view);
+    renderExamSetup(view);
   }
 
   function startGame(review) {
@@ -1217,7 +1492,15 @@
     var html = renderGoalPicker();
     html += '<span class="small muted" style="width:100%">' + goal.line + '</span>';
     html += gNext ? '<button type="button" class="chip" data-go-lesson="' + gNext.ci + '-' + gNext.li + '"><small>1 · Grammar ต่อไป</small><span class="en">' + gNext.l.title + '</span></button>' : '<span class="chip"><small>1 · Grammar</small>เรียนครบทุกบทแล้ว</span>';
-    html += '<button type="button" class="chip" data-go-vocab="1"><small>2 · คำศัพท์</small>' + S.v.lv + ' ชุด ' + (S.v.set + 1) + '</button>';
+    if (S.vmode === 'exam') {
+      var exSet = examSetObj();
+      var exDone = examSetProgress(exSet);
+      html += '<button type="button" class="chip" data-go-vocab="1"><small>2 · คำศัพท์เตรียมสอบ</small><span class="en">' + esc(exSet.themeTh) + '</span> ' + exDone + '/' + exSet.words.length + '</button>';
+      var due = examDueWords();
+      if (due.length) html += '<button type="button" class="chip" data-go-vocab="1"><small>ทบทวนวันนี้</small>' + due.length + ' คำ</button>';
+    } else {
+      html += '<button type="button" class="chip" data-go-vocab="1"><small>2 · คำศัพท์ปูพื้นฐาน</small>' + S.v.lv + ' ชุด ' + (S.v.set + 1) + '</button>';
+    }
     html += rNext ? '<button type="button" class="chip" data-rid="' + rNext.id + '"><small>3 · บทอ่านต่อไป</small><span class="en">' + esc(rNext.title) + '</span></button>' : '<span class="chip"><small>3 · อ่าน</small>อ่านครบ 12 บทแล้ว</span>';
     if (Store.data.goal === 'university') {
       html += '<span class="small muted" style="width:100%">บทเรียนหมวด Academic Language ช่วยฝึก<b>ภาษา</b>ที่ใช้ในงานเขียนวิชาการ ไม่ใช่แบบฝึกข้อสอบ IELTS/TOEFL และไม่ได้รับรองว่าเรียนแล้วจะได้คะแนนสอบหรือผ่านเกณฑ์รับสมัคร — ควรฝึกข้อสอบจริงแยกต่างหากกับแหล่งข้อสอบที่เป็นทางการ</span>';
@@ -1261,6 +1544,7 @@
       Store.data[part] = {};
       if (part === 'grammar') { Store.data.gpost = {}; gQuiz = null; gPost = null; }
       if (part === 'reading') rQuiz = null;
+      if (part === 'examvocab') { examPost = null; S.ex.phase = 'setup'; }
       Store.save(); confirming = null; render(); toast('ล้างความคืบหน้าแล้ว'); return;
     }
 
@@ -1299,6 +1583,7 @@
     }
 
     // Vocab
+    if (d.vmode) { S.vmode = d.vmode; render(); focusHeading(); return; }
     if (d.vlv) { S.v.lv = d.vlv; S.v.set = 0; render(); var lb = $('[data-vlv="' + d.vlv + '"]'); if (lb) lb.focus(); return; }
     if (d.vset != null) { S.v.set = +d.vset; render(); var sb = $('[data-vset="' + d.vset + '"]'); if (sb) sb.focus(); return; }
     if (d.vdir) { S.v.dir = d.vdir; render(); var db = $('[data-vdir="' + d.vdir + '"]'); if (db) db.focus(); return; }
@@ -1315,6 +1600,38 @@
     if (d.vnextset) { var ns = d.vnextset.split('-'); S.v.lv = ns[0]; S.v.set = +ns[1]; startGame(false); return; }
     if (d.vquit) { game = null; S.v.phase = 'setup'; render(); focusHeading(); return; }
 
+    // คำศัพท์เตรียมสอบ (Oxford 3000/5000)
+    if (d.exset != null) { S.ex.setIdx = +d.exset; render(); var esb = $('[data-exset="' + d.exset + '"]'); if (esb) esb.focus(); return; }
+    if (d.exbatch != null) { S.ex.batch = +d.exbatch; render(); var ebb = $('[data-exbatch="' + d.exbatch + '"]'); if (ebb) ebb.focus(); return; }
+    if (d.exstart) { startExamBatch(Math.min(S.ex.batch, examSetObj().words.length)); render(); focusHeading(); return; }
+    if (d.exopt != null) { if (S.ex.phase === 'post') examAnswerPost(+d.exopt); else examAnswerChoice(+d.exopt); return; }
+    if (d.exnext) { examNextQuestion(); return; }
+    if (d.exquit) { S.ex.phase = 'setup'; render(); focusHeading(); return; }
+    if (d.exback) { S.ex.phase = 'setup'; examPost = null; render(); focusHeading(); return; }
+    if (d.expost) { S.ex.phase = 'post'; examPost = null; render(); focusHeading(); return; }
+    if (d.expostretry) { examPost = null; render(); focusHeading(); return; }
+    if (d.expostnext) {
+      var pi = examPost.i;
+      if (examPost.ans[pi] == null) return;
+      examPost.i++;
+      render(); focusHeading(); return;
+    }
+    if (d.exreview) {
+      var due = examDueWords();
+      if (!due.length) return;
+      S.ex.words = due.slice(0, 10);
+      S.ex.rounds = {
+        recognize1: EP.logic.buildCardRound(S.ex.words, Math.min(4, S.ex.words.length), 'en-th', Math.random),
+        recall1: EP.logic.buildCardRound(S.ex.words, Math.min(4, S.ex.words.length), 'th-en', Math.random),
+        listen: EP.logic.buildCardRound(S.ex.words, Math.min(4, S.ex.words.length), 'th-en', Math.random),
+        fill: buildExamFillRound(S.ex.words, Math.random)
+      };
+      S.ex.ans = { recognize1: S.ex.words.map(function () { return null; }), recall1: S.ex.words.map(function () { return null; }), listen: S.ex.words.map(function () { return null; }), fill: S.ex.words.map(function () { return null; }) };
+      S.ex.typed = S.ex.words.map(function () { return null; });
+      S.ex.actIdx = 0; S.ex.qi = 0; S.ex.phase = 'play';
+      render(); focusHeading(); return;
+    }
+
     // Reading
     if (d.rfil) { S.r.filter = d.rfil; render(); var f = $('[data-rfil="' + d.rfil + '"]'); if (f) f.focus(); return; }
     if (d.rid) { S.tab = 'reading'; S.r.id = d.rid; S.r.view = 'passage'; rQuiz = null; renderNav(); render(); focusHeading(); return; }
@@ -1324,9 +1641,11 @@
     if (d.showEv) { showEvidence(d.showEv); return; }
   });
 
-  function resetSessions() { gQuiz = null; gPost = null; rQuiz = null; game = null; S.v.phase = 'setup'; S.g.view = 'list'; S.r.view = 'list'; }
+  function resetSessions() { gQuiz = null; gPost = null; rQuiz = null; game = null; examPost = null; S.v.phase = 'setup'; S.g.view = 'list'; S.r.view = 'list'; S.ex.phase = 'setup'; }
   function afterSwitch(msg) { S.p.editing = false; S.p.del = null; confirming = null; resetSessions(); render(); toast(msg); }
   document.addEventListener('submit', function (e) {
+    var tf = e.target.closest('[data-extypeform]');
+    if (tf) { e.preventDefault(); examSubmitTyped(tf.querySelector('#ex-type-input').value); return; }
     var f = e.target.closest('[data-pform]');
     if (!f) return;
     e.preventDefault();

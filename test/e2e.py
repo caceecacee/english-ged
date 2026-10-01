@@ -81,9 +81,10 @@ with sync_playwright() as p:
         page.click('.score-card [data-gback]')
     print(f'  เล่นครบ {total_lessons} บท + Post-test {cats} หมวด')
 
-    # ---------- Vocab ----------
+    # ---------- Vocab (ปูพื้นฐาน — 400 คำเดิม) ----------
     print('■ Vocab')
     page.click('#tab-vocab')
+    page.click('[data-vmode="basic"]')  # ค่าเริ่มต้นตอนนี้คือโหมด "เตรียมสอบ" (Oxford) ต้องสลับมาโหมดเดิมก่อน
     for lv in ['A1', 'A2', 'B1', 'B2']:
         page.click(f'[data-vlv="{lv}"]')
         for si in range(4):

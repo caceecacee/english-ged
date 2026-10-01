@@ -15,6 +15,7 @@ const files = [
   'src/data/grammar-1-pos.js', 'src/data/grammar-2-tense.js', 'src/data/grammar-3-sentence.js',
   'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-academic.js',
   'src/data/vocab-a1.js', 'src/data/vocab-a2.js', 'src/data/vocab-b1.js', 'src/data/vocab-b2.js',
+  'src/data/examvocab-trip-01.js',
   'src/data/reading.js', 'src/app/vocab-model.js'
 ];
 for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f });
@@ -106,6 +107,46 @@ const totalVocabSets = LEVELS.length * 4;
 ok(DOCKER_MAX.vocab === totalVocabSets * 40, 'docker/scores-logic.mjs MAX.vocab (' + DOCKER_MAX.vocab + ') ต้องเท่ากับ ' + totalVocabSets + ' ชุด × 40 คะแนน (' + (totalVocabSets * 40) + ')');
 ok(DOCKER_DONE_MAX.vocab === totalVocabSets, 'docker/scores-logic.mjs DONE_MAX.vocab (' + DOCKER_DONE_MAX.vocab + ') ต้องเท่ากับจำนวนชุดคำศัพท์จริง (' + totalVocabSets + ')');
 console.log(`  รวม ${totalWords} คำ · คลังประโยค ${totalSentences} ข้อ (16 ชุด × 25)`);
+
+/* ---------- คำศัพท์เตรียมสอบ (อิง Oxford 3000/5000) ---------- */
+section('คำศัพท์เตรียมสอบ (อิง Oxford 3000/5000)');
+const EXAM_LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1'];
+const examTrips = (EP.examVocab && EP.examVocab.trips) || [];
+ok(examTrips.length >= 1, 'ต้องมีคำศัพท์เตรียมสอบอย่างน้อย 1 ทริป');
+let examWordTotal = 0;
+examTrips.forEach((trip) => {
+  ok(trip.sets.length === 5, `ทริป ${trip.id}: ต้องมี 5 ชุด (พบ ${trip.sets.length})`);
+  const seenWords = new Set();
+  const lvCount = {};
+  trip.sets.forEach((set) => {
+    ok(set.words.length === 10, `${trip.id}/${set.id}: ต้องมี 10 คำ (พบ ${set.words.length})`);
+    const ths = new Set();
+    set.words.forEach((w) => {
+      examWordTotal++;
+      ok(!seenWords.has(w.w), `${trip.id}: คำ "${w.w}" ซ้ำข้ามชุด`);
+      seenWords.add(w.w);
+      ok(EXAM_LEVELS.indexOf(w.level) >= 0, `${w.w}: ระดับ "${w.level}" ไม่ถูกต้อง`);
+      ok(w.source === 'Oxford 3000' || w.source === 'Oxford 5000', `${w.w}: ต้องระบุแหล่งอ้างอิงเป็น Oxford 3000/5000 (พบ "${w.source}")`);
+      ok(w.pos && w.pos.length > 0, `${w.w}: ไม่มีชนิดคำ`);
+      ok(w.th && EP.logic.hasThai(w.th), `${w.w}: ความหมายไทยไม่ถูกต้อง`);
+      ok(!ths.has(w.th), `${set.id}: ความหมายไทย "${w.th}" ซ้ำในชุดเดียวกัน (กำกวมในโหมดเลือกความหมาย)`);
+      ths.add(w.th);
+      ok((w.sentence.match(/___/g) || []).length === 1, `${w.w}: ประโยคหลักต้องมีช่องว่าง ___ หนึ่งจุด`);
+      ok(w.sentenceTh && EP.logic.hasThai(w.sentenceTh), `${w.w}: ไม่มีคำแปลประโยคหลัก`);
+      ok(!EP.logic.hasThai(w.sentence), `${w.w}: ประโยคหลักมีอักษรไทยปน`);
+      ok(Array.isArray(w.quizBank) && w.quizBank.length >= 3, `${w.w}: quizBank ต้องมีอย่างน้อย 3 ข้อ (พบ ${(w.quizBank || []).length})`);
+      (w.quizBank || []).forEach((q, i) => {
+        ok((q.s.match(/___/g) || []).length === 1, `${w.w} quizBank ${i}: ต้องมีช่องว่าง ___ หนึ่งจุด`);
+        ok(q.sTh && EP.logic.hasThai(q.sTh), `${w.w} quizBank ${i}: ไม่มีคำแปล`);
+        ok(!EP.logic.hasThai(q.s), `${w.w} quizBank ${i}: ประโยคมีอักษรไทยปน`);
+      });
+      lvCount[w.level] = (lvCount[w.level] || 0) + 1;
+    });
+  });
+  ok(lvCount.A1 === 1 && lvCount.A2 === 4 && lvCount.B1 === 25 && lvCount.B2 === 15 && lvCount.C1 === 5,
+    `ทริป ${trip.id}: สัดส่วนระดับต่อทริปต้องเป็น A1:1 A2:4 B1:25 B2:15 C1:5 (พบ ${JSON.stringify(lvCount)})`);
+});
+console.log(`  ${examTrips.length} ทริป · ${examWordTotal} คำ (ตรวจสอบระดับจริงจาก Oxford 3000/5000 แล้วทุกคำ)`);
 
 /* ---------- Game logic simulation ---------- */
 section('ตรรกะเกม (สุ่มจำลอง)');
