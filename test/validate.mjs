@@ -15,7 +15,7 @@ const files = [
   'src/data/grammar-1-pos.js', 'src/data/grammar-2-tense.js', 'src/data/grammar-3-sentence.js',
   'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-academic.js',
   'src/data/vocab-a1.js', 'src/data/vocab-a2.js', 'src/data/vocab-b1.js', 'src/data/vocab-b2.js',
-  'src/data/examvocab-trip-01.js', 'src/data/examvocab-trip-02.js',
+  'src/data/examvocab-trip-01.js', 'src/data/examvocab-trip-02.js', 'src/data/examvocab-trip-03.js',
   'src/data/reading.js', 'src/app/vocab-model.js'
 ];
 for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f });
