@@ -25,6 +25,7 @@ const scripts = [
   'src/data/examvocab-trip-03.js',
   'src/data/examvocab-trip-04.js',
   'src/data/examvocab-trip-05.js',
+  'src/data/examvocab-trip-06.js',
   'src/data/reading.js',
   'src/app/vocab-model.js',
   'src/app/ui.js'
