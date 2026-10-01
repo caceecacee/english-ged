@@ -864,6 +864,12 @@
       vocabModeToggle() +
       playerBar('vocab') +
       (due.length ? '<section class="panel stack"><h3>ทบทวนวันนี้ (' + due.length + ' คำ)</h3><p class="small muted">คำที่เคยตอบผิดหรือถึงกำหนดทบทวนแบบเว้นระยะ</p><button type="button" class="btn primary block" data-exreview="1">เริ่มทบทวน</button></section>' : '') +
+      (EP.examVocab.trips.length > 1 ? '<div class="chips" role="tablist" aria-label="ทริปคำศัพท์">' +
+        EP.examVocab.trips.map(function (tp, i) {
+          var tDone = tp.sets.reduce(function (s, st) { return s + examSetProgress(st); }, 0);
+          var tTotal = tp.sets.reduce(function (s, st) { return s + st.words.length; }, 0);
+          return '<button type="button" class="chip" role="tab" aria-selected="' + (i === S.ex.tripIdx) + '" data-extrip="' + i + '"><span class="en">ทริป ' + (i + 1) + '</span><small>' + tDone + '/' + tTotal + ' คำ</small></button>';
+        }).join('') + '</div>' : '') +
       '<section class="panel stack" aria-labelledby="ex-trip-h"><h3 id="ex-trip-h"><span class="en">' + esc(trip.name) + '</span></h3>' +
       '<p class="small muted">1 ทริป = 5 ชุด × 10 คำ ตามสัดส่วนที่เว็บกำหนด (ไม่ใช่สัดส่วนทางการของ Oxford) — A1 1 · A2 4 · B1 25 · B2 15 · C1 5 คำ ต่อทริป</p>' +
       '<div class="set-grid" role="group" aria-label="เลือกชุดคำศัพท์">' +
@@ -1601,6 +1607,7 @@
     if (d.vquit) { game = null; S.v.phase = 'setup'; render(); focusHeading(); return; }
 
     // คำศัพท์เตรียมสอบ (Oxford 3000/5000)
+    if (d.extrip != null) { S.ex.tripIdx = +d.extrip; S.ex.setIdx = 0; render(); var etb = $('[data-extrip="' + d.extrip + '"]'); if (etb) etb.focus(); return; }
     if (d.exset != null) { S.ex.setIdx = +d.exset; render(); var esb = $('[data-exset="' + d.exset + '"]'); if (esb) esb.focus(); return; }
     if (d.exbatch != null) { S.ex.batch = +d.exbatch; render(); var ebb = $('[data-exbatch="' + d.exbatch + '"]'); if (ebb) ebb.focus(); return; }
     if (d.exstart) { startExamBatch(Math.min(S.ex.batch, examSetObj().words.length)); render(); focusHeading(); return; }
