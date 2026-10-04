@@ -3004,8 +3004,457 @@ details.words > summary { cursor: pointer; font-weight: 600; min-height: 44px; d
 })(typeof window !== 'undefined' ? window : globalThis);
 
 </script>
-<script>/* src/data/grammar-6-academic.js */
-/* หมวด 6: Academic Language — ภาษาเชิงวิชาการ (C1)
+<script>/* src/data/grammar-6-bridge.js */
+/* หมวด 6: Bridge to Academic — สะพานสู่ภาษาวิชาการ (B2 → C1)
+   ต่อจากกาลและโครงสร้างประโยคพื้นฐาน ไปสู่โครงสร้างที่พบในบทอ่านและงานเขียนของมหาวิทยาลัยต่างประเทศ
+   ประโยคตัวอย่างและแบบฝึกเขียนขึ้นเองเพื่อการฝึก ไม่ใช่ข้อสอบจริง และไม่รับรองว่าผ่านบทแล้วจะได้คะแนนสอบ */
+(function (root) {
+  var EP = root.EP = root.EP || {};
+  EP.grammar = EP.grammar || [];
+  EP.grammar.push({
+    id: 'bridge',
+    name: 'Bridge to Academic',
+    th: 'สะพานสู่ภาษาวิชาการ',
+    blurb: 'โครงสร้างที่ทำให้ประโยคยืดหยุ่นและแม่นยำขึ้น — วลีกริยา การรายงานคำถาม การเปรียบเทียบความจริงกับสิ่งที่หวัง การกลับลำดับเพื่อเน้น และการอ้างถึงโดยไม่ต้องพูดซ้ำ',
+    lessons: [
+      {
+        id: 'bridge-phrasal', level: 'B2', title: 'Phrasal Verbs', th: 'วลีกริยา (กริยา + คำบุพบท/คำวิเศษณ์)',
+        explain: 'Phrasal verb คือกริยาที่ผสมกับ particle (up, out, off, on, back, into ฯลฯ) จนความหมายเปลี่ยนไปจากคำกริยาเดิม เช่น <b>look</b> (ดู) → <b>look up</b> (ค้นหา) บางคู่ <b>แยกได้</b> (separable) วางกรรมไว้ระหว่างกริยากับ particle หรือวางหลังก็ได้ แต่ถ้ากรรมเป็นสรรพนาม (it, them, him) <b>ต้องวางไว้ระหว่างเสมอ</b> ส่วนคู่ที่ <b>แยกไม่ได้</b> (inseparable) เช่น <b>look after, run into</b> ต้องวางกรรมหลัง particle เสมอ',
+        formula: 'verb + particle + noun → verb + noun + particle (look up the word / look the word up) · verb + <b>it/them</b> + particle (look it up) · verb + particle + noun แบบแยกไม่ได้ (look after the children)',
+        examples: [
+          { en: 'S:She|V:looked up|O:the word', th: 'เธอค้นหาคำศัพท์นั้น' },
+          { en: 'S:She|V:looked it up', th: 'เธอค้นมันดู (สรรพนาม it ต้องอยู่ระหว่างกริยากับ up)' },
+          { en: 'S:He|V:took care of|O:his younger brother', th: 'เขาดูแลน้องชายของเขา (คู่ที่แยกไม่ได้ กรรมอยู่หลัง of)' }
+        ],
+        confuse: [
+          'ผู้เรียนไทยมักวาง it ไว้หลัง particle เช่น "look up it" ซึ่งผิด ต้องเป็น "look it up"',
+          'คู่ที่หน้าตาคล้ายกันแต่ความหมายต่างกัน: look up (ค้นหา) ≠ look for (มองหา) ≠ look after (ดูแล) — ให้จำเป็นความหมายทั้งวลี ไม่แปลทีละคำ'
+        ],
+        quiz: [
+          { q: 'ข้อใดเป็นประโยคที่ถูกต้อง?', o: ['She looked it up in the dictionary.', 'She looked up it in the dictionary.', 'She looked in up the dictionary.', 'She up looked it the dictionary.'], a: 0,
+            clue: 'สรรพนาม it ต้องอยู่ระหว่างกริยากับ particle',
+            rule: 'กรรมที่เป็นสรรพนาม (it/them) ต้องวางระหว่าง verb + particle',
+            why: 'look up เป็นคู่ที่แยกได้ และเมื่อกรรมเป็น it ต้องเป็น looked it up',
+            n: ['', 'สรรพนาม it ต้องอยู่ก่อน up ไม่ใช่หลัง', 'in ไม่ควรแทรกระหว่างกริยากับ particle', 'ลำดับคำผิดทั้งประโยค'],
+            ex: 'If you do not know a word, look it up.' },
+          { q: 'We ___ an old classmate at the mall yesterday. (เจอโดยบังเอิญ)', o: ['ran on', 'ran over', 'ran into', 'ran out'], a: 2,
+            clue: 'เจอคนโดยไม่ได้นัดหมาย',
+            rule: 'run into + person = เจอโดยบังเอิญ (แยกไม่ได้)',
+            why: 'run into แปลว่าเจอโดยบังเอิญ ส่วนคำอื่นมีความหมายต่างกันมาก',
+            n: ['run on ไม่ได้หมายถึงการเจอคน', 'run over = ชน (รถ) ทับ', '', 'run out = หมด หรือ ใช้ไม่หมด'],
+            ex: 'Yesterday I ran into my old teacher.' },
+          { q: 'Please ___ before you leave.  (ปิดไฟ — the lights เป็นสิ่งของ)', o: ['turn off them', 'turn them off', 'turn them of', 'off turn them'], a: 1,
+            clue: 'the lights → them (สรรพนามแทนสิ่งของ)',
+            rule: 'turn off แยกได้ และกรรมที่เป็นสรรพนามต้องอยู่ระหว่างกริยากับ off',
+            why: 'เมื่อแทนที่ the lights ด้วย them ต้องเป็น turn them off',
+            n: ['ผิด เพราะ them ต้องอยู่ก่อน off', '', 'of ไม่ใช่ particle ที่ถูก (ต้องเป็น off)', 'ลำดับคำผิดทั้งหมด'],
+            ex: 'The lights are still on. Please turn them off.' },
+          { q: 'ข้อใดมีความหมายว่า "ดูแลเด็กๆ"?', o: ['look after', 'look up', 'put off', 'give up'], a: 0,
+            clue: 'ดูแลคนหรือสิ่งที่อ่อนแอกว่า',
+            rule: 'look after = ดูแล (แยกไม่ได้ กรรมอยู่หลัง after)',
+            why: 'look after คือดูแล ส่วนคำอื่นหมายถึงค้นหา เลื่อน หรือยอมแพ้',
+            n: ['', 'look up = ค้นหาข้อมูล', 'put off = เลื่อนออกไป', 'give up = ยอมแพ้ หรือเลิกทำ'],
+            ex: 'My grandmother looks after the children on weekdays.' },
+          { q: 'The meeting has been ___ until next week. (เลื่อนออกไป)', o: ['put off', 'put up', 'put on', 'put out'], a: 0,
+            clue: 'เลื่อนกำหนดการออกไปอีกเวลาหนึ่ง',
+            rule: 'put off = เลื่อน (ความหมายแบบ postpone)',
+            why: 'put off หมายถึงเลื่อนออกไป ส่วนคำอื่นหมายถึงสร้างหรือพัก สวมใส่หรือเปิด และดับหรือรบกวน',
+            n: ['', 'put up = สร้าง หรือ พักที่ (ไม่ได้หมายถึงเลื่อน)', 'put on = สวมใส่ หรือเปิด (อุปกรณ์)', 'put out = ดับ (ไฟ) หรือรบกวน'],
+            ex: 'We had to put off the trip because of the storm.' }
+        ]
+      },
+      {
+        id: 'bridge-reported-q', level: 'B2', title: 'Reported Questions & Commands', th: 'การรายงานคำถามและคำสั่ง',
+        explain: 'เมื่อเล่าคำถาม <b>yes/no</b> ใช้ <b>if</b> หรือ <b>whether</b> ตามด้วยประโยคบอกเล่า (<b>ไม่กลับลำดับคำ</b>) และ<b>ถอยกาลหนึ่งขั้น</b> เมื่อเล่าคำถาม <b>Wh-</b> ใช้คำถาม wh- ตามด้วยประโยคบอกเล่าเช่นกัน สำหรับคำสั่งหรือคำขอ ใช้ <b>tell/ask + object + (not) to + V1</b> ไม่ใช้ say กับ object',
+        formula: 'Direct: "Are you ready?" → She asked me <b>if I was</b> ready. · "Where do you live?" → She asked <b>where I lived</b>. · "Close the door." → He <b>told me to close</b> the door. · "Don\'t be late." → The teacher <b>told us not to be late</b>.',
+        examples: [
+          { en: 'S:He|V:asked|O:me|C:if I was ready', th: 'เขาถามฉันว่าฉันพร้อมหรือยัง' },
+          { en: 'S:She|V:asked|O:me|C:where I lived', th: 'เธอถามฉันว่าฉันอาศัยอยู่ที่ไหน (ไม่กลับลำดับเป็น where did I live)' },
+          { en: 'S:The teacher|V:told|O:us|C:not to be late', th: 'ครูบอกพวกเราว่าอย่ามาสาย' }
+        ],
+        confuse: [
+          'ห้ามกลับลำดับคำในประโยครายงาน: "She asked where did I live" ผิด → "She asked where I lived"',
+          'ห้ามใช้ say กับ object: "He said me to close the door" ผิด → "He told me to close the door"'
+        ],
+        quiz: [
+          { q: 'Direct: "Do you like coffee?" → She asked me ___ coffee.', o: ['if I liked', 'if did I like', 'that I liked', 'whether I like'], a: 0,
+            clue: 'คำถาม yes/no + ถอยกาล (do like → liked)',
+            rule: 'yes/no question → if/whether + ประโยคบอกเล่า + ถอยกาล',
+            why: 'ใช้ if และถอยจาก like เป็น liked โดยไม่กลับลำดับคำ',
+            n: ['', 'ห้ามกลับลำดับคำ (did I like ผิด)', 'that ใช้กับข้อความบอกเล่า ไม่ใช้กับคำถาม yes/no', 'whether I like ไม่ได้ถอยกาล (ต้องเป็น liked)'],
+            ex: 'She asked whether I liked coffee.' },
+          { q: 'Direct: "Where did you put her keys?" → She asked me ___.', o: ['where I had put her keys', 'where had I put her keys', 'where did I put her keys', 'where I put her keys'], a: 0,
+            clue: 'คำถาม wh- + ถอยกาล did put → had put',
+            rule: 'คำถาม wh- ในประโยครายงานเป็นประโยคบอกเล่า และถอยกาล',
+            why: 'ต้องถอย did put เป็น had put และไม่กลับลำดับคำ',
+            n: ['', 'ห้ามกลับลำดับคำ (had I ผิด)', 'did ต้องถอยเป็น had ในประโยครายงาน', 'ต้องถอยกาลเป็น had put ไม่ใช่ put'],
+            ex: 'He asked where I had left his notes.' },
+          { q: 'Direct: "Please don\'t leave the team." → The coach told the players ___.', o: ['not to leave the team', 'don\'t leave the team', 'that they not leave the team', 'leave not the team'], a: 0,
+            clue: 'คำสั่งเชิงห้าม',
+            rule: 'คำสั่งในประโยครายงานใช้ tell + object + not to + V1',
+            why: 'คำสั่งรายงานใช้ to-infinitive โดยมี not อยู่หน้า to',
+            n: ['', 'don\'t ห้ามปรากฏในประโยครายงาน', 'that clause ไม่ใช้กับคำสั่งลักษณะนี้', 'ลำดับ not ผิด'],
+            ex: 'The guard told us not to touch the painting.' },
+          { q: 'Direct: "Are you coming to the party?" → He wanted to know ___.', o: ['whether I was coming to the party', 'if am I coming to the party', 'whether I am coming to the party', 'if I coming to the party'], a: 0,
+            clue: 'yes/no + ถอยกาล am → was',
+            rule: 'whether/if + ประโยคบอกเล่า + ถอยกาล',
+            why: 'ถอย am เป็น was และคงรูปประโยคบอกเล่าไว้',
+            n: ['', 'ห้ามกลับลำดับคำ', 'ยังคง am ไม่ได้ถอยกาล (ต้องเป็น was)', 'ขาด be ที่ถูกต้อง (ต้องเป็น was coming)'],
+            ex: 'She wondered whether I was going to the party.' },
+          { q: 'Direct: "Please don\'t touch the painting." → The guard ___ us ___.', o: ['said not touching the painting', 'told us not to touch the painting', 'asked us that we not touch the painting', 'told us don\'t touch the painting'], a: 1,
+            clue: 'คำสั่งเชิงห้าม + object',
+            rule: 'tell + object + not to + V1 คือรูปแบบรายงานคำสั่ง',
+            why: 'ใช้ told + us + not to touch ตรงกับคำสั่งเดิม',
+            n: ['say ใช้กับ object โดยตรงไม่ได้ และ not touching ไม่ใช่รูปรายงานคำสั่ง', '', 'ask + that clause ไม่ใช่รูปคำสั่งที่ถูก', 'ห้ามใช้ don\'t ในประโยครายงาน'],
+            ex: 'The lifeguard told the children not to swim after dark.' }
+        ]
+      },
+      {
+        id: 'bridge-used-would', level: 'B2', title: 'Used to, Would & Get Used to', th: 'เคยทำ / ชินกับ / กำลังปรับตัว',
+        explain: '<b>used to + V1</b> บอกว่าเคยเป็นหรือเคยทำในอดีตแต่ตอนนี้ไม่แล้ว ใช้ได้ทั้งสถานะและนิสัย <b>would + V1</b> บอกได้เฉพาะ<b>นิสัยหรือกิจวัตรในอดีต</b> ไม่ใช้กับสถานะ (would live ผิด) <b>be used to + V-ing/noun</b> = คุ้นเคยแล้ว และ <b>get used to</b> = กำลังปรับตัวให้คุ้น',
+        formula: 'used to + V1 (past habit or state, no longer) · would + V1 (past habit of actions only) · be used to + V-ing/noun (familiar now) · get used to + V-ing/noun (becoming familiar)',
+        examples: [
+          { en: 'S:I|V:used to live|C:in a small town', th: 'ฉันเคยอาศัยอยู่ในเมืองเล็ก (ตอนนี้ไม่แล้ว)' },
+          { en: 'S:We|V:would walk|C:to school together', th: 'พวกเราเคยเดินไปโรงเรียนด้วยกัน (เป็นกิจวัตรในอดีต)' },
+          { en: 'S:She|V:is used to|C:the noise', th: 'เธอชินกับเสียงรบกวนแล้ว' }
+        ],
+        confuse: [
+          'would ใช้กับสถานะไม่ได้: "I would live in a small town" (หมายถึงอดีต) ผิด ต้องเป็น "I used to live"',
+          '"used to" (เคย) ≠ "be used to" (ชินแล้ว): "I used to walk" ไม่ได้แปลว่า "ฉันชินกับการเดิน"'
+        ],
+        quiz: [
+          { q: 'When I was a child, I ___ in a small village.', o: ['would live', 'used to live', 'am used to live', 'would to live'], a: 1,
+            clue: 'สถานะในอดีต ตอนนี้ไม่ได้อยู่แล้ว',
+            rule: 'would ใช้กับนิสัยหรือการกระทำเท่านั้น ไม่ใช่สถานะ',
+            why: 'live in a village เป็นสถานะ จึงต้องใช้ used to',
+            n: ['would live ใช้กับสถานะไม่ได้', '', 'am used to + V-ing ไม่ใช่รูปเล่าอดีต', 'would to live ผิดรูปไวยากรณ์'],
+            ex: 'We used to have a big garden when I was young.' },
+          { q: 'I moved to Chiang Mai last year. I ___ the cold weather now.', o: ['am used to', 'used to', 'would', 'am used'], a: 0,
+            clue: 'ตอนนี้คุ้นกับอากาศแล้ว',
+            rule: 'be used to + noun = คุ้นเคยแล้วในปัจจุบัน',
+            why: 'สื่อว่าตอนนี้ชินแล้ว ต่างจาก used to ที่หมายถึงเคยทำในอดีต',
+            n: ['', 'used to หมายถึงเคยทำในอดีต ไม่ใช่ชินแล้ว', 'would ไม่มี to ตามหลัง และไม่สื่อความคุ้นเคย', 'ขาด to ตามหลัง used'],
+            ex: 'After a few months, I am used to the cold weather.' },
+          { q: 'Every summer we ___ to the beach together.', o: ['would go', 'would went', 'would to go', 'used go'], a: 0,
+            clue: 'กิจวัตรซ้ำๆ ในอดีต',
+            rule: 'would + V1 สำหรับนิสัยหรือกิจวัตรในอดีต',
+            why: 'would ตามด้วย V1 และเป็นการกระทำซ้ำในอดีต',
+            n: ['', 'would ตามด้วย V2 ไม่ได้', 'would to ผิดโครงสร้าง', 'used go ขาด to'],
+            ex: 'When we were kids, we would spend hours at the beach.' },
+          { q: 'She ___ be a shy girl, but now she is very confident.', o: ['used to', 'would', 'is used to', 'would to'], a: 0,
+            clue: 'สถานะในอดีต (be shy) ตอนนี้เปลี่ยนไปแล้ว',
+            rule: 'สถานะในอดีตใช้ used to ไม่ใช้ would',
+            why: 'be shy เป็นลักษณะนิสัยหรือสถานะ จึงต้องใช้ used to',
+            n: ['', 'would ใช้กับสถานะ (be shy) ไม่ได้', 'is used to + V-ing ผิดความหมายในประโยคนี้', 'would to ผิดรูป'],
+            ex: 'He used to be afraid of dogs, but now he owns two.' },
+          { q: 'It took me months to ___ the early wake-up time at the new job.', o: ['get used to', 'used to get', 'would get', 'used to be'], a: 0,
+            clue: 'กำลังปรับตัวให้คุ้น',
+            rule: 'get used to + noun/V-ing = กำลังปรับตัวให้คุ้นเคย',
+            why: 'get used to สื่อการปรับตัวที่กำลังเกิดขึ้น',
+            n: ['', 'used to get ไม่ใช่โครงสร้างปรับตัวให้คุ้น', 'would get ไม่มี used to', 'used to be เป็นรูปสถานะในอดีต'],
+            ex: 'It is hard at first, but you will get used to it.' }
+        ]
+      },
+      {
+        id: 'bridge-wish', level: 'B2', title: 'Wish & If Only', th: 'ปรารถนาให้เป็นอย่างอื่น (ตอนนี้และอดีต)',
+        explain: '<b>wish + past simple</b> = อยากให้สถานะปัจจุบันเป็นอย่างอื่น (ตอนนี้ไม่เป็นเช่นนั้น) <b>wish + past perfect</b> = เสียใจหรืออยากให้เรื่องในอดีตต่างไป <b>wish + would</b> = อยากให้คนอื่นหรือสิ่งอื่นเปลี่ยน มักใช้กับเรื่องที่รำคาญ <b>If only</b> ใช้แทน wish ได้ และมีน้ำเสียงเข้มกว่า',
+        formula: 'wish + past simple (present unreal): I wish I had more time. · wish + past perfect (past regret): I wish I had studied harder. · wish + would (change someone): She wishes you would stop. · If only + past perfect: If only I had known!',
+        examples: [
+          { en: 'S:I|V:wish|C:I had more time', th: 'ฉันอยากมีเวลามากกว่านี้ (ตอนนี้ไม่มี)' },
+          { en: 'S:I|V:wish|C:I had studied harder', th: 'ฉันเสียใจที่ไม่ได้อ่านหนังสือให้มากกว่านี้ (เป็นเรื่องในอดีต)' },
+          { en: 'S:She|V:wishes|C:you would stop talking', th: 'เธออยากให้คุณหยุดพูดเสียที (ต้องการให้คนอื่นเปลี่ยน)' }
+        ],
+        confuse: [
+          'wish + past simple ไม่ได้หมายถึงอดีต: "I wish I knew the answer" = ตอนนี้ฉันไม่รู้คำตอบ',
+          'ห้ามใช้ would กับความปรารถนาเกี่ยวกับตัวเอง: "I wish I would win" ไม่เป็นธรรมชาติ ควรใช้ "I wish I could win"'
+        ],
+        quiz: [
+          { q: 'Right now I have a test tomorrow. I wish I ___ more time to study.', o: ['have', 'had', 'would have', 'will have'], a: 1,
+            clue: 'ตอนนี้ไม่มีเวลาพอ (สถานะปัจจุบันที่ไม่จริง)',
+            rule: 'wish + past simple สำหรับสถานะปัจจุบันที่ไม่เป็นจริง',
+            why: 'สิ่งที่อยากให้เป็นคือมีเวลามากขึ้นตอนนี้ จึงใช้ had',
+            n: ['ห้ามใช้ present simple หลัง wish ที่หมายถึงสิ่งไม่จริง', '', 'ไม่ใช้ would have กับความปรารถนาเกี่ยวกับตัวเอง', 'will have ไม่ใช้หลัง wish'],
+            ex: 'I wish I had a bigger room.' },
+          { q: 'I wish I ___ harder last semester. (เสียใจกับเรื่องที่ผ่านไปแล้ว)', o: ['studied', 'had studied', 'study', 'would study'], a: 1,
+            clue: 'เป็นเรื่องในอดีตที่เสียใจ',
+            rule: 'wish + past perfect สำหรับเสียใจเรื่องที่เกิดแล้วในอดีต',
+            why: 'เรื่องที่เสียใจเกิดขึ้นแล้วในอดีต จึงต้องใช้ past perfect',
+            n: ['studied เป็นอดีตปกติ ไม่สื่อการเสียใจเรื่องที่ผ่านไปแล้ว', '', 'study เป็นรูปปัจจุบัน ใช้ไม่ได้', 'would study ไม่ใช้กับความเสียใจเรื่องที่ผ่านมาแล้ว'],
+            ex: 'I wish I had started earlier.' },
+          { q: 'Our neighbours are very loud at night. She wishes they ___ so loudly.', o: ['would stop', 'stop', 'stopped', 'will stop'], a: 0,
+            clue: 'อยากให้คนอื่นเปลี่ยนพฤติกรรม',
+            rule: 'wish + would + V1 สำหรับการเปลี่ยนแปลงที่ต้องการจากคนอื่น',
+            why: 'เป็นการรำคาญพฤติกรรมของคนอื่น จึงใช้ would',
+            n: ['', 'stop โดยไม่มี would ไม่ได้บอกความต้องการให้คนอื่นเปลี่ยน', 'stopped เป็นสถานะที่ไม่จริง ไม่ได้สื่อการเปลี่ยนพฤติกรรม', 'will stop ใช้หลัง wish ไม่ได้'],
+            ex: 'I wish you would turn the music down.' },
+          { q: 'If only I ___ the answer. I would have passed.', o: ['knew', 'had known', 'know', 'have known'], a: 1,
+            clue: 'ประโยคหลังเป็นเรื่องอดีต (would have passed)',
+            rule: 'If only + past perfect สำหรับเสียใจเรื่องอดีต คู่กับ would have + V3',
+            why: 'ความปรารถนาเกี่ยวกับอดีตที่ไม่เป็นจริง ต้องใช้ had known',
+            n: ['knew ใช้กับความจริงตอนนี้ ไม่ใช่เรื่องที่พลาดไปแล้ว', '', 'know เป็นปัจจุบัน ใช้ไม่ได้', 'have known ไม่ใช่โครงสร้างที่สื่ออดีตที่ไม่จริง'],
+            ex: 'If only I had left earlier, I would not have missed the train.' },
+          { q: 'I wish I ___ about the plan last week. Now it is too late.', o: ['had known', 'knew', 'would know', 'know'], a: 0,
+            clue: 'last week = เรื่องในอดีต',
+            rule: 'wish + past perfect สำหรับอดีต',
+            why: 'เป็นความเสียใจกับการไม่รู้ในอดีต จึงใช้ had known',
+            n: ['', 'knew หมายถึงไม่รู้ในปัจจุบัน ไม่ตรงกับ last week', 'would know ใช้กับ wish เรื่องอดีตไม่ได้', 'know ไม่ถูกหลักเพราะไม่ได้บอกเวลาที่ถูกต้อง'],
+            ex: 'I wish I had known about the delay before I left home.' }
+        ]
+      },
+      {
+        id: 'bridge-inversion', level: 'C1', title: 'Inversion after Negative Adverbials', th: 'การกลับลำดับคำหลังคำปฏิเสธที่ขึ้นต้นประโยค',
+        explain: 'เมื่อนำคำปฏิเสธหรือคำบอกความถี่ที่มีความหมายเชิงลบ (never, rarely, seldom, hardly, not only, no sooner, scarcely) ขึ้นต้นประโยค ต้อง<b>กลับลำดับเป็น auxiliary + subject + V1</b> เพื่อเน้นความหมาย พบบ่อยในงานเขียนทางการและบทความวิชาการ แต่<b>ไม่ควรใช้กับทุกประโยค</b> เพราะจะฟังดูเกินจริงในการพูดทั่วไป',
+        formula: 'Never + have + S + V3: Never have I seen such a view. · Rarely + do + S + V1: Rarely do we see snow here. · Not only + did + S + V1, but also...: Not only did she win, but she also set a record. · Hardly/Scarcely + had + S + V3 + when...: Hardly had I arrived when it started to rain.',
+        examples: [
+          { en: 'S:Never|aux:have|S:I|V:seen|O:such a view', th: 'ฉันไม่เคยเห็นวิวแบบนี้เลย' },
+          { en: 'S:Rarely|aux:do|S:we|V:see|O:snow here', th: 'พวกเราแทบไม่เคยเห็นหิมะที่นี่' },
+          { en: 'S:Not only|aux:did|S:she|V:win|O:the prize', th: 'เธอไม่เพียงแต่ชนะรางวัล แต่ยังทำลายสถิติด้วย' }
+        ],
+        confuse: [
+          'ลืมกลับลำดับคำ: "Never I have seen such a view" ผิด → "Never have I seen such a view"',
+          'ไม่ใช่ทุกประโยคที่มี not จะกลับลำดับได้ — ต้องเป็นคำปฏิเสธที่ขึ้นต้นประโยคเท่านั้น: "I have never seen it" ไม่ต้องกลับลำดับ'
+        ],
+        quiz: [
+          { q: 'Never ___ such a beautiful sunset.', o: ['have I seen', 'I have seen', 'I seen have', 'have seen I'], a: 0,
+            clue: 'Never อยู่ต้นประโยค',
+            rule: 'Never ขึ้นต้นประโยค → กลับเป็น have + S + V3',
+            why: 'เมื่อ Never อยู่ต้นประโยคต้องกลับ have มาอยู่หน้า I',
+            n: ['', 'ประโยค I have seen ไม่ได้กลับลำดับทั้งที่ Never อยู่ต้นประโยค', 'ลำดับ seen have I ไม่ถูกหลักไวยากรณ์', 'ลำดับคำผิดทั้งหมด'],
+            ex: 'Never have I felt so proud of my students.' },
+          { q: 'Rarely ___ late for class.', o: ['does she arrive', 'she arrives', 'she does arrive', 'arrives she'], a: 0,
+            clue: 'Rarely อยู่ต้นประโยค และประธานเป็น she',
+            rule: 'Rarely ขึ้นต้น → do/does + S + V1',
+            why: 'ประธาน she และกาลปัจจุบัน ใช้ does กลับหน้า she',
+            n: ['', 'รูปปกติ she arrives ไม่ได้กลับลำดับ', 'ถ้า does อยู่หลัง she ก็ยังไม่ได้กลับลำดับ', 'ลำดับผิดทั้งหมด'],
+            ex: 'Rarely does he make mistakes in his reports.' },
+          { q: 'Hardly ___ when the phone rang.', o: ['had I sat down', 'I had sat down', 'I sat down had', 'had sat I down'], a: 0,
+            clue: 'Hardly + past perfect + when',
+            rule: 'Hardly ขึ้นต้น → had + S + V3 แล้วตามด้วย when',
+            why: 'Hardly ใช้กับ past perfect และกลับ had มาหน้า I',
+            n: ['', 'I had sat down ไม่ได้กลับลำดับ', 'ลำดับ I sat down had ผิด', 'had sat I down ผิดลำดับ'],
+            ex: 'Hardly had the class begun when the fire alarm went off.' },
+          { q: 'Not only ___ the exam, but she also got the top score.', o: ['did she pass', 'she did pass', 'she passed', 'passed she'], a: 0,
+            clue: 'Not only อยู่ต้นประโยค',
+            rule: 'Not only ขึ้นต้น → did + S + V1',
+            why: 'เมื่อ Not only ขึ้นต้นประโยคต้องกลับ did มาหน้า she',
+            n: ['', 'she did pass ไม่ได้กลับลำดับทั้งที่ Not only อยู่ต้นประโยค', 'she passed ไม่ได้กลับลำดับ', 'ลำดับ passed she ผิด'],
+            ex: 'Not only did they finish early, but they also cleaned the lab.' },
+          { q: 'No sooner ___ the lecture than the students started to leave.', o: ['had the professor finished', 'the professor had finished', 'did the professor finish', 'the professor finished'], a: 0,
+            clue: 'No sooner + past perfect + than',
+            rule: 'No sooner ขึ้นต้น → had + S + V3 (แล้วตามด้วย than)',
+            why: 'โครงสร้างนี้ต้องกลับ had มาหน้า the professor',
+            n: ['', 'the professor had finished ไม่ได้กลับลำดับ', 'did ไม่ใช่โครงสร้างของ No sooner', 'the professor finished ไม่ได้กลับลำดับ'],
+            ex: 'No sooner had the bus left than it started to rain.' }
+        ],
+        writing: [
+          { prompt: 'เขียนประโยคนี้ใหม่โดยใช้ Rarely ขึ้นต้นเพื่อเน้น: "I have rarely read such a well-argued essay."',
+            sample: 'Rarely have I read such a well-argued essay.',
+            checklist: ['กลับ have มาอยู่หน้า I หลัง Rarely', 'ความหมายยังคงเดิม (แทบไม่เคยอ่าน)', 'ไม่มีการกลับลำดับซ้ำอีกในประโยคเดียวกัน'] },
+          { prompt: 'เขียนประโยคนี้ใหม่โดยใช้ Barely ขึ้นต้น: "She had barely finished the test when the bell rang."',
+            sample: 'Barely had she finished the test when the bell rang.',
+            checklist: ['ใช้ had + S + V3 หลัง Barely', 'คง when ไว้ตามความหมายเดิม', 'ไม่เปลี่ยนเวลาของเหตุการณ์'] }
+        ]
+      },
+      {
+        id: 'bridge-cleft', level: 'C1', title: 'Cleft Sentences for Emphasis', th: 'ประโยคแยกเพื่อเน้น (It was… that / What… is…)',
+        explain: 'ประโยคแยก (cleft) ช่วย<b>เน้นส่วนหนึ่งของประโยค</b>โดยย้ายส่วนนั้นมาอยู่หลัง <b>It + be</b> หรือย้ายประโยคทั้งหมดมาไว้หลัง <b>What</b> โครงสร้างนี้เหมาะกับงานเขียนที่ต้องการโฟกัสประเด็นหลักชัดเจน ต้องระบุ <b>ส่วนที่เน้น (focus)</b> ให้แน่นอนก่อนเลือกโครงสร้าง',
+        formula: 'It + be + focus + that/who + rest: It was the manager who decided the plan. · What + S + V + be + focus: What I need is more time. · All + S + V + be + focus: All she wanted was a quiet room.',
+        examples: [
+          { en: 'S:It|V:was|O:the new data|X:that changed our view', th: 'ข้อมูลใหม่นั่นแหละที่เปลี่ยนมุมมองของเรา (เน้นข้อมูลใหม่)' },
+          { en: 'S:What I need|V:is|C:more time', th: 'สิ่งที่ฉันต้องการคือเวลาเพิ่มขึ้น (เน้นเวลา)' },
+          { en: 'S:It|V:was|C:in 1998|X:that the company was founded', th: 'บริษัทก่อตั้งขึ้นในปี 1998 (เน้นเวลา)' }
+        ],
+        confuse: [
+          'ต้องมีส่วนที่เน้นระหว่าง it be กับ that เสมอ: "It is that I want" ผิด → "It is money that I want"',
+          'What-cleft: ถ้าส่วนที่เน้นเป็นพหูพจน์ ใช้ are: "What I need are books" (ไม่ใช่ is)'
+        ],
+        quiz: [
+          { q: 'Rewrite with focus on "the manager": "The manager decided the plan."', o: ['It was the manager who decided the plan.', 'It was the plan that the manager decided.', 'The manager was decided the plan.', 'It decided the manager the plan.'], a: 0,
+            clue: 'ส่วนที่เน้นคือ the manager',
+            rule: 'It + be + ส่วนที่เน้น + who/that + ส่วนที่เหลือ',
+            why: 'ต้องวาง the manager หลัง It was และตามด้วย who',
+            n: ['', 'ตัวเลือกนี้เน้น the plan ไม่ใช่ the manager', 'โครงสร้าง passive ไม่ได้เน้นผู้จัดการ และไม่ถูกต้องทางไวยากรณ์', 'โครงสร้างพังทั้งประโยค'],
+            ex: 'It was the teacher who explained the rule.' },
+          { q: 'Focus on "more time": ___', o: ['What I need is more time.', 'What I need more time is.', 'More time what I need is.', 'I need what is more time.'], a: 0,
+            clue: 'ส่วนที่เน้นวางอยู่หลัง is',
+            rule: 'What + S + V + be + ส่วนที่เน้น',
+            why: 'ส่วนเน้นต้องอยู่หลัง is และ What-clause ขึ้นต้นประโยค',
+            n: ['', 'is ต้องอยู่ก่อนส่วนที่เน้น ไม่ใช่ท้ายประโยค', 'ลำดับคำผิดทั้งหมด', 'ไม่ใช่โครงสร้าง What-cleft ที่ถูกต้อง'],
+            ex: 'What we really need is a clear plan.' },
+          { q: 'It was in 1998 ___ the company was founded.', o: ['that', 'which', 'what', 'how'], a: 0,
+            clue: 'ส่วนที่เน้นคือเวลา (in 1998)',
+            rule: 'โครงสร้าง It was + ส่วนเน้น + that ใช้ that เชื่อม',
+            why: 'เชื่อมด้วย that ตามรูปแบบ cleft ที่สอนในบทนี้',
+            n: ['', 'which ไม่ใช้เป็นตัวเชื่อมในโครงสร้าง It was… that', 'what ใช้ในโครงสร้าง What-cleft ไม่ใช่ It-cleft', 'how ไม่ใช่ตัวเชื่อมในโครงสร้างนี้'],
+            ex: 'It was in winter that we first met.' },
+          { q: 'It is the lack of funding ___ limits the research.', o: ['that', 'what', 'which', 'who'], a: 0,
+            clue: 'ส่วนที่เน้นคือ the lack of funding (สิ่งของ)',
+            rule: 'It is + ส่วนเน้น + that ใช้เชื่อมในโครงสร้าง It-cleft',
+            why: 'ใช้ that เชื่อมส่วนที่เหลือของประโยค',
+            n: ['', 'what ไม่ใช่ตัวเชื่อมใน It-cleft', 'which ไม่ใช้เชื่อมในโครงสร้างนี้ตามที่สอนในบทนี้', 'who ใช้กับคน ไม่ใช่สิ่งของ'],
+            ex: 'It is the noise that keeps me awake.' },
+          { q: '___ the researchers wanted was reliable data.', o: ['What', 'That', 'Which', 'It'], a: 0,
+            clue: 'ประโยคแยกที่เริ่มด้วย what-clause',
+            rule: 'What + S + V... + was/is เป็นโครงสร้าง What-cleft',
+            why: 'What ทำหน้าที่เป็นประธานของประโยคแยก',
+            n: ['', 'that ไม่ได้เป็นประธานในโครงสร้าง What-cleft', 'which ใช้เริ่ม What-cleft ไม่ได้', 'It ไม่ใช่รูปที่ถูกต้องในตำแหน่งนี้'],
+            ex: 'What the students need is more practice.' }
+        ],
+        writing: [
+          { prompt: 'เขียนประโยค cleft ที่เน้น "the teacher" จาก "The teacher changed my life."',
+            sample: 'It was the teacher who changed my life.',
+            checklist: ['ใช้ It + was + ส่วนที่เน้น + who/that', 'ส่วนที่เน้นคือ the teacher', 'ไม่เปลี่ยนความหมายเดิม'] },
+          { prompt: 'เขียนประโยค What-cleft จาก "I need a quiet place to study."',
+            sample: 'What I need is a quiet place to study.',
+            checklist: ['ขึ้นต้นด้วย What + S + V', 'ใช้ is ตามส่วนที่เน้นเป็นเอกพจน์', 'ส่วนที่เน้นวางหลัง is'] }
+        ]
+      },
+      {
+        id: 'bridge-modal-past', level: 'C1', title: 'Modals of the Past', th: 'โมดอลในอดีต (should/could/might/must have)',
+        explain: '<b>modal + have + V3</b> ใช้พูดถึงอดีต: <b>should have</b> = ควรทำแต่ไม่ได้ทำ (เสียใจ) <b>could have</b> = ทำได้แต่ไม่ได้ทำ <b>might/may have</b> = อาจจะเกิดขึ้นแล้ว (ไม่แน่ใจ) <b>must have</b> = สรุปอย่างหนักแน่นจากหลักฐานว่าเกิดขึ้นแล้ว <b>needn\'t have</b> = ทำไปแล้วแต่ไม่จำเป็น',
+        formula: 'should/ought to have + V3 (regret) · could have + V3 (missed ability) · might/may have + V3 (possibility) · must have + V3 (strong deduction) · needn\'t have + V3 (did it unnecessarily)',
+        examples: [
+          { en: 'S:She|aux:should have|V:called|O:me|X:earlier', th: 'เธอน่าจะโทรหาฉันก่อนหน้านี้ (แต่ไม่ได้โทร)' },
+          { en: 'S:He|aux:must have|V:missed|O:the bus', th: 'เขาคงพลาดรถเมล์ไปแล้วแน่ๆ (สรุปจากหลักฐาน)' },
+          { en: 'S:You|aux:needn\'t have|V:brought|O:lunch', th: 'คุณไม่จำเป็นต้องนำอาหารกลางวันมาเลย (แต่นำมาแล้ว)' }
+        ],
+        confuse: [
+          'must have (สรุปอดีต) ≠ must (บังคับปัจจุบัน): "He must have left" = สรุปว่าเขาออกไปแล้ว',
+          'needn\'t have ≠ didn\'t need to: "You needn\'t have come" = มาแล้วแต่ไม่จำเป็น แต่ "You didn\'t need to come" ไม่ได้บอกว่ามาหรือไม่'
+        ],
+        quiz: [
+          { q: 'I ___ my umbrella. Now I am soaked in the rain.', o: ['should have brought', 'must have brought', 'needn\'t have brought', 'might bring'], a: 0,
+            clue: 'ควรทำแต่ไม่ได้ทำ และผลเสียเกิดขึ้น',
+            rule: 'should have + V3 = เสียใจว่าควรทำแต่ไม่ได้ทำ',
+            why: 'สื่อว่าควรพกร่มแต่ไม่ได้พก จึงเกิดผลเสีย',
+            n: ['', 'must have brought สื่อการสรุปจากหลักฐาน ไม่ใช่การเสียใจ', 'needn\'t have หมายถึงทำไปแล้วแต่ไม่จำเป็น ไม่ตรงกับบริบท', 'might bring ผิดรูปและผิดเวลา'],
+            ex: 'You should have checked the weather before you left.' },
+          { q: 'The lights are off and the door is locked. They ___ left already.', o: ['must have', 'should have', 'could have', 'needn\'t have'], a: 0,
+            clue: 'สรุปจากหลักฐาน (ไฟดับ ประตูล็อก)',
+            rule: 'must have + V3 = สรุปอย่างหนักแน่นว่าเกิดขึ้นแล้ว',
+            why: 'หลักฐานชัดเจนพอจะสรุปได้ว่าออกไปแล้ว',
+            n: ['', 'should have เป็นความควรที่ไม่ได้ทำ ไม่ใช่การสรุป', 'could have เน้นความสามารถที่ไม่ได้ใช้ ไม่ใช่การสรุป', 'needn\'t have หมายถึงไม่จำเป็นต้องทำแต่ทำไปแล้ว'],
+            ex: 'The printer is warm, so someone must have used it recently.' },
+          { q: 'We ___ a taxi, because the bus came right on time.', o: ['needn\'t have taken', 'mustn\'t have taken', 'didn\'t need to take', 'couldn\'t have taken'], a: 0,
+            clue: 'เรานั่งแท็กซี่ไปแล้ว แต่ไม่จำเป็นเพราะรถเมล์มาตรงเวลา',
+            rule: 'needn\'t have + V3 = ทำไปแล้วโดยไม่จำเป็น',
+            why: 'ประโยคบอกว่าเรานั่งแท็กซี่ (ทำไปแล้ว) แต่รถเมล์มาตรงเวลาจึงไม่จำเป็น',
+            n: ['', 'mustn\'t have taken สื่อการสรุปว่าไม่ได้ทำ ไม่ตรงกับบริบท', 'didn\'t need to take ไม่ได้บอกว่าได้ทำไปแล้ว ไม่ตรงกับ we took', 'couldn\'t have taken สื่อว่าทำไม่ได้ ซึ่งขัดกับการที่เรานั่งไปแล้ว'],
+            ex: 'We needn\'t have hurried; the meeting started late.' },
+          { q: 'I am not sure where Tom is. He ___ stuck in traffic.', o: ['might have been', 'must have been', 'should have been', 'needn\'t have been'], a: 0,
+            clue: 'ไม่แน่ใจ (not sure)',
+            rule: 'might have + V3 = อาจจะเกิดขึ้นในอดีต (ไม่ได้ยืนยัน)',
+            why: 'บริบทบอกว่าไม่แน่ใจ จึงใช้ might ไม่ใช่ must',
+            n: ['', 'must have been บอกว่าแน่ใจ ไม่ตรงกับ not sure', 'should have been เป็นความควรที่ไม่ได้ทำ ไม่ใช่การคาดเดา', 'needn\'t have been เป็นความไม่จำเป็น ไม่ใช่การคาดเดา'],
+            ex: 'She might have forgotten the appointment.' },
+          { q: 'The report ___ earlier, but the manager changed the deadline.', o: ['could have been finished', 'could finish', 'had could finish', 'could have finish'], a: 0,
+            clue: 'ทำได้ในอดีตแต่ไม่ได้ทำ (passive)',
+            rule: 'could have + been + V3 = ทำได้แต่ไม่ได้ทำ (ถูกกระทำ)',
+            why: 'รายงานเป็นสิ่งที่ถูกทำ จึงต้องใช้ passive ร่วมกับ could have',
+            n: ['', 'could finish อ้างปัจจุบันหรืออนาคต ไม่ได้บอกอดีต', 'had could ผิดโครงสร้าง', 'could have + V3 ต้องเป็น been finished ไม่ใช่ finish'],
+            ex: 'The project could have been completed last year.' }
+        ],
+        writing: [
+          { prompt: 'เขียนประโยคนี้ใหม่โดยใช้ should have: "You did not check your answers, and that was a mistake."',
+            sample: 'You should have checked your answers.',
+            checklist: ['ใช้ should have + V3', 'สื่อความเสียใจว่าควรทำแต่ไม่ได้ทำ', 'ไม่ใช้ must หรือ might ในบริบทนี้'] }
+        ]
+      },
+      {
+        id: 'bridge-substitution', level: 'C1', title: 'So, Not & Do So (Substitution)', th: 'การใช้ so / not / do so แทนข้อความที่พูดไปแล้ว',
+        explain: 'ใช้ <b>so</b> หรือ <b>not</b> แทนประโยคที่มีอยู่แล้วได้หลังกริยาอย่าง <b>think, believe, hope, suppose, expect, guess, be afraid</b> เช่น "I think so" / "I hope not" ใช้ <b>do so / did so</b> แทนกริยาทั้งวลีในงานเขียนที่เป็นทางการ และใช้ <b>auxiliary</b> เพียงตัวเดียวแทนส่วนที่ซ้ำได้ เช่น "She can, and he can too"',
+        formula: 'think/hope/believe/suppose/expect + so / not · do so / did so (replaces the whole verb phrase) · aux only: "She can, and he can too." · so + aux + S (agreement): She likes tea, and so do I.',
+        examples: [
+          { en: 'S:I|V:think|C:so', th: 'ฉันคิดว่าอย่างนั้น' },
+          { en: 'S:Many students|V:ask|O:questions, and many|V:do so', th: 'นักเรียนหลายคนถามคำถาม และทำเช่นนั้นเป็นประจำ' },
+          { en: 'S:She likes tea, and|aux:so do|S:I', th: 'เธอชอบชา และฉันก็ชอบเหมือนกัน' }
+        ],
+        confuse: [
+          'ห้ามใช้ that ตามด้วย so: "I think that so" ผิด → "I think so"',
+          'ละได้ไม่ใช่ต้องละ: "Anna can speak French, and her brother can speak French too" ฟังทางการน้อยกว่า "and her brother can too"'
+        ],
+        quiz: [
+          { q: 'Will the exam be hard? — I hope ___.', o: ['not', 'so not', 'no', 'that not'], a: 0,
+            clue: 'ตอบด้วยการแทนประโยคที่ถามไว้',
+            rule: 'hope + not แทนประโยคที่เป็นลบ',
+            why: 'hope ใช้ not แทนข้อความ "the exam will be hard" ในรูปปฏิเสธ',
+            n: ['', 'so not ไม่ใช่รูปที่ถูกต้อง', 'no ไม่ใช่ไวยากรณ์ของการแทนประโยคในบริบทนี้', 'that not ไม่ใช่รูปที่ถูกต้อง'],
+            ex: 'Will the bus be late? — I hope not.' },
+          { q: 'Is the library open tomorrow? — I believe ___.', o: ['so', 'it is', 'that so', 'is so'], a: 0,
+            clue: 'ตอบด้วยการแทนประโยค',
+            rule: 'believe + so แทนประโยคบอกเล่าที่ถามมา',
+            why: 'ใช้ so หลัง believe แทนข้อความ "it is open"',
+            n: ['', 'it is ซ้ำประโยคและไม่ใช่รูปที่ใช้หลัง believe', 'that so ผิดรูปเพราะไม่ใช้ that', 'is so ผิดรูป'],
+            ex: 'Is the shop closed today? — I suppose so.' },
+          { q: 'Many people want to live abroad, and some ___ every year.', o: ['do so', 'do it so', 'so do', 'so'], a: 0,
+            clue: 'แทนกริยาทั้งวลี (live abroad)',
+            rule: 'do so แทนกริยาทั้งวลีในงานเขียนทางการ',
+            why: 'ต้องการแทนการกระทำ live abroad จึงใช้ do so',
+            n: ['', 'do it so ไม่ใช่รูปที่ถูกต้องในระดับนี้', 'so do ใช้เมื่อพูดเห็นด้วยอีกประโยค ไม่ใช่แทนการกระทำ', 'so เพียงคำเดียวแทนการกระทำไม่ได้'],
+            ex: 'Students are encouraged to ask questions, and many do so.' },
+          { q: 'Anna studies French, and her sister ___ too.', o: ['does', 'studies', 'is', 'do'], a: 0,
+            clue: 'ประธาน sister เป็นเอกพจน์ และละคำกริยาที่ซ้ำ',
+            rule: 'auxiliary ตัวเดียวแทนกริยาที่ซ้ำ และต้องสอดคล้องกับประธานใหม่',
+            why: 'sister เป็นเอกพจน์ ใช้ does เพื่อแทน studies',
+            n: ['', 'studies ซ้ำกริยาที่ควรละ', 'is ไม่ใช่ auxiliary ที่ใช้แทนการกระทำนี้', 'do ไม่สอดคล้องกับประธานเอกพจน์ sister'],
+            ex: 'My brother likes jazz, and my dad does too.' },
+          { q: 'Is the vaccine effective? — Early data suggest ___, though more trials are needed.', o: ['so', 'it', 'that so', 'is so'], a: 0,
+            clue: 'แทนข้อความว่า "it is effective" ในงานวิชาการ',
+            rule: 'suggest + so แทนข้อความที่กล่าวไว้ก่อนหน้า',
+            why: 'so แทนข้อความที่ยังไม่ได้ระบุชัดในประโยคนี้',
+            n: ['', 'it ไม่ได้แทนประโยคในบริบทนี้', 'that so ผิดรูป', 'is so ผิดรูป'],
+            ex: 'The report suggests so, but the sample is small.' }
+        ]
+      }
+    ],
+    post: [
+      { q: 'Please ___ the form before you leave.', o: ['fill in it', 'fill it in', 'in fill it', 'fill it of'], a: 1,
+        clue: 'the form → it (สรรพนาม)', rule: 'verb + it + particle สำหรับวลีกริยาที่แยกได้',
+        why: 'สรรพนาม it ต้องอยู่ระหว่าง fill กับ in', n: ['ต้องวาง it ระหว่าง fill กับ in', '', 'ลำดับคำผิด', 'of ไม่ใช่ particle ที่ถูกต้อง'],
+        ex: 'Could you fill it in and sign here?' },
+      { q: 'I ___ live near the sea, but now I live in the city.', o: ['used to', 'would to', 'am used to', 'used'], a: 0,
+        clue: 'สถานะในอดีตที่ไม่เป็นแล้ว', rule: 'used to + V1 สำหรับสถานะหรือนิสัยในอดีต',
+        why: 'live near the sea เป็นสถานะ จึงใช้ used to', n: ['', 'would to ผิดรูปไวยากรณ์', 'am used to ไม่ใช่รูปเล่าอดีต', 'ขาด to ตามหลัง used'],
+        ex: 'We used to live next to a river.' },
+      { q: '"Did you finish the report?" He asked me ___.', o: ['if I had finished the report', 'if did I finish the report', 'that I finished the report', 'whether finished I the report'], a: 0,
+        clue: 'คำถาม yes/no + ถอยกาล did finish → had finished', rule: 'if/whether + ประโยคบอกเล่า + ถอยกาล',
+        why: 'ถอย did finish เป็น had finished และไม่กลับลำดับคำ', n: ['', 'ห้ามกลับลำดับคำ', 'that ใช้กับคำถาม yes/no ไม่ได้', 'ลำดับคำผิดทั้งหมด'],
+        ex: 'She asked whether I had finished my homework.' },
+      { q: 'I wish I ___ the bus last week; I would not have been late.', o: ['had caught', 'caught', 'would catch', 'catch'], a: 0,
+        clue: 'last week = เรื่องอดีตที่เสียใจ', rule: 'wish + past perfect สำหรับความเสียใจเรื่องอดีต',
+        why: 'เรื่องที่เสียใจคือการไม่ได้ขึ้นรถเมล์ในอดีต', n: ['', 'caught ไม่สื่อความเสียใจเรื่องอดีตที่ไม่จริง', 'would catch ไม่ใช้หลัง wish เรื่องอดีต', 'catch เป็นปัจจุบัน ใช้ไม่ได้'],
+        ex: 'I wish I had left the house earlier.' },
+      { q: 'She ___ so hard, because the test was postponed.', o: ['needn\'t have studied', 'mustn\'t study', 'shouldn\'t study', 'didn\'t must study'], a: 0,
+        clue: 'เธอเรียนไปแล้วแต่ไม่จำเป็น (การสอบเลื่อน)', rule: 'needn\'t have + V3 = ทำไปแล้วโดยไม่จำเป็น',
+        why: 'ประโยคบอกว่าเรียนหนักไปแล้ว แต่การสอบถูกเลื่อนจึงไม่จำเป็น', n: ['', 'mustn\'t สื่อข้อห้าม ไม่ใช่ความไม่จำเป็น', 'shouldn\'t study เป็นคำแนะนำปัจจุบัน ไม่ได้สื่ออดีต', 'didn\'t must ไม่ใช่โครงสร้างที่ถูกต้อง'],
+        ex: 'You needn\'t have worried; the flight was on time.' },
+      { q: 'Hardly ___ the door when the phone started ringing.', o: ['had she closed', 'she had closed', 'did she close', 'she closed'], a: 0,
+        clue: 'Hardly ขึ้นต้นประโยค + when', rule: 'Hardly + had + S + V3 + when',
+        why: 'Hardly ขึ้นต้นต้องกลับ had มาหน้า she', n: ['', 'she had closed ไม่ได้กลับลำดับ', 'did she close ไม่ใช่โครงสร้างของ Hardly… when', 'she closed ไม่ได้กลับลำดับ'],
+        ex: 'Hardly had she sat down when the bell rang.' },
+      { q: 'It was ___ who solved the problem, not the manager.', o: ['the engineer', 'engineer the', 'that the engineer', 'is the engineer'], a: 0,
+        clue: 'ส่วนที่เน้นคือ the engineer', rule: 'It was + ส่วนเน้น + who/that',
+        why: 'ส่วนเน้นต้องวางหลัง It was โดยไม่มีตัวเชื่อมคั่น', n: ['', 'engineer the เรียงคำผิด', 'that ต้องอยู่หลังส่วนเน้น ไม่ใช่หน้าส่วนเน้น', 'is ผิดกาลและโครงสร้าง It was'],
+        ex: 'It was the captain who made the final decision.' },
+      { q: 'Tom wrote the essay, and his friends ___ too.', o: ['did', 'wrote', 'are', 'do'], a: 0,
+        clue: 'กริยาในประโยคแรกเป็นอดีต (wrote)', rule: 'auxiliary ตัวเดียวแทนกริยาที่ซ้ำ โดยใช้รูปตามกาลของประโยคแรก',
+        why: 'wrote เป็นอดีต จึงใช้ did แทน', n: ['', 'wrote ซ้ำกริยาที่ควรละ', 'are ไม่ใช่ auxiliary ที่แทนการกระทำนี้', 'do ใช้ไม่ได้เพราะประโยคแรกเป็นอดีต'],
+        ex: 'Ann visited Paris, and her sisters did too.' },
+      { q: 'Under no circumstances ___ the lab without permission.', o: ['should students enter', 'students should enter', 'should enter students', 'enter students should'], a: 0,
+        clue: 'Under no circumstances ขึ้นต้นประโยค', rule: 'Under no circumstances + should + S + V1 (กลับลำดับ)',
+        why: 'คำปฏิเสธขึ้นต้นต้องกลับ should มาหน้า students', n: ['', 'students should enter ไม่ได้กลับลำดับทั้งที่คำปฏิเสธอยู่ต้นประโยค', 'should enter students ลำดับผิด', 'ลำดับคำผิดทั้งหมด'],
+        ex: 'Under no circumstances should visitors touch the exhibits.' },
+      { q: '"Where is my wallet?" "You ___ it on the train. That is the only place you have been since morning."', o: ['must have left', 'might leave', 'should left', 'needn\'t have left'], a: 0,
+        clue: 'สรุปจากหลักฐานว่าเกิดขึ้นแล้ว (only place)', rule: 'must have + V3 = สรุปอย่างหนักแน่นว่าเกิดขึ้นแล้ว',
+        why: 'หลักฐานชัดพอจะสรุปได้ว่าลืมไว้บนรถไฟ', n: ['', 'might leave เป็นความเป็นไปได้ที่ไม่ได้สรุปอดีต', 'should left ผิดรูป (ต้องเป็น should have left)', 'needn\'t have left เป็นความไม่จำเป็น ไม่ใช่การสรุป'],
+        ex: 'You must have dropped it in the taxi.' }
+    ]
+  });
+})(typeof window !== 'undefined' ? window : globalThis);
+
+</script>
+<script>/* src/data/grammar-7-academic.js */
+/* หมวด 7: Academic Language — ภาษาเชิงวิชาการ (C1)
    สำหรับผู้เรียนที่เตรียมอ่าน/เขียนภาษาอังกฤษเชิงวิชาการ เช่น เพื่อสมัครมหาวิทยาลัยต่างประเทศ
    บทเรียนนี้สอนไวยากรณ์/ภาษาเชิงวิชาการเท่านั้น ไม่ใช่แบบฝึกข้อสอบ IELTS/TOEFL และไม่รับรองว่าผ่านบทแล้วจะได้คะแนนสอบหรือผ่านเกณฑ์รับสมัคร */
 (function (root) {

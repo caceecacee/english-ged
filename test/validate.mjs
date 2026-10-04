@@ -13,7 +13,7 @@ vm.createContext(ctx);
 const files = [
   'src/app/logic.js',
   'src/data/grammar-1-pos.js', 'src/data/grammar-2-tense.js', 'src/data/grammar-3-sentence.js',
-  'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-academic.js',
+  'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-bridge.js', 'src/data/grammar-7-academic.js',
   'src/data/vocab-a1.js', 'src/data/vocab-a2.js', 'src/data/vocab-b1.js', 'src/data/vocab-b2.js',
   'src/data/examvocab-trip-01.js', 'src/data/examvocab-trip-02.js', 'src/data/examvocab-trip-03.js', 'src/data/examvocab-trip-04.js', 'src/data/examvocab-trip-05.js', 'src/data/examvocab-trip-06.js', 'src/data/examvocab-trip-07.js', 'src/data/examvocab-trip-08.js', 'src/data/examvocab-trip-09.js', 'src/data/examvocab-trip-10.js', 'src/data/examvocab-trip-11.js', 'src/data/examvocab-trip-12.js', 'src/data/examvocab-trip-13.js', 'src/data/examvocab-trip-14.js', 'src/data/examvocab-trip-15.js', 'src/data/examvocab-trip-16.js', 'src/data/examvocab-trip-17.js', 'src/data/examvocab-trip-18.js', 'src/data/examvocab-trip-19.js', 'src/data/examvocab-trip-20.js',
   'src/data/reading.js', 'src/app/vocab-model.js'
@@ -29,7 +29,7 @@ const section = (t) => console.log('\n■ ' + t);
 section('Grammar');
 const GLEVELS = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1'];
 const LEVELS = ['A1', 'A2', 'B1', 'B2']; // ใช้กับ Vocabulary ด้านล่าง (คำศัพท์ยังมีแค่ 4 ระดับ)
-ok(EP.grammar.length === 6, 'ต้องมี 6 หมวด (พบ ' + EP.grammar.length + ')');
+ok(EP.grammar.length === 7, 'ต้องมี 7 หมวด (พบ ' + EP.grammar.length + ')');
 let lessonCount = 0, miniCount = 0, postCount = 0;
 const lessonIds = new Set();
 function checkQ(q, where) {
