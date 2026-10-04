@@ -1194,7 +1194,7 @@
   var rQuiz = null;
   function renderReading(view) {
     if (S.r.view === 'passage') return renderPassage(view);
-    var filters = [['all', 'ทั้งหมด'], ['RLA', 'RLA'], ['Science', 'Science'], ['Social Studies', 'Social Studies']];
+    var filters = [['all', 'ทั้งหมด'], ['RLA', 'RLA'], ['Science', 'Science'], ['Social Studies', 'Social Studies'], ['Academic', 'Academic Reading']];
     var list = EP.reading.filter(function (p) { return S.r.filter === 'all' || p.subject === S.r.filter; });
     view.innerHTML = '<div class="stack">' +
       '<div class="row" style="justify-content:space-between"><h2>ฝึกอ่านแนว GED</h2><span class="small muted">12 บท · เรียงจากง่ายไปยาก</span></div>' +

@@ -16,7 +16,7 @@ const files = [
   'src/data/grammar-4-det.js', 'src/data/grammar-5-prep.js', 'src/data/grammar-6-bridge.js', 'src/data/grammar-7-academic.js', 'src/data/grammar-8-essay.js',
   'src/data/vocab-a1.js', 'src/data/vocab-a2.js', 'src/data/vocab-b1.js', 'src/data/vocab-b2.js',
   'src/data/examvocab-trip-01.js', 'src/data/examvocab-trip-02.js', 'src/data/examvocab-trip-03.js', 'src/data/examvocab-trip-04.js', 'src/data/examvocab-trip-05.js', 'src/data/examvocab-trip-06.js', 'src/data/examvocab-trip-07.js', 'src/data/examvocab-trip-08.js', 'src/data/examvocab-trip-09.js', 'src/data/examvocab-trip-10.js', 'src/data/examvocab-trip-11.js', 'src/data/examvocab-trip-12.js', 'src/data/examvocab-trip-13.js', 'src/data/examvocab-trip-14.js', 'src/data/examvocab-trip-15.js', 'src/data/examvocab-trip-16.js', 'src/data/examvocab-trip-17.js', 'src/data/examvocab-trip-18.js', 'src/data/examvocab-trip-19.js', 'src/data/examvocab-trip-20.js',
-  'src/data/reading.js', 'src/app/vocab-model.js'
+  'src/data/reading.js', 'src/data/reading-academic.js', 'src/app/vocab-model.js'
 ];
 for (const f of files) vm.runInContext(fs.readFileSync(path.join(root, f), 'utf8'), ctx, { filename: f });
 const EP = ctx.EP;
@@ -197,14 +197,14 @@ console.log(`  Post-test: 16 ชุด × ${RUNS} รอบ (15 ข้อไม�
 
 /* ---------- Reading ---------- */
 section('Reading');
-ok(EP.reading.length === 12, 'ต้องมีบทอ่าน 12 บท (พบ ' + EP.reading.length + ')');
+ok(EP.reading.length === 16, 'ต้องมีบทอ่าน 16 บท (พบ ' + EP.reading.length + ')');
 ok(DOCKER_DONE_MAX.reading === EP.reading.length, 'docker/scores-logic.mjs DONE_MAX.reading (' + DOCKER_DONE_MAX.reading + ') ต้องเท่ากับจำนวนบทอ่านจริง (' + EP.reading.length + ')');
 const bySubj = {};
 let rq = 0, lastLv = 0;
 for (const p of EP.reading) {
   bySubj[p.subject] = (bySubj[p.subject] || 0) + 1;
   ok(p.s.length === p.th.length, p.id + ': จำนวนคำแปลไม่เท่ากับจำนวนประโยค');
-  const lv = LEVELS.indexOf(p.level);
+  const lv = GLEVELS.indexOf(p.level); // บทอ่านมี C1 ได้ (ใช้รายการระดับเดียวกับไวยากรณ์)
   ok(lv >= lastLv, p.id + ': ระดับต้องไล่จากง่ายไปยาก'); lastLv = Math.max(lastLv, lv);
   for (const q of p.q) {
     rq++;
@@ -218,7 +218,7 @@ for (const p of EP.reading) {
   if (p.visual && p.visual.kind === 'bar') ok(p.visual.labels.length === p.visual.values.length, p.id + ': กราฟป้ายกับค่าไม่เท่ากัน');
 }
 console.log('  ' + Object.entries(bySubj).map(([k, v]) => k + ' ' + v).join(' · ') + ` · คำถามรวม ${rq} ข้อ`);
-ok(bySubj['RLA'] === 4 && bySubj['Science'] === 4 && bySubj['Social Studies'] === 4, 'ต้องมีวิชาละ 4 บท');
+ok(bySubj['RLA'] === 4 && bySubj['Science'] === 4 && bySubj['Social Studies'] === 4 && bySubj['Academic'] === 4, 'ต้องมีวิชาละ 4 บท');
 ok(DOCKER_MAX.reading === rq, 'docker/scores-logic.mjs MAX.reading (' + DOCKER_MAX.reading + ') ต้องเท่ากับจำนวนคำถามอ่านจริง (' + rq + ')');
 
 console.log(`\n${fails === 0 ? '✓ ผ่านทั้งหมด' : '✗ ไม่ผ่าน ' + fails + ' รายการ'} (${checks} การตรวจ)`);

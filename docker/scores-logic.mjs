@@ -1,6 +1,6 @@
 // docker/scores-logic.mjs
-export const MAX = { grammar: 430, vocab: 640, reading: 53 };
-export const DONE_MAX = { grammar: 70, vocab: 16, reading: 12 };
+export const MAX = { grammar: 430, vocab: 640, reading: 73 };
+export const DONE_MAX = { grammar: 70, vocab: 16, reading: 16 };
 export const PARTS = ['grammar', 'vocab', 'reading'];
 const DONE_KEYS = { grammar: 'grammarDone', vocab: 'vocabDone', reading: 'readingDone' };
 

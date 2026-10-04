@@ -56,7 +56,7 @@ Scripts load in order: logic → data → vocab-model → ui (see `scripts` in b
 ## Shared leaderboard (Google Sheet)
 
 - `docs/config.js` sets `window.EP_CONFIG.scoreEndpoint` to the Apps Script `/exec` URL. Empty → local-only leaderboard. `npm run build` does not overwrite an existing config.js (use `node build.mjs --reset-config` to regenerate).
-- Client POSTs `text/plain` JSON (avoids CORS preflight, which Apps Script can't answer) and GETs `?action=top`. Server keeps the max per nickname per part and clamps to part maxima (`MAX` in Code.gs must match `partMax()` in ui.js if content counts change: grammar 430, vocab 640, reading 53).
+- Client POSTs `text/plain` JSON (avoids CORS preflight, which Apps Script can't answer) and GETs `?action=top`. Server keeps the max per nickname per part and clamps to part maxima (`MAX` in Code.gs must match `partMax()` in ui.js if content counts change: grammar 430, vocab 640, reading 73).
 - The self-hosted Docker deployment (`docker/`) uses its own backend instead of Code.gs; `docker/scores-logic.mjs`'s `MAX` must also match these same values. `test/validate.mjs` cross-checks it against the actual data counts — if content counts change, update `docker/scores-logic.mjs` too, or `npm run validate` fails.
 - The claude.ai Artifact build (dist/) cannot call external hosts, so it always runs local-only.
 - No auth: anyone with the endpoint can submit. Fine for classroom motivation; don't present it as secure.

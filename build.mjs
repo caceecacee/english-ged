@@ -43,6 +43,7 @@ const scripts = [
   'src/data/examvocab-trip-19.js',
   'src/data/examvocab-trip-20.js',
   'src/data/reading.js',
+  'src/data/reading-academic.js',
   'src/app/vocab-model.js',
   'src/app/ui.js'
 ];
