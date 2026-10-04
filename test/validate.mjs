@@ -221,5 +221,22 @@ console.log('  ' + Object.entries(bySubj).map(([k, v]) => k + ' ' + v).join(' ·
 ok(bySubj['RLA'] === 4 && bySubj['Science'] === 4 && bySubj['Social Studies'] === 4 && bySubj['Academic'] === 4, 'ต้องมีวิชาละ 4 บท');
 ok(DOCKER_MAX.reading === rq, 'docker/scores-logic.mjs MAX.reading (' + DOCKER_MAX.reading + ') ต้องเท่ากับจำนวนคำถามอ่านจริง (' + rq + ')');
 
+// รายงานความก้าวหน้า (ตรรกะล้วน): ข้อมูลว่าง → ทุกหมวดยังไม่ครบ · เรียนครบและผ่าน → ไม่มีช่องว่าง · ผ่านเกณฑ์ไม่ถึง → ควรทบทวน
+{
+  const empty = EP.logic.progressReport({}, EP.grammar, EP.reading);
+  ok(empty.grammar.cats.every(c => c.status === 'incomplete'), 'รายงาน: ข้อมูลว่างต้องเป็น incomplete ทุกหมวด');
+  ok(empty.reading.done === 0 && empty.reading.total === EP.reading.length, 'รายงาน: บทอ่านที่ทำแล้วต้องเป็น 0');
+  const full = { grammar: {}, gpost: {}, reading: {} };
+  EP.grammar.forEach(c => { c.lessons.forEach(l => { full.grammar[l.id] = { answered: 5 }; }); full.gpost[c.id] = c.post.length; });
+  EP.reading.forEach(p => { full.reading[p.id] = { best: p.q.length }; });
+  const ok1 = EP.logic.progressReport(full, EP.grammar, EP.reading);
+  ok(ok1.gaps.length === 0, 'รายงาน: เรียนครบและได้คะแนนเต็มต้องไม่มีช่องว่าง (พบ ' + ok1.gaps.length + ')');
+  const low = JSON.parse(JSON.stringify(full)); low.gpost[EP.grammar[0].id] = EP.logic.PROGRESS_MIN - 1;
+  const r2 = EP.logic.progressReport(low, EP.grammar, EP.reading);
+  ok(r2.grammar.cats[0].status === 'review' && r2.gaps.some(g => g.kind === 'grammar'), 'รายงาน: Post-test ต่ำกว่าเกณฑ์ต้องเป็น review');
+  const pct = EP.logic.progressReport(full, EP.grammar, EP.reading).reading.subjects;
+  ok(pct.every(s => s.pct === 100), 'รายงาน: บทอ่านได้เต็มต้องได้ 100%');
+}
+
 console.log(`\n${fails === 0 ? '✓ ผ่านทั้งหมด' : '✗ ไม่ผ่าน ' + fails + ' รายการ'} (${checks} การตรวจ)`);
 process.exit(fails ? 1 : 0);

@@ -24,6 +24,7 @@
     back: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M15.4 6.4 14 5l-7 7 7 7 1.4-1.4L9.8 12z"/></svg>',
     book: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4.5A2.5 2.5 0 0 1 6.5 2H20v16H6.5a1.5 1.5 0 0 0 0 3H20v1H6.5A2.5 2.5 0 0 1 4 19.5v-15zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg>',
     cards: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 7.5 12.2 3l5 10.3-9.2 4.5L3 7.5zm15.4 5.3L14.6 5H19a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-8.5l7.9-8.2z"/></svg>',
+    check: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M9 2h6v2h4v18H5V4h4V2zm0 4H7v12h10V6h-2v2H9V6zm1.5 6.5 2 2 4-4 1.4 1.4-5.4 5.4-3.4-3.4z"/></svg>',
     read: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 6.5C10.2 5 7.7 4 5 4c-1 0-2 .1-3 .4v14c1-.3 2-.4 3-.4 2.7 0 5.2 1 7 2.5 1.8-1.5 4.3-2.5 7-2.5 1 0 2 .1 3 .4v-14C21 4.1 20 4 19 4c-2.7 0-5.2 1-7 2.5zm-1 11.2A11.8 11.8 0 0 0 5 16c-.3 0-.7 0-1 .1V6.1L5 6c2.2 0 4.3.8 6 2.1v9.6z"/></svg>'
   };
   function sayBtn(text, small) {
@@ -45,7 +46,7 @@
      root = { v:2, current:<key>, profiles:{ <key>: {nick, updated, grammar, gpost, vocab, reading} } }
      key '__guest' = ยังไม่ใส่ชื่อเล่น (ไม่ขึ้นตารางอันดับ) */
   var GUEST = '__guest';
-  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {}, examvocab: {} }; }
+  function emptyProfile(nick) { return { nick: nick || '', updated: 0, grammar: {}, gpost: {}, vocab: {}, reading: {}, review: {}, examvocab: {}, mock: {} }; }
   // "จำกฎได้" = โจทย์ที่ถามกฎตรง ๆ (ไม่มีช่องว่างให้เติม) · "ใช้ในประโยคได้" = โจทย์เติมคำ/ใช้ในบริบทจริง (มี ___)
   function quizType(q) { return /___/.test(q.q) ? 'usage' : 'rule'; }
   function recordReview(key, title, wrongPqs) {
@@ -100,7 +101,7 @@
         var prof = emptyProfile(nick.trim());
         var g = this.root.profiles[GUEST];
         if (this.named().length === 0 && hasProgress(g)) {
-          ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab'].forEach(function (k) { prof[k] = g[k]; });
+          ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab', 'mock'].forEach(function (k) { prof[k] = g[k]; });
           this.root.profiles[GUEST] = emptyProfile('');
           moved = true;
         }
@@ -120,7 +121,7 @@
     }
   };
   function hasProgress(p) {
-    return ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab'].some(function (k) { return p[k] && Object.keys(p[k]).length > 0; });
+    return ['grammar', 'gpost', 'vocab', 'reading', 'review', 'examvocab', 'mock'].some(function (k) { return p[k] && Object.keys(p[k]).length > 0; });
   }
 
   /* ---------- คะแนนรวมของแต่ละ Part (ใช้จัดอันดับ) ---------- */
@@ -304,7 +305,8 @@
   var TABS = [
     { id: 'grammar', label: 'เรียน Grammar', icon: ICON.book },
     { id: 'vocab', label: 'เกมคำศัพท์', icon: ICON.cards },
-    { id: 'reading', label: 'ฝึกอ่าน GED', icon: ICON.read }
+    { id: 'reading', label: 'ฝึกอ่าน GED', icon: ICON.read },
+    { id: 'mock', label: 'ทดสอบ', icon: ICON.check }
   ];
   function renderNav() {
     var nav = $('#nav');
@@ -1515,11 +1517,151 @@
   }
 
   /* ---------- วาดหน้า ---------- */
+  /* ---------- ทดสอบจำลอง (บทอ่านเชิงวิชาการ 4 บท + งานเขียน 1 ชิ้นตรวจด้วย checklist) ---------- */
+  var MOCK_MINUTES = 30;
+  function mockState() { return S.m || (S.m = { phase: 'intro', endAt: 0, timer: null, result: null }); }
+  function mockPassages() { return EP.reading.filter(function (p) { return p.subject === 'Academic'; }); }
+  function mockWriting() {
+    var c = EP.grammar.filter(function (x) { return x.id === 'essay'; })[0];
+    var l = c && c.lessons.filter(function (x) { return x.id === 'essay-thesis'; })[0];
+    return l && l.writing ? l.writing[0] : null;
+  }
+  function mockStop() { var m = mockState(); if (m.timer) { clearInterval(m.timer); m.timer = null; } }
+  function mockClockText(ms) {
+    var s = Math.max(0, Math.ceil(ms / 1000)), mm = Math.floor(s / 60), ss = s % 60;
+    return (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+  }
+  function mockTick() {
+    var m = mockState();
+    var left = m.endAt - Date.now();
+    var el = $('#mock-clock');
+    if (el) el.textContent = mockClockText(left);
+    if (left <= 0) mockSubmit(true);
+  }
+  function mockStart() {
+    var m = mockState();
+    m.phase = 'running'; m.result = null;
+    m.endAt = Date.now() + MOCK_MINUTES * 60000;
+    mockStop();
+    m.timer = setInterval(mockTick, 1000);
+    render();
+    focusHeading();
+  }
+  function mockSubmit(auto) {
+    var m = mockState();
+    if (m.phase !== 'running') return;
+    mockStop();
+    var details = [], score = 0, max = 0;
+    mockPassages().forEach(function (p) {
+      p.q.forEach(function (q, qi) {
+        max++;
+        var checked = document.querySelector('input[name="mq-' + p.id + '-' + qi + '"]:checked');
+        var oi = checked ? Number(checked.value) : null;
+        var ok = oi === q.a;
+        if (ok) score++;
+        details.push({ pid: p.id, qi: qi, q: q.q, picked: oi === null ? null : q.o[oi], correct: q.o[q.a], why: q.why, ok: ok });
+      });
+    });
+    var wr = mockWriting(), ticked = document.querySelectorAll('#mock-checks input:checked').length;
+    var wmax = wr ? wr.checklist.length : 0;
+    m.phase = 'done';
+    m.result = { score: score, max: max, ticked: ticked, wmax: wmax, auto: !!auto, details: details };
+    Store.data.mock = Store.data.mock || {};
+    Store.data.mock.last = { reading: { score: score, max: max }, writing: { ticked: ticked, max: wmax }, auto: !!auto, at: Date.now() };
+    Store.save();
+    render();
+    focusHeading();
+  }
+  function mockReset() { var m = mockState(); m.phase = 'intro'; m.result = null; render(); focusHeading(); }
+  function mockAct(act) {
+    if (act === 'start') mockStart();
+    else if (act === 'submit') mockSubmit(false);
+    else if (act === 'reset') mockReset();
+  }
+
+  function progressHTML() {
+    var prog = EP.logic.progressReport(Store.data, EP.grammar, EP.reading);
+    var st = { ok: 'ผ่าน ✓', review: 'ควรทบทวน !', incomplete: 'ยังไม่ครบ –' };
+    var gaps = prog.gaps.length
+      ? '<ul class="small" style="margin:0;padding-left:20px">' + prog.gaps.map(function (g) { return '<li>' + esc(g.label) + '</li>'; }).join('') + '</ul>'
+      : '<p class="small muted" style="margin:0">ยังไม่พบช่องว่างที่ต้องทบทวน</p>';
+    var cats = prog.grammar.cats.map(function (c) {
+      return '<li><b>' + esc(c.th) + '</b> · บท ' + c.done + '/' + c.total + ' · Post-test ' + c.postBest + '/' + c.postMax + ' · <span class="small">' + st[c.status] + (c.nextLesson && c.status === 'incomplete' ? ' (บทถัดไป: ' + esc(c.nextLesson) + ')' : '') + '</span></li>';
+    }).join('');
+    var pctTxt = function (x) { return x.pct === null ? 'ยังไม่ทำ' : x.pct + '%'; };
+    var subj = prog.reading.subjects.map(function (s) { return '<li><b>' + esc(s.subject) + '</b> · ทำแล้ว ' + s.done + '/' + s.total + ' บท · คะแนนที่ดีที่สุด ' + pctTxt(s) + '</li>'; }).join('');
+    var lvls = prog.reading.levels.map(function (l) { return '<li><b>' + l.level + '</b> · ทำแล้ว ' + l.done + '/' + l.total + ' บท · ' + pctTxt(l) + '</li>'; }).join('');
+    return '<section class="stack" style="gap:10px" aria-labelledby="prog-h">' +
+      '<h2 id="prog-h">ความก้าวหน้าของคุณ</h2>' +
+      '<p class="small muted" style="margin:0">รายงานนี้บอกช่องว่างการฝึกเท่านั้น ไม่ใช่การทำนายผลสอบ · เกณฑ์ "ผ่าน" คือ Post-test อย่างน้อย ' + EP.logic.PROGRESS_MIN + '/10 ข้อ</p>' +
+      '<div><p class="eyebrow" style="margin:0 0 6px">ช่องว่างที่ควรทบทวน</p>' + gaps + '</div>' +
+      '<div><p class="eyebrow" style="margin:0 0 6px">Grammar</p><ul class="small" style="margin:0;padding-left:20px">' + cats + '</ul></div>' +
+      '<div><p class="eyebrow" style="margin:0 0 6px">บทอ่านตามวิชา</p><ul class="small" style="margin:0;padding-left:20px">' + subj + '</ul></div>' +
+      '<div><p class="eyebrow" style="margin:0 0 6px">บทอ่านตามระดับ</p><ul class="small" style="margin:0;padding-left:20px">' + lvls + '</ul></div>' +
+      '</section>';
+  }
+
+  function mockIntroHTML() {
+    var wr = mockWriting(), last = (Store.data.mock || {}).last;
+    return '<section class="stack" style="gap:10px" aria-labelledby="mock-h">' +
+      '<h2 id="mock-h">ทดสอบจำลอง</h2>' +
+      '<p class="small muted" style="margin:0">ชุดนี้ฝึกรูปแบบข้อสอบ: อ่านบทวิชาการ 4 บท (' + mockPassages().reduce(function (s, p) { return s + p.q.length; }, 0) + ' ข้อ) โดยไม่มีคำแปลและคำช่วยอ่าน และเขียนงาน 1 ชิ้น ตรวจด้วย checklist ด้วยตนเอง</p>' +
+      '<ul class="small" style="margin:0;padding-left:20px"><li>เวลา ' + MOCK_MINUTES + ' นาที ระบบส่งคำตอบอัตโนมัติเมื่อหมดเวลา</li><li>คำตอบที่ไม่ได้เลือกนับเป็นข้อที่ไม่ถูก</li><li>งานเขียน: ' + (wr ? esc(wr.prompt) : '—') + '</li></ul>' +
+      (last ? '<p class="small muted" style="margin:0">ผลครั้งล่าสุด: บทอ่าน ' + last.reading.score + '/' + last.reading.max + ' · งานเขียน ตรวจแล้ว ' + last.writing.ticked + '/' + last.writing.max + ' ข้อ</p>' : '') +
+      '<div><button type="button" class="btn primary" data-mock-act="start">เริ่มทดสอบ ' + MOCK_MINUTES + ' นาที</button></div></section>';
+  }
+  function mockRunningHTML() {
+    var wr = mockWriting();
+    var passages = mockPassages().map(function (p) {
+      var qs = p.q.map(function (q, qi) {
+        return '<fieldset style="border:0;padding:0;margin:0 0 12px"><legend style="font-weight:600;margin-bottom:6px">' + (qi + 1) + '. ' + esc(q.q) + '</legend>' +
+          q.o.map(function (o, oi) {
+            var id = 'mq-' + p.id + '-' + qi + '-' + oi;
+            return '<div><input type="radio" id="' + id + '" name="mq-' + p.id + '-' + qi + '" value="' + oi + '"> <label for="' + id + '">' + esc(o) + '</label></div>';
+          }).join('') + '</fieldset>';
+      }).join('');
+      return '<article class="stack" style="gap:8px"><h3 style="margin:0">' + esc(p.title) + ' <span class="small muted">(' + esc(p.level) + ')</span></h3>' +
+        '<div class="en" style="line-height:1.7">' + esc(p.s.join(' ')) + '</div>' + qs + '</article>';
+    }).join('<hr style="border:0;border-top:1px solid var(--line);margin:16px 0">');
+    var checks = wr ? wr.checklist.map(function (c, i) {
+      return '<div><input type="checkbox" id="mock-chk-' + i + '"> <label for="mock-chk-' + i + '">' + esc(c) + '</label></div>';
+    }).join('') : '';
+    return '<section class="stack" style="gap:12px" aria-labelledby="mock-h">' +
+      '<div class="row" style="justify-content:space-between"><h2 id="mock-h">ทดสอบจำลอง</h2><span class="small" role="timer" aria-label="เวลาที่เหลือ"><span id="mock-clock" class="en">' + mockClockText(mockState().endAt - Date.now()) + '</span></span></div>' +
+      passages +
+      '<section class="stack" style="gap:8px" aria-labelledby="mock-w"><h3 id="mock-w" style="margin:0">งานเขียน</h3>' +
+      '<p style="margin:0">' + (wr ? esc(wr.prompt) : '') + '</p>' +
+      '<textarea rows="8" aria-label="พิมพ์งานเขียนของคุณที่นี่ (ไม่ถูกบันทึก)" style="width:100%"></textarea>' +
+      '<p class="small muted" style="margin:0">ข้อความนี้ไม่ถูกบันทึก ตรวจด้วย checklist หลังส่งคำตอบ</p>' +
+      '<div id="mock-checks" class="small stack" style="gap:6px">' + checks + '</div></section>' +
+      '<div><button type="button" class="btn primary" data-mock-act="submit">ส่งคำตอบ</button></div></section>';
+  }
+  function mockDoneHTML() {
+    var r = mockState().result;
+    var rows = r.details.map(function (d, i) {
+      return '<li><b>' + (d.ok ? '✓ ถูก' : '✗ ผิด') + '</b> · ข้อ ' + (i + 1) + ': ' + esc(d.q) + '<br><span class="small">คำตอบของคุณ: ' + (d.picked === null ? 'ไม่ได้ตอบ' : esc(d.picked)) + (d.ok ? '' : ' · เฉลย: ' + esc(d.correct) + '<br>' + esc(d.why)) + '</span></li>';
+    }).join('');
+    return '<section class="stack" style="gap:12px" aria-labelledby="mock-h">' +
+      '<h2 id="mock-h">ผลทดสอบจำลอง' + (r.auto ? ' (หมดเวลา ส่งอัตโนมัติ)' : '') + '</h2>' +
+      '<p style="margin:0">บทอ่าน: <b>' + r.score + '/' + r.max + '</b> ข้อ · งานเขียน: ตรวจแล้ว <b>' + r.ticked + '/' + r.wmax + '</b> ข้อใน checklist</p>' +
+      '<p class="small muted" style="margin:0">ผลนี้เป็นการฝึกเท่านั้น ไม่ได้รับรองคะแนนสอบจริง งานเขียนควรให้ผู้สอนหรือเพื่อนตรวจซ้ำ</p>' +
+      '<ol class="small" style="padding-left:20px;margin:0;display:grid;gap:10px">' + rows + '</ol>' +
+      '<div><button type="button" class="btn" data-mock-act="reset">กลับไปหน้าเริ่ม</button></div></section>';
+  }
+  function renderMock(view) {
+    var m = mockState();
+    if (m.phase === 'running') { view.innerHTML = '<div class="stack" style="gap:28px">' + mockRunningHTML() + '</div>'; return; }
+    var body = m.phase === 'done' ? mockDoneHTML() : mockIntroHTML();
+    view.innerHTML = '<div class="stack" style="gap:28px">' + body + progressHTML() + '</div>';
+  }
+
   function render() {
     var view = $('#view');
     view.setAttribute('aria-labelledby', 'tab-' + S.tab);
+    if (S.tab !== 'mock') mockStop();
     if (S.tab === 'grammar') renderGrammar(view);
     else if (S.tab === 'vocab') renderVocab(view);
+    else if (S.tab === 'mock') renderMock(view);
     else renderReading(view);
     renderContinue();
     renderTotalBoard();
@@ -1542,6 +1684,7 @@
     var d = t.dataset;
     if (d.say != null) { e.preventDefault(); Speech.speak(d.say, t); return; }
     if (d.tab) { setTab(d.tab, true); return; }
+    if (d.mockAct) { mockAct(d.mockAct); return; }
 
     if (d.reset) { confirming = d.reset; render(); var y = $('[data-reset-yes]'); if (y) y.focus(); return; }
     if (d.resetNo) { confirming = null; render(); return; }

@@ -84,7 +84,48 @@
     return /[฀-๿]/.test(String(text || ''));
   }
 
+  /* รายงานความก้าวหน้า: ไม่ใช้คะแนนทำนายผลสอบ บอกเพียงช่องว่างที่ผู้เรียนควรทบทวน
+     PROGRESS_MIN = เกณฑ์ผ่านของ Post-test (7/10 ข้อ) ที่ถือว่า "ควรทบทวน" ถ้าต่ำกว่า */
+  var PROGRESS_MIN = 7;
+  function progressReport(data, grammarCats, readingList) {
+    data = data || {};
+    var gr = data.grammar || {}, gp = data.gpost || {}, rd = data.reading || {};
+    var out = { grammar: { lessonsDone: 0, lessonsTotal: 0, cats: [] }, reading: { done: 0, total: readingList.length, subjects: [], levels: [] }, gaps: [] };
+    grammarCats.forEach(function (c) {
+      var done = 0;
+      c.lessons.forEach(function (l) { if (gr[l.id] && gr[l.id].answered >= 5) done++; });
+      var postBest = gp[c.id] || 0, postMax = c.post.length;
+      var next = c.lessons.filter(function (l) { return !(gr[l.id] && gr[l.id].answered >= 5); })[0];
+      var status = done < c.lessons.length ? 'incomplete' : (postBest >= PROGRESS_MIN ? 'ok' : 'review');
+      out.grammar.lessonsDone += done; out.grammar.lessonsTotal += c.lessons.length;
+      out.grammar.cats.push({ id: c.id, name: c.name, th: c.th, done: done, total: c.lessons.length, postBest: postBest, postMax: postMax, status: status, nextLesson: next ? next.title : null });
+      if (status === 'review') out.gaps.push({ kind: 'grammar', label: c.th + ': Post-test ' + postBest + '/' + postMax + ' ควรทบทวนก่อนไปต่อ' });
+      else if (status === 'incomplete') out.gaps.push({ kind: 'grammar', label: c.th + ': ยังเรียนไม่ครบ ' + done + '/' + c.lessons.length + ' บท' });
+    });
+    var subj = {}, lvl = {};
+    readingList.forEach(function (p) {
+      var rec = rd[p.id];
+      if (rec) out.reading.done++;
+      var best = rec ? (rec.best || 0) : 0, max = p.q.length;
+      var s = subj[p.subject] || (subj[p.subject] = { subject: p.subject, done: 0, total: 0, best: 0, max: 0 });
+      s.total++; s.max += max; s.best += best; if (rec) s.done++;
+      var l = lvl[p.level] || (lvl[p.level] = { level: p.level, done: 0, total: 0, best: 0, max: 0 });
+      l.total++; l.max += max; l.best += best; if (rec) l.done++;
+    });
+    function pct(x) { return x.max ? Math.round(x.best / x.max * 100) : null; }
+    Object.keys(subj).forEach(function (k) { var s = subj[k]; out.reading.subjects.push({ subject: s.subject, done: s.done, total: s.total, pct: pct(s) }); });
+    Object.keys(lvl).sort(function (a, b) { return GLEVEL_ORDER.indexOf(a) - GLEVEL_ORDER.indexOf(b); }).forEach(function (k) { var l = lvl[k]; out.reading.levels.push({ level: l.level, done: l.done, total: l.total, pct: pct(l) }); });
+    out.reading.subjects.forEach(function (s) {
+      if (s.done < s.total) out.gaps.push({ kind: 'reading', label: 'บทอ่านวิชา ' + s.subject + ' ยังไม่ทำครบ ' + s.done + '/' + s.total + ' บท' });
+      else if (s.pct !== null && s.pct < PROGRESS_MIN * 10) out.gaps.push({ kind: 'reading', label: 'บทอ่านวิชา ' + s.subject + ' ได้ ' + s.pct + '% ควรทบทวนการหาหลักฐาน' });
+    });
+    return out;
+  }
+  var GLEVEL_ORDER = ['Basic', 'A1', 'A2', 'B1', 'B2', 'C1'];
+
   EP.logic = {
+    PROGRESS_MIN: PROGRESS_MIN,
+    progressReport: progressReport,
     shuffle: shuffle,
     sample: sample,
     cardDistractors: cardDistractors,
