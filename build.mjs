@@ -38,6 +38,7 @@ const scripts = [
   'src/data/examvocab-trip-16.js',
   'src/data/examvocab-trip-17.js',
   'src/data/examvocab-trip-18.js',
+  'src/data/examvocab-trip-19.js',
   'src/data/reading.js',
   'src/app/vocab-model.js',
   'src/app/ui.js'
