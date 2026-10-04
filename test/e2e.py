@@ -45,7 +45,7 @@ with sync_playwright() as p:
     # ---------- Grammar: ทุกหมวด ทุกบท ----------
     print('■ Grammar')
     cats = page.locator('[data-gcat]').count()
-    check(cats == 7, f'หมวด Grammar {cats} ≠ 7')
+    check(cats == 8, f'หมวด Grammar {cats} ≠ 8')
     total_lessons = 0
     for ci in range(cats):
         page.click(f'[data-gcat="{ci}"]')
