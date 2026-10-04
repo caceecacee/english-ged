@@ -1577,6 +1577,7 @@
     if (act === 'start') mockStart();
     else if (act === 'submit') mockSubmit(false);
     else if (act === 'reset') mockReset();
+    else if (act === 'clear') { if (window.confirm('ล้างผลทดสอบจำลองที่บันทึกไว้ของผู้เรียนคนนี้?')) { Store.data.mock = {}; Store.save(); render(); focusHeading(); } }
   }
 
   function progressHTML() {
@@ -1608,7 +1609,7 @@
       '<p class="small muted" style="margin:0">ชุดนี้ฝึกรูปแบบข้อสอบ: อ่านบทวิชาการ 4 บท (' + mockPassages().reduce(function (s, p) { return s + p.q.length; }, 0) + ' ข้อ) โดยไม่มีคำแปลและคำช่วยอ่าน และเขียนงาน 1 ชิ้น ตรวจด้วย checklist ด้วยตนเอง</p>' +
       '<ul class="small" style="margin:0;padding-left:20px"><li>เวลา ' + MOCK_MINUTES + ' นาที ระบบส่งคำตอบอัตโนมัติเมื่อหมดเวลา</li><li>คำตอบที่ไม่ได้เลือกนับเป็นข้อที่ไม่ถูก</li><li>งานเขียน: ' + (wr ? esc(wr.prompt) : '—') + '</li></ul>' +
       (last ? '<p class="small muted" style="margin:0">ผลครั้งล่าสุด: บทอ่าน ' + last.reading.score + '/' + last.reading.max + ' · งานเขียน ตรวจแล้ว ' + last.writing.ticked + '/' + last.writing.max + ' ข้อ</p>' : '') +
-      '<div><button type="button" class="btn primary" data-mock-act="start">เริ่มทดสอบ ' + MOCK_MINUTES + ' นาที</button></div></section>';
+      '<div class="row" style="gap:8px"><button type="button" class="btn primary" data-mock-act="start">เริ่มทดสอบ ' + MOCK_MINUTES + ' นาที</button>' + (last ? '<button type="button" class="btn ghost" data-mock-act="clear">ล้างผลทดสอบจำลอง</button>' : '') + '</div></section>';
   }
   function mockRunningHTML() {
     var wr = mockWriting();
